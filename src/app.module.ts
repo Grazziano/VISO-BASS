@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { InteractionModule } from './interaction/interaction.module';
-import { ObjectModule } from './object/object.module';
+import { MyObjectModule } from './my-object/my-object.module';
 
 @Module({
-  imports: [InteractionModule, ObjectModule],
+  imports: [InteractionModule, MyObjectModule],
   controllers: [AppController],
   providers: [AppService],
 })
