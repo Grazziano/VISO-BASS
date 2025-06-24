@@ -6,9 +6,11 @@ import { MyObjectModule } from './my-object/my-object.module';
 import { OnaEnvironmentModule } from './ona-environment/ona-environment.module';
 import { PagerankFriendshipModule } from './pagerank-friendship/pagerank-friendship.module';
 import { MyClassModule } from './my-class/my-class.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     InteractionModule,
     MyObjectModule,
     OnaEnvironmentModule,
