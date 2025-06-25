@@ -5,6 +5,7 @@ import { UpdateOnaEnvironmentDto } from './dto/update-ona-environment.dto';
 @Injectable()
 export class OnaEnvironmentService {
   create(createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
+    console.log(createOnaEnvironmentDto);
     return 'This action adds a new onaEnvironment';
   }
 
@@ -17,6 +18,7 @@ export class OnaEnvironmentService {
   }
 
   update(id: number, updateOnaEnvironmentDto: UpdateOnaEnvironmentDto) {
+    console.log(updateOnaEnvironmentDto);
     return `This action updates a #${id} onaEnvironment`;
   }
 

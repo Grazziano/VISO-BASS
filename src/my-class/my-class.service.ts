@@ -5,6 +5,7 @@ import { UpdateMyClassDto } from './dto/update-my-class.dto';
 @Injectable()
 export class MyClassService {
   create(createMyClassDto: CreateMyClassDto) {
+    console.log(createMyClassDto);
     return 'This action adds a new myClass';
   }
 
@@ -17,6 +18,7 @@ export class MyClassService {
   }
 
   update(id: number, updateMyClassDto: UpdateMyClassDto) {
+    console.log(updateMyClassDto);
     return `This action updates a #${id} myClass`;
   }
 

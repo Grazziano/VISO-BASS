@@ -5,6 +5,7 @@ import { UpdatePagerankFriendshipDto } from './dto/update-pagerank-friendship.dt
 @Injectable()
 export class PagerankFriendshipService {
   create(createPagerankFriendshipDto: CreatePagerankFriendshipDto) {
+    console.log(createPagerankFriendshipDto);
     return 'This action adds a new pagerankFriendship';
   }
 
@@ -17,6 +18,7 @@ export class PagerankFriendshipService {
   }
 
   update(id: number, updatePagerankFriendshipDto: UpdatePagerankFriendshipDto) {
+    console.log(updatePagerankFriendshipDto);
     return `This action updates a #${id} pagerankFriendship`;
   }
 
