@@ -7,10 +7,12 @@ import { OnaEnvironmentModule } from './ona-environment/ona-environment.module';
 import { PagerankFriendshipModule } from './pagerank-friendship/pagerank-friendship.module';
 import { MyClassModule } from './my-class/my-class.module';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URI!),
     InteractionModule,
     MyObjectModule,
     OnaEnvironmentModule,
