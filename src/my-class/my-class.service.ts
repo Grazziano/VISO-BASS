@@ -11,13 +11,28 @@ export class MyClassService {
     @InjectModel(MyClass.name) private myClassModel: Model<MyClassDocument>,
   ) {}
 
-  create(createMyClassDto: CreateMyClassDto) {
-    const newMyClass = new this.myClassModel(createMyClassDto);
-    return newMyClass.save();
+  async create(createMyClassDto: CreateMyClassDto): Promise<MyClass> {
+    try {
+      const newMyClass = new this.myClassModel(createMyClassDto);
+      return newMyClass.save();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to create MyClass: ${error.message}`);
+      }
+      throw new Error('Failed to create MyClass due to an unknown error');
+    }
   }
 
-  findAll() {
-    return `This action returns all myClass`;
+  async findAll(): Promise<MyClass[]> {
+    try {
+      const myClasses = await this.myClassModel.find();
+      return myClasses;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find MyClass: ${error.message}`);
+      }
+      throw new Error('Failed to find MyClass due to an unknown error');
+    }
   }
 
   findOne(id: number) {
