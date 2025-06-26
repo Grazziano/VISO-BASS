@@ -3,12 +3,12 @@ import { Document } from 'mongoose';
 
 export type MyClassDocument = MyClass & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class MyClass {
   @Prop({ required: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   role: string;
 }
 

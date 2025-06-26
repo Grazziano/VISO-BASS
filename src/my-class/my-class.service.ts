@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMyClassDto } from './dto/create-my-class.dto';
 import { UpdateMyClassDto } from './dto/update-my-class.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { MyClass, MyClassDocument } from './schemas/my-class.schema';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
+import { plainToInstance } from 'class-transformer';
+import { MyClassResponseDto } from './dto/my-class-response.dto';
 
 @Injectable()
 export class MyClassService {
@@ -11,10 +13,13 @@ export class MyClassService {
     @InjectModel(MyClass.name) private myClassModel: Model<MyClassDocument>,
   ) {}
 
-  async create(createMyClassDto: CreateMyClassDto): Promise<MyClass> {
+  async create(
+    createMyClassDto: CreateMyClassDto,
+  ): Promise<MyClassResponseDto> {
     try {
       const newMyClass = new this.myClassModel(createMyClassDto);
-      return newMyClass.save();
+      const savedMyClass = await newMyClass.save();
+      return plainToInstance(MyClassResponseDto, savedMyClass.toJSON());
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to create MyClass: ${error.message}`);
@@ -23,10 +28,10 @@ export class MyClassService {
     }
   }
 
-  async findAll(): Promise<MyClass[]> {
+  async findAll(): Promise<MyClassResponseDto[]> {
     try {
-      const myClasses = await this.myClassModel.find();
-      return myClasses;
+      const myClasses = await this.myClassModel.find().lean().exec();
+      return plainToInstance(MyClassResponseDto, myClasses);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find MyClass: ${error.message}`);
@@ -35,8 +40,30 @@ export class MyClassService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} myClass`;
+  async findOne(id: string): Promise<MyClassResponseDto> {
+    const isValid = isValidObjectId(id);
+
+    if (!isValid) {
+      throw new NotFoundException(`MyClass with id ${id} not found`);
+    }
+
+    try {
+      const myClass = await this.myClassModel
+        .findById({ _id: id })
+        .lean()
+        .exec();
+
+      if (!myClass) {
+        throw new NotFoundException(`MyClass with id ${id} not found 1223`);
+      }
+
+      return plainToInstance(MyClassResponseDto, myClass);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find MyClass: ${error.message}`);
+      }
+      throw new Error('Failed to find MyClass due to an unknown error');
+    }
   }
 
   update(id: number, updateMyClassDto: UpdateMyClassDto) {
