@@ -7,6 +7,7 @@ import { PagerankFriendshipModule } from './pagerank-friendship/pagerank-friends
 import { VisoClassModule } from './viso-class/viso-class.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { VisoObjectModule } from './viso-object/viso-object.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     OnaEnvironmentModule,
     PagerankFriendshipModule,
     VisoClassModule,
+    VisoObjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
