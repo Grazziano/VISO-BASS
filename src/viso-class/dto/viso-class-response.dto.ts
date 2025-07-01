@@ -1,14 +1,14 @@
 import { Expose } from 'class-transformer';
 
-export class MyClassResponseDto {
+export class VisoClassResponseDto {
   @Expose()
   id: string;
 
   @Expose()
-  name: string;
+  class_name: string;
 
   @Expose()
-  role: string;
+  class_function: string[];
 
   @Expose()
   createdAt: Date;

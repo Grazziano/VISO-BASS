@@ -1,25 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateMyClassDto } from './dto/create-my-class.dto';
-import { UpdateMyClassDto } from './dto/update-my-class.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { MyClass, MyClassDocument } from './schemas/my-class.schema';
+import { VisoClass, VisoClassDocument } from './schemas/viso-class.schema';
 import { isValidObjectId, Model } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
-import { MyClassResponseDto } from './dto/my-class-response.dto';
+import { CreateVisoClassDto } from './dto/create-viso-class.dto';
+import { VisoClassResponseDto } from './dto/viso-class-response.dto';
+import { UpdateVisoClassDto } from './dto/update-viso-class.dto';
 
 @Injectable()
-export class MyClassService {
+export class VisoClassService {
   constructor(
-    @InjectModel(MyClass.name) private myClassModel: Model<MyClassDocument>,
+    @InjectModel(VisoClass.name)
+    private visoClassModel: Model<VisoClassDocument>,
   ) {}
 
   async create(
-    createMyClassDto: CreateMyClassDto,
-  ): Promise<MyClassResponseDto> {
+    createVisoClassDto: CreateVisoClassDto,
+  ): Promise<VisoClassResponseDto> {
     try {
-      const newMyClass = new this.myClassModel(createMyClassDto);
+      const newMyClass = new this.visoClassModel(createVisoClassDto);
       const savedMyClass = await newMyClass.save();
-      return plainToInstance(MyClassResponseDto, savedMyClass.toJSON());
+      return plainToInstance(VisoClassResponseDto, savedMyClass.toJSON());
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to create MyClass: ${error.message}`);
@@ -28,10 +29,10 @@ export class MyClassService {
     }
   }
 
-  async findAll(): Promise<MyClassResponseDto[]> {
+  async findAll(): Promise<VisoClassResponseDto[]> {
     try {
-      const myClasses = await this.myClassModel.find().lean().exec();
-      return plainToInstance(MyClassResponseDto, myClasses);
+      const myClasses = await this.visoClassModel.find().lean().exec();
+      return plainToInstance(VisoClassResponseDto, myClasses);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find MyClass: ${error.message}`);
@@ -40,7 +41,7 @@ export class MyClassService {
     }
   }
 
-  async findOne(id: string): Promise<MyClassResponseDto> {
+  async findOne(id: string): Promise<VisoClassResponseDto> {
     const isValid = isValidObjectId(id);
 
     if (!isValid) {
@@ -48,7 +49,7 @@ export class MyClassService {
     }
 
     try {
-      const myClass = await this.myClassModel
+      const myClass = await this.visoClassModel
         .findById({ _id: id })
         .lean()
         .exec();
@@ -57,7 +58,7 @@ export class MyClassService {
         throw new NotFoundException(`MyClass with id ${id} not found 1223`);
       }
 
-      return plainToInstance(MyClassResponseDto, myClass);
+      return plainToInstance(VisoClassResponseDto, myClass);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find MyClass: ${error.message}`);
@@ -66,8 +67,8 @@ export class MyClassService {
     }
   }
 
-  update(id: number, updateMyClassDto: UpdateMyClassDto) {
-    console.log(updateMyClassDto);
+  update(id: number, updateVisoClassDto: UpdateVisoClassDto) {
+    console.log(updateVisoClassDto);
     return `This action updates a #${id} myClass`;
   }
 

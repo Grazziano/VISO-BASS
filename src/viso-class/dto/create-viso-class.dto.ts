@@ -1,14 +1,20 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
-export class CreateMyClassDto {
+export class CreateVisoClassDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  class_name: string;
 
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
-  role: string;
+  class_function: string[];
 
   @IsOptional()
   @IsDate()
