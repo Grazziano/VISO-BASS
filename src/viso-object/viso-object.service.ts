@@ -39,8 +39,16 @@ export class VisoObjectService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} visoObject`;
+  findOne(id: string) {
+    try {
+      const object = this.visoObjectModel.findById(id).lean().exec();
+      return plainToInstance(ResponseVisoObjectDto, object);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find object: ${error.message}`);
+      }
+      throw new Error('Failed to find object due to an unknown error');
+    }
   }
 
   update(id: number, updateVisoObjectDto: UpdateVisoObjectDto) {

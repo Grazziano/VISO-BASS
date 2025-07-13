@@ -27,7 +27,7 @@ export class VisoObjectController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.visoObjectService.findOne(+id);
+    return this.visoObjectService.findOne(id);
   }
 
   @Patch(':id')
