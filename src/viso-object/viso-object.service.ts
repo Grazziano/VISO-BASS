@@ -28,7 +28,15 @@ export class VisoObjectService {
   }
 
   findAll() {
-    return `This action returns all visoObject`;
+    try {
+      const objects = this.visoObjectModel.find().lean().exec();
+      return plainToInstance(ResponseVisoObjectDto, objects);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find objects: ${error.message}`);
+      }
+      throw new Error('Failed to find objects due to an unknown error');
+    }
   }
 
   findOne(id: number) {
