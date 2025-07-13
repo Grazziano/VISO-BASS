@@ -11,7 +11,7 @@ import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
 
-@Controller('viso-object')
+@Controller('object')
 export class VisoObjectController {
   constructor(private readonly visoObjectService: VisoObjectService) {}
 
