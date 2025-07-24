@@ -9,7 +9,7 @@ import {
 export class CreateVisoObjectDto {
   @IsMACAddress()
   @IsNotEmpty()
-  obj_macRede: string;
+  obj_networkMAC: string;
 
   @IsString()
   @IsNotEmpty()
@@ -27,9 +27,9 @@ export class CreateVisoObjectDto {
   @IsNotEmpty()
   obj_brand: string;
 
-  @IsString()
-  @IsNotEmpty()
-  obj_class: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // obj_class: string;
 
   @IsArray()
   @IsString({ each: true })

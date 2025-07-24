@@ -11,7 +11,7 @@ export class VisoObject {
       /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(value),
     index: true,
   })
-  obj_macRede: string;
+  obj_networkMAC: string;
 
   @Prop({ required: true })
   obj_name: string;
@@ -25,8 +25,8 @@ export class VisoObject {
   @Prop({ required: true })
   obj_brand: string;
 
-  @Prop({ required: true })
-  obj_class: string;
+  // @Prop({ required: true })
+  // obj_class: string;
 
   @Prop({ required: true, type: [String] })
   obj_function: string[];
