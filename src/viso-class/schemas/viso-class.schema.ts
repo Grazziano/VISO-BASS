@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { VisoObject } from 'src/viso-object/schema/viso-object.schema';
 
 export type VisoClassDocument = VisoClass & Document;
 
@@ -10,6 +11,9 @@ export class VisoClass {
 
   @Prop({ required: true })
   class_function: string[];
+
+  @Prop({ type: [Types.ObjectId], ref: VisoObject.name })
+  objects: Types.ObjectId[];
 }
 
 export const VisoClassSchema = SchemaFactory.createForClass(VisoClass);

@@ -16,6 +16,10 @@ export class CreateVisoClassDto {
   @IsNotEmpty()
   class_function: string[];
 
+  @IsArray()
+  @IsNotEmpty()
+  objects: string[];
+
   @IsOptional()
   @IsDate()
   @Type(() => Date)

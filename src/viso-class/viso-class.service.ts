@@ -18,6 +18,12 @@ export class VisoClassService {
     createVisoClassDto: CreateVisoClassDto,
   ): Promise<VisoClassResponseDto> {
     try {
+      for (const object of createVisoClassDto.objects) {
+        if (!isValidObjectId(object)) {
+          throw new Error('Invalid object ID');
+        }
+      }
+
       const newMyClass = new this.visoClassModel(createVisoClassDto);
       const savedMyClass = await newMyClass.save();
       return plainToInstance(VisoClassResponseDto, savedMyClass.toJSON());
