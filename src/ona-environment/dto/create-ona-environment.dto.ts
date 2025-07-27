@@ -6,10 +6,10 @@ export class CreateOnaEnvironmentDto {
   env_object_i: string;
 
   @IsNotEmpty()
-  env_total_Intera: number;
+  env_total_interactions: number;
 
   @IsNotEmpty()
-  env_total_valida: number;
+  env_total_valid: number;
 
   @IsNotEmpty()
   env_total_new: number;
@@ -17,4 +17,8 @@ export class CreateOnaEnvironmentDto {
   @IsNotEmpty()
   @IsArray()
   env_adjacency: number[][];
+
+  @IsNotEmpty()
+  @IsArray()
+  objects: string[];
 }

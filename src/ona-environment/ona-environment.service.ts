@@ -1,12 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 import { UpdateOnaEnvironmentDto } from './dto/update-ona-environment.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { OnaEnvironment } from './schema/ona-enviroment.schema';
 
 @Injectable()
 export class OnaEnvironmentService {
+  constructor(
+    @InjectModel(OnaEnvironment.name)
+    private onaEnvironmentModel: Model<OnaEnvironment>,
+  ) {}
+
   create(createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
-    console.log(createOnaEnvironmentDto);
-    return 'This action adds a new onaEnvironment';
+    try {
+      const onaEnvironment = new this.onaEnvironmentModel(
+        createOnaEnvironmentDto,
+      );
+      const savedOnaEnvironment = onaEnvironment.save();
+      return savedOnaEnvironment;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to create onaEnvironment: ${error.message}`);
+      }
+      throw new Error(
+        'Failed to create onaEnvironment due to an unknown error',
+      );
+    }
   }
 
   findAll() {
