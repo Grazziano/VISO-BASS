@@ -29,8 +29,19 @@ export class OnaEnvironmentService {
     }
   }
 
-  findAll() {
-    return `This action returns all onaEnvironment`;
+  async findAll() {
+    try {
+      const onaEnvironments = await this.onaEnvironmentModel
+        .find()
+        .lean()
+        .exec();
+      return onaEnvironments;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find onaEnvironment: ${error.message}`);
+      }
+      throw new Error('Failed to find onaEnvironment due to an unknown error');
+    }
   }
 
   findOne(id: number) {
