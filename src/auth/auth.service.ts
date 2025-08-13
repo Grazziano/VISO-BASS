@@ -11,12 +11,23 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, pass: string) {
-    const user = await this.usersService.findByEmail(email);
-    const isMatch = await bcrypt.compare(pass, user.password);
-    if (!isMatch) throw new UnauthorizedException('Credenciais inválidas');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
-    const { password, ...result } = user.toObject();
-    return result;
+    try {
+      const user = await this.usersService.findByEmail(email);
+
+      if (!user) throw new UnauthorizedException('Credenciais inválidas');
+
+      const isMatch = await bcrypt.compare(pass, user.password);
+
+      if (!isMatch) throw new UnauthorizedException('Credenciais inválidas');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
+      const { password, ...result } = user.toObject();
+      return result;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new UnauthorizedException('Credenciais inválidas');
+      }
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
   }
 
   login(user: any) {
