@@ -8,16 +8,20 @@ import { VisoClassModule } from './viso-class/viso-class.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { VisoObjectModule } from './viso-object/viso-object.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }), // Carrega os variáveis de ambiente do .env
     MongooseModule.forRoot(process.env.MONGO_URI!),
     InteractionModule,
     OnaEnvironmentModule,
     PagerankFriendshipModule,
     VisoClassModule,
     VisoObjectModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
