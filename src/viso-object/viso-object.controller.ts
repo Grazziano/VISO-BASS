@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('object')
 export class VisoObjectController {
   constructor(private readonly visoObjectService: VisoObjectService) {}
