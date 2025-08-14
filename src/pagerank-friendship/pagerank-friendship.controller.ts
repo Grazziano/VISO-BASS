@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { PagerankFriendshipService } from './pagerank-friendship.service';
 import { CreatePagerankFriendshipDto } from './dto/create-pagerank-friendship.dto';
 import { UpdatePagerankFriendshipDto } from './dto/update-pagerank-friendship.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('pagerank-friendship')
 export class PagerankFriendshipController {
   constructor(

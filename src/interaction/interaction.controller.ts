@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { InteractionService } from './interaction.service';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
 import { UpdateInteractionDto } from './dto/update-interaction.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('interaction')
 export class InteractionController {
   constructor(private readonly interactionService: InteractionService) {}
