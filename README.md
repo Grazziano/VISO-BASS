@@ -1,9 +1,9 @@
-# VISO-BASS 🛰️
+# VISO-B.A.S.S. 🛰️
 
 VISO-B.A.S.S. — VISO-Based API for Structured Storage
 Uma API projetada para armazenamento estruturado e eficiente de dados no contexto da Social IoT, implementada com NestJS e MongoDB.
 
-O sistema adota a abordagem estrutural do modelo VISO, garantindo organização, escalabilidade e consultas otimizadas para informações relacionadas a objetos, classes, interações, ambientes e relações sociais.
+O sistema adota a abordagem estrutural do modelo [VISO](https://sol.sbc.org.br/index.php/semish/article/view/25072), garantindo organização, escalabilidade e consultas otimizadas para informações relacionadas a objetos, classes, interações, ambientes e relações sociais.
 
 Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de Pelotas (UFPEL), intitulada:
 "VISO-BASS: Uma Proposta Estrutural para Persistência de Dados na Social IoT".
@@ -48,8 +48,8 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 ## 📂 Estrutura do Projeto
 
 ```bash
-docs/                 # Arquivos de documentação
-src/
+docs/                 # Arquivos de documentação, imagens, GIFs e guias adicionais
+src/                  # Código-fonte principal da aplicação
 ├── modules/          # Módulos da aplicação
 │   ├── auth/
 │   ├── interaction/
@@ -64,6 +64,10 @@ src/
 ├── app.service.ts    # Service raiz
 ├── main.ts           # Ponto de entrada da aplicação
 test/                 # Testes unitários
+.env.example          # Exemplo de variáveis de ambiente necessárias para rodar o projeto
+.gitignore            # Arquivos e pastas a serem ignorados pelo Git
+docker-compose.yml    # Configuração Docker Compose para rodar API + MongoDB + Mongo Express
+Dockerfile            # Instruções para criar a imagem Docker da API
 ````
 
 ---
