@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: viso-bass-api
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - viso-net
+
+  mongo:
+    image: mongo:6
+    container_name: viso-bass-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: viso-bass
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - viso-net
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: viso-bass-mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ""
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ""
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongo
+    networks:
+      - viso-net
+
+volumes:
+  mongo_data:
+
+networks:
+  viso-net:
+    driver: bridge
