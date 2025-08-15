@@ -1,98 +1,197 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# VISO-BASS 🛰️
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+VISO-B.A.S.S. — VISO-Based API for Structured Storage
+Uma API projetada para armazenamento estruturado e eficiente de dados no contexto da Social IoT, implementada com NestJS e MongoDB.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O sistema adota a abordagem estrutural do modelo VISO, garantindo organização, escalabilidade e consultas otimizadas para informações relacionadas a objetos, classes, interações, ambientes e relações sociais.
 
-## Description
+Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de Pelotas (UFPEL), intitulada:
+"VISO-BASS: Uma Proposta Estrutural para Persistência de Dados na Social IoT".
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/issues)
 
-## Project setup
+<!-- > **API desenvolvida com NestJS e MongoDB para persistência de dados no contexto da Social IoT**, seguindo a proposta estrutural da abordagem **VISO**.  
+> Parte da pesquisa de mestrado: **"VISO-BASS: Uma Proposta Estrutural para Persistência de Dados na Social IoT"**. -->
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 📸 Demonstração
 
-```bash
-# development
-$ npm run start
+![Demonstração da API](docs/gif_rodando_api.gif)  
+<!-- <sub>*Api rodando*</sub> -->
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## 📌 Status do Projeto
 
-## Run tests
+| Status Geral      | API | Banco de Dados | Documentação | Testes |
+|-------------------|-----|---------------|--------------|--------|
+| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído | 🛠️ Em andamento | 🛠️ Em andamento |
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## 🚀 Tecnologias Utilizadas
 
-# test coverage
-$ npm run test:cov
-```
+- [NestJS](https://nestjs.com/) — Framework Node.js para construção de APIs escaláveis
+- [MongoDB](https://www.mongodb.com/) — Banco de dados NoSQL
+- [Mongoose](https://mongoosejs.com/) — ODM para modelagem de dados
+- [TypeScript](https://www.typescriptlang.org/) — Linguagem tipada para JavaScript
+- [Dotenv](https://github.com/motdotla/dotenv) — Variáveis de ambiente
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 📂 Estrutura do Projeto
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docs/                 # Arquivos de documentação
+src/
+├── modules/          # Módulos da aplicação
+│   ├── auth/
+│   ├── interaction/
+│   ├── ona-enviroment/
+│   ├── pagerank-friendship/
+│   ├── users/
+│   ├── viso-class/
+│   ├── viso-object/
+├── common/           # Utilitários e middlewares
+├── app.controller.ts # Controller raiz
+├── app.module.ts     # Módulo raiz
+├── app.service.ts    # Service raiz
+├── main.ts           # Ponto de entrada da aplicação
+test/                 # Testes unitários
+````
+
+---
+
+## ⚙️ Pré-requisitos
+
+* [Node.js](https://nodejs.org/) **>= 18**
+* [MongoDB](https://www.mongodb.com/) ou [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+* [Git](https://git-scm.com/)
+
+---
+
+## 📥 Instalação
+
+```bash
+# Clonar o repositório
+git clone https://github.com/Grazziano/VISO-BASS.git
+
+# Acessar o diretório
+cd VISO-BASS
+
+# Instalar dependências
+npm install
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🔑 Configuração
 
-Check out a few resources that may come in handy when working with NestJS:
+Crie um arquivo **`.env`** na raiz do projeto ou renomeie o arquivo **`.env.example`**:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```env
+MONGO_URI=mongodb://localhost:27017/viso-bass
+PORT=3000
+JWT_SECRET=sua_chave_secreta_aqui
+JWT_EXPIRES_IN=24h
+```
 
-## Support
+Para usar no **MongoDB Atlas**:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```env
+MONGO_URI=mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/viso-bass
+PORT=3000
+JWT_SECRET=sua_chave_secreta_aqui
+JWT_EXPIRES_IN=24h
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## ▶️ Executando a Aplicação
 
-## License
+```bash
+# Ambiente de desenvolvimento
+npm run start:dev
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Produção
+npm run build
+npm run start:prod
+```
+
+Acesse:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 📚 Endpoints Principais
+
+| Método | Rota                 | Descrição                   |
+| ------ | -------------------- | --------------------------- |
+| GET    | /api                 | Lista todos os endpoints    |
+| POST   | /auth/register       | Cria um novo usuário        |
+| POST   | /auth/login          | Efetua login                |
+| GET    | /object              | Lista todos os objetos      |
+| GET    | /object/:id          | Encontra objeto pelo id     |
+| POST   | /object              | Cria um novo objeto         |
+| GET    | /class               | Lista todas as classes      |
+| GET    | /class/:id           | Encontra classe pelo id     |
+| POST   | /class               | Cria uma nova classe        |
+| GET    | /interaction         | Lista todas as interações   |
+| POST   | /interaction         | Cria uma nova interação     |
+| GET    | /ona-enviroment      | Lista todos os ambientes    |
+| POST   | /ona-enviroment      | Cria um novo ambiente       |
+| GET    | /pagerank-friendship | Lista relações de amizade   |
+| POST   | /pagerank-friendship | Cria uma relação de amizade |
+
+---
+
+## 🧪 Testes
+
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Cobertura
+npm run test:cov
+```
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para mais informações.
+
+---
+
+## 🔗 Links
+
+* **Repositório:** [VISO-BASS no GitHub](https://github.com/Grazziano/VISO-BASS)
+* **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
+* **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
+
+
+## 🌟 Contato & Suporte
+
+**Precisa de ajuda ou quer colaborar?** Estou disponível para trocar ideias e parcerias!
+
+📬 **Meios de contato:**
+- [LinkedIn](https://www.linkedin.com/in/grazziano-fagundes/)
+
+---
+
+<div align="center">
+  <sub>Desenvolvido com ❤️ por <a href="https://github.com/Grazziano">Grazziano Borges Fagundes</a></sub><br>
+  <sub>© 2025 - Todos os direitos reservados</sub>
+</div>
