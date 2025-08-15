@@ -1,4 +1,4 @@
-# Dockerfile
+# Imagem base
 FROM node:18-alpine
 
 # Diretório de trabalho no container

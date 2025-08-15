@@ -132,6 +132,77 @@ http://localhost:3000
 
 ---
 
+## 🐳 Rodando com Docker
+
+O projeto possui um **ambiente completo via Docker Compose**, incluindo:
+
+* **API NestJS** (porta `3000`)
+* **MongoDB** (porta `27017`)
+* **Mongo Express** – interface web para o banco (porta `8081`)
+
+---
+
+### 📋 Pré-requisitos
+
+* [Docker](https://www.docker.com/get-started) instalado
+* [Docker Compose](https://docs.docker.com/compose/) instalado
+
+---
+
+### ⚙️ Configuração do `.env` para Docker
+
+No arquivo `.env` na raiz do projeto, defina:
+
+```env
+MONGO_URI=mongodb://mongo:27017/viso-bass
+PORT=3000
+JWT_SECRET=sua_chave_secreta_aqui
+JWT_EXPIRES_IN=24h
+```
+
+> Importante: o host do Mongo é `mongo`, que é o nome do serviço no `docker-compose.yml`.
+
+---
+
+### 🚀 Subindo o ambiente
+
+```bash
+docker-compose up --build
+```
+
+Após a inicialização:
+
+* **API:** [http://localhost:3000](http://localhost:3000)
+* **Mongo Express:** [http://localhost:8081](http://localhost:8081)
+
+  * Usuário: `admin`
+  * Senha: `admin`
+
+---
+
+### 📦 Parando os containers
+
+```bash
+docker-compose down
+```
+
+Para também remover os dados persistidos no banco:
+
+```bash
+docker-compose down -v
+```
+
+---
+
+### 💡 Dicas
+
+* O Mongo Express é útil para **visualizar coleções, inserir, editar e excluir documentos** diretamente via navegador.
+* As alterações feitas no Mongo Express são refletidas imediatamente na API.
+* O volume `mongo_data` garante que os dados do banco persistam mesmo que os containers sejam reiniciados.
+
+
+---
+
 ## 📚 Endpoints Principais
 
 | Método | Rota                 | Descrição                   |
