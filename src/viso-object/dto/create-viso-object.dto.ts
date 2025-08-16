@@ -15,9 +15,9 @@ export class CreateVisoObjectDto {
   @IsNotEmpty()
   obj_name: string;
 
-  @IsString()
-  @IsNotEmpty()
-  obj_owner: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // obj_owner: string;
 
   @IsString()
   @IsNotEmpty()

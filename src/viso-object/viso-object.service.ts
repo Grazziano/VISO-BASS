@@ -6,6 +6,7 @@ import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 import { Model } from 'mongoose';
 import { VisoObject, VisoObjectDocument } from './schema/viso-object.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { JwtPayload } from 'src/types/jwt-payload.type';
 
 @Injectable()
 export class VisoObjectService {
@@ -14,9 +15,13 @@ export class VisoObjectService {
     private visoObjectModel: Model<VisoObjectDocument>,
   ) {}
 
-  async create(createVisoObjectDto: CreateVisoObjectDto) {
+  async create(createVisoObjectDto: CreateVisoObjectDto, user: JwtPayload) {
     try {
-      const object = new this.visoObjectModel(createVisoObjectDto);
+      const object = new this.visoObjectModel({
+        ...createVisoObjectDto,
+        obj_owner: user.userId,
+      });
+
       const savedObject = await object.save();
       return plainToInstance(ResponseVisoObjectDto, savedObject.toJSON());
     } catch (error: unknown) {

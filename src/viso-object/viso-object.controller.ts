@@ -7,11 +7,17 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtPayload } from 'src/types/jwt-payload.type';
+
+interface AuthenticatedRequest extends Request {
+  user: JwtPayload;
+}
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('object')
@@ -19,8 +25,12 @@ export class VisoObjectController {
   constructor(private readonly visoObjectService: VisoObjectService) {}
 
   @Post()
-  create(@Body() createVisoObjectDto: CreateVisoObjectDto) {
-    return this.visoObjectService.create(createVisoObjectDto);
+  create(
+    @Body() createVisoObjectDto: CreateVisoObjectDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const user = req.user;
+    return this.visoObjectService.create(createVisoObjectDto, user);
   }
 
   @Get()
