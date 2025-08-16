@@ -34,8 +34,9 @@ export class VisoObjectController {
   }
 
   @Get()
-  findAll() {
-    return this.visoObjectService.findAll();
+  findAll(@Req() req: AuthenticatedRequest) {
+    const { userId } = req.user;
+    return this.visoObjectService.findAll(userId);
   }
 
   @Get(':id')

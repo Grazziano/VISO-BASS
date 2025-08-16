@@ -32,9 +32,13 @@ export class VisoObjectService {
     }
   }
 
-  findAll() {
+  findAll(ownerId: string) {
     try {
-      const objects = this.visoObjectModel.find().lean().exec();
+      const objects = this.visoObjectModel
+        .find({ obj_owner: ownerId })
+        .lean()
+        .exec();
+
       return plainToInstance(ResponseVisoObjectDto, objects);
     } catch (error: unknown) {
       if (error instanceof Error) {
