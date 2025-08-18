@@ -13,11 +13,7 @@ import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtPayload } from 'src/types/jwt-payload.type';
-
-interface AuthenticatedRequest extends Request {
-  user: JwtPayload;
-}
+import { AuthenticatedRequest } from 'src/auth/types/jwt-payload.interface';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('object')

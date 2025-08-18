@@ -6,7 +6,7 @@ import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 import { Model } from 'mongoose';
 import { VisoObject, VisoObjectDocument } from './schema/viso-object.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { JwtPayload } from 'src/types/jwt-payload.type';
+import { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @Injectable()
 export class VisoObjectService {
