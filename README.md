@@ -254,6 +254,7 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para mais informações
 ## 🔗 Links
 
 * **Repositório:** [VISO-BASS no GitHub](https://github.com/Grazziano/VISO-BASS)
+* **Outros Projetos relacionados:** [Repositórios de Pesquisa - UFPel](https://github.com/Grazziano/projetos-siot)
 * **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
 * **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
 
