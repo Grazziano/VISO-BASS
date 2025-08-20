@@ -11,6 +11,7 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/commits/main)
 [![GitHub issues](https://img.shields.io/github/issues/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/issues)
@@ -42,6 +43,7 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 - [Mongoose](https://mongoosejs.com/) — ODM para modelagem de dados
 - [TypeScript](https://www.typescriptlang.org/) — Linguagem tipada para JavaScript
 - [Dotenv](https://github.com/motdotla/dotenv) — Variáveis de ambiente
+- [Docker](https://www.docker.com/) — Plataforma de contêineres para isolamento e padronização de ambientes de desenvolvimento
 
 ---
 
