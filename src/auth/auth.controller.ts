@@ -9,14 +9,15 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from './types/jwt-payload.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() body: { email: string; password: string }) {
-    return this.authService['usersService'].create(body.email, body.password);
+  async register(@Body() body: IUser) {
+    return this.authService['usersService'].create(body);
   }
 
   @Post('login')

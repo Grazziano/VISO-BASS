@@ -8,26 +8,30 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
+import { IUser } from './interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(email: string, password: string): Promise<User> {
-    if (!email || !password) {
+  async create(body: IUser): Promise<User> {
+    if (!body.email || !body.password) {
       throw new BadRequestException('Email e senha são obrigatórios');
     }
 
     try {
-      const userExists = await this.findByEmail(email);
+      const userExists = await this.findByEmail(body.email);
 
       if (userExists) {
         throw new ConflictException('Usuário ja cadastrado');
       }
 
-      const hash = await bcrypt.hash(password, 10);
+      const hash = await bcrypt.hash(body.password, 10);
 
-      const user = new this.userModel({ email, password: hash });
+      const user = new this.userModel({
+        ...body,
+        password: hash,
+      });
 
       return await user.save();
     } catch (error: unknown) {
