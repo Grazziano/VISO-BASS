@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { UsersModule } from 'src/users/users.module';
 
 export type VisoObjectDocument = VisoObject & Document;
 
@@ -16,17 +17,14 @@ export class VisoObject {
   @Prop({ required: true })
   obj_name: string;
 
-  @Prop({ required: true })
-  obj_owner: string;
+  @Prop({ type: Types.ObjectId, ref: UsersModule.name })
+  obj_owner: Types.ObjectId;
 
   @Prop({ required: true })
   obj_model: string;
 
   @Prop({ required: true })
   obj_brand: string;
-
-  // @Prop({ required: true })
-  // obj_class: string;
 
   @Prop({ required: true, type: [String] })
   obj_function: string[];
@@ -48,6 +46,9 @@ export class VisoObject {
 
   @Prop({ required: true, default: 1 })
   obj_status: number;
+
+  @Prop({ type: Types.ObjectId, ref: 'Class' })
+  class: Types.ObjectId;
 }
 
 export const VisoObjectSchema = SchemaFactory.createForClass(VisoObject);
