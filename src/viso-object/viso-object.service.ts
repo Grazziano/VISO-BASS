@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
-import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
 import { plainToInstance } from 'class-transformer';
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 import { Model } from 'mongoose';
@@ -58,14 +57,5 @@ export class VisoObjectService {
       }
       throw new Error('Failed to find object due to an unknown error');
     }
-  }
-
-  update(id: number, updateVisoObjectDto: UpdateVisoObjectDto) {
-    console.log(updateVisoObjectDto);
-    return `This action updates a #${id} visoObject`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} visoObject`;
   }
 }

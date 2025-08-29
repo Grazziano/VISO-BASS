@@ -3,15 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
-import { UpdateVisoObjectDto } from './dto/update-viso-object.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from 'src/auth/types/jwt-payload.interface';
 
@@ -38,18 +35,5 @@ export class VisoObjectController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.visoObjectService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateVisoObjectDto: UpdateVisoObjectDto,
-  ) {
-    return this.visoObjectService.update(+id, updateVisoObjectDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.visoObjectService.remove(+id);
   }
 }

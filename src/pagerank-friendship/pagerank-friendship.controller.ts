@@ -1,16 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { PagerankFriendshipService } from './pagerank-friendship.service';
 import { CreatePagerankFriendshipDto } from './dto/create-pagerank-friendship.dto';
-import { UpdatePagerankFriendshipDto } from './dto/update-pagerank-friendship.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
@@ -33,21 +23,5 @@ export class PagerankFriendshipController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.pagerankFriendshipService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePagerankFriendshipDto: UpdatePagerankFriendshipDto,
-  ) {
-    return this.pagerankFriendshipService.update(
-      +id,
-      updatePagerankFriendshipDto,
-    );
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pagerankFriendshipService.remove(+id);
   }
 }

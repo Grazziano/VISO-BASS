@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
-import { UpdateInteractionDto } from './dto/update-interaction.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Interaction } from './schema/interaction.schema';
 import { Model } from 'mongoose';
@@ -39,14 +38,5 @@ export class InteractionService {
 
   findOne(id: number) {
     return `This action returns a #${id} interaction`;
-  }
-
-  update(id: number, updateInteractionDto: UpdateInteractionDto) {
-    console.log(updateInteractionDto);
-    return `This action updates a #${id} interaction`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} interaction`;
   }
 }

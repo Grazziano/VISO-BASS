@@ -5,7 +5,6 @@ import { isValidObjectId, Model } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
 import { CreateVisoClassDto } from './dto/create-viso-class.dto';
 import { VisoClassResponseDto } from './dto/viso-class-response.dto';
-import { UpdateVisoClassDto } from './dto/update-viso-class.dto';
 
 @Injectable()
 export class VisoClassService {
@@ -71,14 +70,5 @@ export class VisoClassService {
       }
       throw new Error('Failed to find MyClass due to an unknown error');
     }
-  }
-
-  update(id: number, updateVisoClassDto: UpdateVisoClassDto) {
-    console.log(updateVisoClassDto);
-    return `This action updates a #${id} myClass`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} myClass`;
   }
 }

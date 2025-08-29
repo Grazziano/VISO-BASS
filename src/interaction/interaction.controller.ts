@@ -1,16 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { InteractionService } from './interaction.service';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
-import { UpdateInteractionDto } from './dto/update-interaction.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
@@ -31,18 +21,5 @@ export class InteractionController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.interactionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateInteractionDto: UpdateInteractionDto,
-  ) {
-    return this.interactionService.update(+id, updateInteractionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.interactionService.remove(+id);
   }
 }
