@@ -37,6 +37,14 @@ export class InteractionService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} interaction`;
+    try {
+      const interaction = this.interactionModel.findById(id).lean().exec();
+      return interaction;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find interaction: ${error.message}`);
+      }
+      throw new Error('Failed to find interaction due to an unknown error');
+    }
   }
 }
