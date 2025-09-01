@@ -36,7 +36,7 @@ export class InteractionService {
     }
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     try {
       const interaction = this.interactionModel.findById(id).lean().exec();
       return interaction;

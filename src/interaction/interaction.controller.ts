@@ -20,6 +20,6 @@ export class InteractionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.interactionService.findOne(+id);
+    return this.interactionService.findOne(id);
   }
 }
