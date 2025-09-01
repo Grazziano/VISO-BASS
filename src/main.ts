@@ -22,11 +22,6 @@ async function bootstrap() {
       'VISO-Based API for Structured Storage - API com foco em armazenamento estruturado, baseada no modelo VISO',
     )
     .setVersion('1.0')
-    .addTag('interaction')
-    .addTag('object')
-    .addTag('class')
-    .addTag('environment')
-    .addTag('pagerank-friendship')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

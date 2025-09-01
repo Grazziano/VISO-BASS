@@ -10,7 +10,9 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from './types/jwt-payload.interface';
 import { IUser } from 'src/users/interfaces/user.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
