@@ -79,7 +79,7 @@ Dockerfile            # Instruções para criar a imagem Docker da API
 O diagrama abaixo representa a modelagem utilizada no projeto, destacando as entidades, suas relações e como elas são persistidas no **MongoDB**.
 
 <p align="center">
-  <img src="./docs/diagrama_tabelas_api.png" alt="Diagrama do Banco MongoDB" width="800"/>
+  <img src="./docs/diagrama_er_api_comentado.png" alt="Diagrama do Banco MongoDB" width="800"/>
 </p>
 
 > O diagrama foi gerado a partir do modelo conceitual e traduzido para schemas do **Mongoose/NestJS**.
