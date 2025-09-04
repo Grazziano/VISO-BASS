@@ -42,6 +42,6 @@ export class PagerankFriendshipController {
   @ApiResponse({ status: 200, type: CreatePagerankFriendshipDto })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.pagerankFriendshipService.findOne(+id);
+    return this.pagerankFriendshipService.findOne(id);
   }
 }

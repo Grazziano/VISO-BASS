@@ -30,11 +30,37 @@ export class PagerankFriendshipService {
     }
   }
 
-  findAll() {
-    return `This action returns all pagerankFriendship`;
+  async findAll() {
+    try {
+      const pagerankFriendships = await this.pagerankFriendshipModel.find();
+      return pagerankFriendships;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find pagerankFriendship: ${error.message}`);
+      }
+      throw new Error(
+        'Failed to find pagerankFriendship due to an unknown error',
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pagerankFriendship`;
+  async findOne(id: string) {
+    try {
+      const pagerankFriendship =
+        await this.pagerankFriendshipModel.findById(id);
+
+      if (!pagerankFriendship) {
+        throw new Error(`pagerankFriendship with id ${id} not found`);
+      }
+
+      return pagerankFriendship;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find pagerankFriendship: ${error.message}`);
+      }
+      throw new Error(
+        'Failed to find pagerankFriendship due to an unknown error',
+      );
+    }
   }
 }
