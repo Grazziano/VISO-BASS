@@ -34,6 +34,6 @@ export class OnaEnvironmentController {
   @ApiOperation({ summary: 'Get an ona-environment by id' })
   @ApiParam({ name: 'id', type: String })
   findOne(@Param('id') id: string) {
-    return this.onaEnvironmentService.findOne(+id);
+    return this.onaEnvironmentService.findOne(id);
   }
 }

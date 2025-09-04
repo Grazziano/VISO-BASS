@@ -43,7 +43,23 @@ export class OnaEnvironmentService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} onaEnvironment`;
+  async findOne(id: string) {
+    try {
+      const onaEnvironment = await this.onaEnvironmentModel
+        .findById(id)
+        .lean()
+        .exec();
+
+      if (!onaEnvironment) {
+        throw new Error(`onaEnvironment with id ${id} not found`);
+      }
+
+      return onaEnvironment;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find onaEnvironment: ${error.message}`);
+      }
+      throw new Error('Failed to find onaEnvironment due to an unknown error');
+    }
   }
 }
