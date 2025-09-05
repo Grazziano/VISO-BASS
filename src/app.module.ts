@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { VisoObjectModule } from './viso-object/viso-object.module';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { OwnersModule } from './owners/owners.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { UsersModule } from './users/users.module';
     VisoClassModule,
     VisoObjectModule,
     AuthModule,
-    UsersModule,
+    OwnersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

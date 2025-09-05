@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
+export type OwnerDocument = Owner & Document;
 
 @Schema({ timestamps: true })
-export class User {
+export class Owner {
   toObject(): { [x: string]: any; password: any } {
     throw new Error('Method not implemented.');
   }
@@ -39,4 +39,4 @@ export class User {
   role: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const OwnerSchema = SchemaFactory.createForClass(Owner);

@@ -6,29 +6,31 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
-import { IUser } from './interfaces/user.interface';
+import { Owner, OwnerDocument } from './schema/owner.schema';
+import { IOwner } from './interfaces/owner.interface';
 
 @Injectable()
-export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+export class OwnersService {
+  constructor(
+    @InjectModel(Owner.name) private ownerModel: Model<OwnerDocument>,
+  ) {}
 
-  async create(body: IUser): Promise<User> {
+  async create(body: IOwner): Promise<Owner> {
     if (!body.email || !body.password) {
       throw new BadRequestException('Email e senha são obrigatórios');
     }
 
     try {
-      const userExists = await this.findByEmail(body.email);
+      const ownerExists = await this.findByEmail(body.email);
 
-      if (userExists) {
+      if (ownerExists) {
         throw new ConflictException('Usuário ja cadastrado');
       }
 
       const hash = await bcrypt.hash(body.password, 10);
 
-      const user = new this.userModel({
+      const user = new this.ownerModel({
         ...body,
         password: hash,
       });
@@ -42,7 +44,7 @@ export class UsersService {
     }
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userModel.findOne({ email }).exec();
+  async findByEmail(email: string): Promise<Owner | null> {
+    return this.ownerModel.findOne({ email }).exec();
   }
 }

@@ -9,7 +9,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from './types/jwt-payload.interface';
-import { IUser } from 'src/users/interfaces/user.interface';
+import { IOwner } from 'src/owners/interfaces/owner.interface';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -18,8 +18,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() body: IUser) {
-    return this.authService['usersService'].create(body);
+  async register(@Body() body: IOwner) {
+    return this.authService['ownersService'].create(body);
   }
 
   @Post('login')
