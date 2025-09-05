@@ -223,11 +223,18 @@ docker-compose down -v
 
 ## 📚 Endpoints Principais
 
+### 🔓 Rotas Públicas (sem autenticação)
+
 | Método | Rota                     | Descrição                   |
 | ------ | ------------------------ | --------------------------- |
 | GET    | /api                     | Lista todos os endpoints    |
 | POST   | /auth/register           | Cria um novo usuário        |
 | POST   | /auth/login              | Efetua login                |
+
+### 🔐 Rotas Protegidas (requer autenticação)
+
+| Método | Rota                     | Descrição                   |
+| ------ | ------------------------ | --------------------------- |
 | GET    | /auth/me                 | Retorna dados do usuário    |
 | GET    | /object                  | Lista todos os objetos      |
 | GET    | /object/:id              | Encontra objeto pelo id     |
