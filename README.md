@@ -54,13 +54,13 @@ docs/                 # Arquivos de documentação, imagens, GIFs e guias adicio
 src/                  # Código-fonte principal da aplicação
 ├── modules/          # Módulos da aplicação
 │   ├── auth/
+│   ├── common/       # Utilitários e middlewares
 │   ├── interaction/
 │   ├── ona-enviroment/
+│   ├── owners/
 │   ├── pagerank-friendship/
-│   ├── users/
 │   ├── viso-class/
 │   ├── viso-object/
-├── common/           # Utilitários e middlewares
 ├── app.controller.ts # Controller raiz
 ├── app.module.ts     # Módulo raiz
 ├── app.service.ts    # Service raiz
