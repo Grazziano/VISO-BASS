@@ -50,26 +50,29 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 ## 📂 Estrutura do Projeto
 
 ```bash
-docs/                 # Arquivos de documentação, imagens, GIFs e guias adicionais
-src/                  # Código-fonte principal da aplicação
-├── modules/          # Módulos da aplicação
+docs/                        # Arquivos de documentação, imagens, GIFs e guias adicionais
+src/                         # Código-fonte principal da aplicação
+├── modules/                 # Módulos da aplicação
 │   ├── auth/
-│   ├── common/       # Utilitários e middlewares
+│   ├── common/             # Utilitários e middlewares
+│   │   └── filters/        # Filtros de exceção global
+│   ├── database/
+│   │   └── seeders/        # Dados iniciais para popular o banco
 │   ├── interaction/
 │   ├── ona-enviroment/
 │   ├── owners/
 │   ├── pagerank-friendship/
 │   ├── viso-class/
-│   ├── viso-object/
-├── app.controller.ts # Controller raiz
-├── app.module.ts     # Módulo raiz
-├── app.service.ts    # Service raiz
-├── main.ts           # Ponto de entrada da aplicação
-test/                 # Testes unitários
-.env.example          # Exemplo de variáveis de ambiente necessárias para rodar o projeto
-.gitignore            # Arquivos e pastas a serem ignorados pelo Git
-docker-compose.yml    # Configuração Docker Compose para rodar API + MongoDB + Mongo Express
-Dockerfile            # Instruções para criar a imagem Docker da API
+│   └── viso-object/
+├── app.controller.ts        # Controller raiz
+├── app.module.ts            # Módulo raiz
+├── app.service.ts           # Service raiz
+└── main.ts                  # Ponto de entrada da aplicação
+test/                        # Testes unitários
+.env.example                 # Exemplo de variáveis de ambiente necessárias para rodar o projeto
+.gitignore                   # Arquivos e pastas a serem ignorados pelo Git
+docker-compose.yml           # Configuração Docker Compose para rodar API + MongoDB + Mongo Express
+Dockerfile                   # Instruções para criar a imagem Docker da API
 ````
 
 ---
