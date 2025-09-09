@@ -221,6 +221,28 @@ docker-compose down -v
 * As alterações feitas no Mongo Express são refletidas imediatamente na API.
 * O volume `mongo_data` garante que os dados do banco persistam mesmo que os containers sejam reiniciados.
 
+---
+
+## 🌱 Rodando os Seeders (Populando o Banco)
+
+O projeto conta com **seeders** para popular o banco de dados com dados iniciais de usuários, objetos, classes, interações, ambientes e relações sociais.
+
+### ▶️ Executando manualmente
+
+```bash
+# Rodar todos os seeders
+npm run seed
+````
+
+### 💡 Observações
+
+* Certifique-se de que o **MongoDB** está rodando e que o arquivo `.env` contém a variável `MONGO_URI` configurada corretamente.
+* Caso use **Docker**, suba os containers antes de executar os seeders:
+
+```bash
+docker-compose up -d
+npm run seed
+```
 
 ---
 
