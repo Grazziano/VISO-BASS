@@ -54,10 +54,10 @@ docs/                        # Arquivos de documentação, imagens, GIFs e guias
 src/                         # Código-fonte principal da aplicação
 ├── modules/                 # Módulos da aplicação
 │   ├── auth/
-│   ├── common/             # Utilitários e middlewares
-│   │   └── filters/        # Filtros de exceção global
+│   ├── common/              # Utilitários e middlewares
+│   │   └── filters/         # Filtros de exceção global
 │   ├── database/
-│   │   └── seeders/        # Dados iniciais para popular o banco
+│   │   └── seeders/         # Dados iniciais para popular o banco
 │   ├── interaction/
 │   ├── ona-enviroment/
 │   ├── owners/
@@ -250,32 +250,33 @@ npm run seed
 
 ### 🔓 Rotas Públicas (sem autenticação)
 
-| Método | Rota                     | Descrição                   |
-| ------ | ------------------------ | --------------------------- |
-| GET    | /api                     | Lista todos os endpoints    |
-| POST   | /auth/register           | Cria um novo usuário        |
-| POST   | /auth/login              | Efetua login                |
+| Método | Rota                                       | Descrição                         |
+| ------ | ------------------------------------------ | --------------------------------- |
+| GET    | /api                                       | Lista todos os endpoints          |
+| POST   | /auth/register                             | Cria um novo usuário              |
+| POST   | /auth/login                                | Efetua login                      |
 
 ### 🔐 Rotas Protegidas (requer autenticação)
 
-| Método | Rota                     | Descrição                   |
-| ------ | ------------------------ | --------------------------- |
-| GET    | /auth/me                 | Retorna dados do usuário    |
-| GET    | /object                  | Lista todos os objetos      |
-| GET    | /object/:id              | Encontra objeto pelo id     |
-| POST   | /object                  | Cria um novo objeto         |
-| GET    | /class                   | Lista todas as classes      |
-| GET    | /class/:id               | Encontra classe pelo id     |
-| POST   | /class                   | Cria uma nova classe        |
-| GET    | /interaction             | Lista todas as interações   |
-| GET    | /interaction/:id         | Encontra interações por id  |
-| POST   | /interaction             | Cria uma nova interação     |
-| GET    | /ona-enviroment          | Lista todos os ambientes    |
-| GET    | /ona-enviroment/:id      | Encontra ambiente por id    |
-| POST   | /ona-enviroment          | Cria um novo ambiente       |
-| GET    | /pagerank-friendship     | Lista relações de amizade   |
-| GET    | /pagerank-friendship/:id | Encontra amizade por id     |
-| POST   | /pagerank-friendship     | Cria uma relação de amizade |
+| Método | Rota                                       | Descrição                         |
+| ------ | ------------------------------------------ | --------------------------------- |
+| GET    | /auth/me                                   | Retorna dados do usuário          |
+| GET    | /object                                    | Lista todos os objetos            |
+| GET    | /object/:id                                | Encontra objeto pelo id           |
+| POST   | /object                                    | Cria um novo objeto               |
+| GET    | /class                                     | Lista todas as classes            |
+| GET    | /class/:id                                 | Encontra classe pelo id           |
+| POST   | /class                                     | Cria uma nova classe              |
+| GET    | /interaction                               | Lista todas as interações         |
+| GET    | /interaction/:id                           | Encontra interações por id        |
+| POST   | /interaction                               | Cria uma nova interação           |
+| GET    | /ona-enviroment                            | Lista todos os ambientes          |
+| GET    | /ona-enviroment/:id                        | Encontra ambiente por id          |
+| POST   | /ona-enviroment                            | Cria um novo ambiente             |
+| GET    | /pagerank-friendship                       | Lista relações de amizade         |
+| GET    | /pagerank-friendship/:id                   | Encontra amizade por id           |
+| POST   | /pagerank-friendship                       | Cria uma relação de amizade       |
+| GET    | /pagerank-friendship/relevant?limit=10     | Lista as relações mais relevantes |
 
 ---
 
