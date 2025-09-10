@@ -15,6 +15,10 @@ import {
   PageRankFriendship,
   PageRankFriendshipSchema,
 } from 'src/pagerank-friendship/schema/pagerank-friendship.schema';
+import {
+  OnaEnvironment,
+  OnaEnvironmentSchema,
+} from 'src/ona-environment/schema/ona-enviroment.schema';
 
 @Module({
   imports: [
@@ -25,6 +29,7 @@ import {
       { name: VisoObject.name, schema: VisoObjectSchema },
       { name: VisoClass.name, schema: VisoClassSchema },
       { name: PageRankFriendship.name, schema: PageRankFriendshipSchema },
+      { name: OnaEnvironment.name, schema: OnaEnvironmentSchema },
     ]),
   ],
   providers: [SeedService],
