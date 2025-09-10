@@ -63,4 +63,18 @@ export class PagerankFriendshipService {
       );
     }
   }
+
+  async findMostRelevant(limit: number) {
+    const results = await this.pagerankFriendshipModel.find().lean();
+
+    // Lógica para ordenar por número de adjacências (maior relevância = mais conexões)
+    const sorted = results
+      .map((result) => ({
+        ...result,
+        relevanceScore: result.rank_adjacency.length,
+      }))
+      .sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+    return sorted.slice(0, limit);
+  }
 }

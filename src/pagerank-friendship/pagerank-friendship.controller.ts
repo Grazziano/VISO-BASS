@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { PagerankFriendshipService } from './pagerank-friendship.service';
 import { CreatePagerankFriendshipDto } from './dto/create-pagerank-friendship.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,6 +14,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -31,6 +40,15 @@ export class PagerankFriendshipController {
   @Get()
   findAll() {
     return this.pagerankFriendshipService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Get most relevant pagerank-friendships' })
+  @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
+  @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @Get('relevant')
+  async getRelevant(@Query('limit') limit: number = 10) {
+    return this.pagerankFriendshipService.findMostRelevant(limit);
   }
 
   @ApiParam({
