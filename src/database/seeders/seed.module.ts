@@ -7,6 +7,10 @@ import {
   VisoObject,
   VisoObjectSchema,
 } from 'src/viso-object/schema/viso-object.schema';
+import {
+  VisoClass,
+  VisoClassSchema,
+} from 'src/viso-class/schemas/viso-class.schema';
 
 @Module({
   imports: [
@@ -15,6 +19,7 @@ import {
     MongooseModule.forFeature([
       { name: Owner.name, schema: OwnerSchema },
       { name: VisoObject.name, schema: VisoObjectSchema },
+      { name: VisoClass.name, schema: VisoClassSchema },
     ]),
   ],
   providers: [SeedService],
