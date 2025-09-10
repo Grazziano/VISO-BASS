@@ -19,6 +19,10 @@ import {
   OnaEnvironment,
   OnaEnvironmentSchema,
 } from 'src/ona-environment/schema/ona-enviroment.schema';
+import {
+  Interaction,
+  InteractionSchema,
+} from 'src/interaction/schema/interaction.schema';
 
 @Module({
   imports: [
@@ -30,6 +34,7 @@ import {
       { name: VisoClass.name, schema: VisoClassSchema },
       { name: PageRankFriendship.name, schema: PageRankFriendshipSchema },
       { name: OnaEnvironment.name, schema: OnaEnvironmentSchema },
+      { name: Interaction.name, schema: InteractionSchema },
     ]),
   ],
   providers: [SeedService],
