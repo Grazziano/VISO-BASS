@@ -11,6 +11,10 @@ import {
   VisoClass,
   VisoClassSchema,
 } from 'src/viso-class/schemas/viso-class.schema';
+import {
+  PageRankFriendship,
+  PageRankFriendshipSchema,
+} from 'src/pagerank-friendship/schema/pagerank-friendship.schema';
 
 @Module({
   imports: [
@@ -20,6 +24,7 @@ import {
       { name: Owner.name, schema: OwnerSchema },
       { name: VisoObject.name, schema: VisoObjectSchema },
       { name: VisoClass.name, schema: VisoClassSchema },
+      { name: PageRankFriendship.name, schema: PageRankFriendshipSchema },
     ]),
   ],
   providers: [SeedService],
