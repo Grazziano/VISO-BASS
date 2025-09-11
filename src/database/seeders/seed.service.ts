@@ -70,8 +70,25 @@ export class SeedService {
 
   private async seedClasses() {
     await this.visoClassesModel.deleteMany({});
-    await this.visoClassesModel.insertMany(classSeed);
-    this.logger.log(`🌱 Classes seeded: ${classSeed.length}`);
+
+    // Busca todos os objetos já inseridos
+    const objects = await this.visoObjectsModel.find().exec();
+
+    // Mapeia os seeds das classes atribuindo objetos
+    const classSeedWithObjects = classSeed.map((cls, index) => {
+      // Distribui os objetos entre as classes
+      const relatedObjects = objects
+        .slice(index, index + 2) // pega 2 objetos por classe só de exemplo
+        .map((obj) => obj._id);
+
+      return {
+        ...cls,
+        objects: relatedObjects, // campo que referencia os objetos
+      };
+    });
+
+    await this.visoClassesModel.insertMany(classSeedWithObjects);
+    this.logger.log(`🌱 Classes seeded: ${classSeedWithObjects.length}`);
   }
 
   private async seedPagerankFriendship() {
