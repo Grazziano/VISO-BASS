@@ -10,7 +10,7 @@ import { Interaction } from 'src/interaction/schema/interaction.schema';
 import { ownersSeed } from './data/owner.seed';
 import { objectSeed } from './data/object.seed';
 import { classSeed } from './data/class.seed';
-import { pagerankFriendshipSeed } from './data/pagerankFriendship.seed';
+// import { pagerankFriendshipSeed } from './data/pagerankFriendship.seed';
 import { onaEnvironmentSeed } from './data/onaEnviroment.seed';
 import { interactionsSeed } from './data/interaction.seed';
 
@@ -93,8 +93,36 @@ export class SeedService {
 
   private async seedPagerankFriendship() {
     await this.pagerankModel.deleteMany({});
-    await this.pagerankModel.insertMany(pagerankFriendshipSeed);
-    this.logger.log(`🌱 Pagerank seeded: ${pagerankFriendshipSeed.length}`);
+
+    // Busca todos os objetos já inseridos
+    const objects = await this.visoObjectsModel.find().exec();
+
+    // Se não houver objetos, não há como criar as relações
+    if (objects.length < 2) {
+      this.logger.warn(
+        '⚠️ Não há objetos suficientes para criar pagerankFriendship',
+      );
+      return;
+    }
+
+    // Cria seeds dinamicamente
+    const pagerankSeedsWithObjects = objects.map((obj, index) => {
+      // Pega alguns objetos diferentes como adjacentes
+      const adjacents = objects
+        .filter((_, i) => i !== index) // remove o próprio objeto
+        .slice(0, Math.floor(Math.random() * 4) + 1) // escolhe até 4 adjacentes aleatórios
+        .map((o) => o._id.toString());
+
+      return {
+        rank_object: obj._id.toString(),
+        rank_adjacency: adjacents,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    });
+
+    await this.pagerankModel.insertMany(pagerankSeedsWithObjects);
+    this.logger.log(`🌱 Pagerank seeded: ${pagerankSeedsWithObjects.length}`);
   }
 
   private async seedOnaEnvironment() {
