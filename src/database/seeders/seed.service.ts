@@ -52,8 +52,20 @@ export class SeedService {
 
   private async seedObjects() {
     await this.visoObjectsModel.deleteMany({});
-    await this.visoObjectsModel.insertMany(objectSeed);
-    this.logger.log(`🌱 Objects seeded: ${objectSeed.length}`);
+
+    const owner = await this.ownersModel
+      .findOne({
+        email: 'joao.silva@example.com',
+      })
+      .exec();
+
+    const objectSeedWithOwnerId = objectSeed.map((object) => ({
+      ...object,
+      obj_owner: owner?._id,
+    }));
+
+    await this.visoObjectsModel.insertMany(objectSeedWithOwnerId);
+    this.logger.log(`🌱 Objects seeded: ${objectSeedWithOwnerId.length}`);
   }
 
   private async seedClasses() {
