@@ -99,8 +99,27 @@ export class SeedService {
 
   private async seedOnaEnvironment() {
     await this.onaEnvironmentModel.deleteMany({});
-    await this.onaEnvironmentModel.insertMany(onaEnvironmentSeed);
-    this.logger.log(`🌱 Ona Environment seeded: ${onaEnvironmentSeed.length}`);
+
+    // Busca todos os objetos já inseridos
+    const objects = await this.visoObjectsModel.find().exec();
+
+    // Mapeia os seeds dos ambientes atribuindo objetos
+    const onaEnvSeedWithObjects = onaEnvironmentSeed.map((env, index) => {
+      // Atribui alguns objetos por ambiente
+      const relatedObjects = objects
+        .slice(index, index + 3) // pega 3 objetos por ambiente só de exemplo
+        .map((obj) => obj._id);
+
+      return {
+        ...env,
+        objects: relatedObjects, // campo de referência
+      };
+    });
+
+    await this.onaEnvironmentModel.insertMany(onaEnvSeedWithObjects);
+    this.logger.log(
+      `🌱 Ona Environment seeded: ${onaEnvSeedWithObjects.length}`,
+    );
   }
 
   private async seedInteractions() {
