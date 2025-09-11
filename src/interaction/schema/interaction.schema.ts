@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 // import { OnaEnvironment } from 'src/ona-environment/schema/ona-enviroment.schema';
 // import { VisoClass } from 'src/viso-class/schemas/viso-class.schema';
 // import { VisoObject } from 'src/viso-object/schema/viso-object.schema';
@@ -25,10 +25,10 @@ export class Interaction extends Document {
   // data: Date;
 
   @Prop()
-  inter_obj_i: number;
+  inter_obj_i: Types.ObjectId;
 
   @Prop()
-  inter_obj_j: number;
+  inter_obj_j: Types.ObjectId;
 
   @Prop()
   inter_start: Date;

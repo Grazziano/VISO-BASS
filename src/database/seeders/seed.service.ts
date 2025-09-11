@@ -12,7 +12,7 @@ import { objectSeed } from './data/object.seed';
 import { classSeed } from './data/class.seed';
 // import { pagerankFriendshipSeed } from './data/pagerankFriendship.seed';
 import { onaEnvironmentSeed } from './data/onaEnviroment.seed';
-import { interactionsSeed } from './data/interaction.seed';
+// import { interactionsSeed } from './data/interaction.seed';
 
 @Injectable()
 export class SeedService {
@@ -152,7 +152,42 @@ export class SeedService {
 
   private async seedInteractions() {
     await this.interactionModel.deleteMany({});
-    await this.interactionModel.insertMany(interactionsSeed);
-    this.logger.log(`🌱 Interactions seeded: ${interactionsSeed.length}`);
+
+    // Busca objetos já salvos
+    const objects = await this.visoObjectsModel.find().exec();
+
+    if (objects.length < 2) {
+      this.logger.warn('⚠️ Não há objetos suficientes para criar interações');
+      return;
+    }
+
+    const interactions: Partial<Interaction>[] = [];
+
+    for (let i = 0; i < 1000; i++) {
+      // escolhe dois objetos diferentes
+      const objA = objects[Math.floor(Math.random() * objects.length)];
+
+      let objB = objA;
+
+      while (objB._id.equals(objA._id)) {
+        objB = objects[Math.floor(Math.random() * objects.length)];
+      }
+
+      // gera tempos fictícios
+      const start = new Date();
+      const end = new Date(start.getTime() + Math.floor(Math.random() * 60000)); // até +60s
+
+      interactions.push({
+        inter_obj_i: objA._id,
+        inter_obj_j: objB._id,
+        inter_start: start,
+        inter_end: end,
+        inter_service: Math.floor(Math.random() * 5) + 1, // serviço 1 a 5
+        inter_feedback: Math.random() > 0.2, // 80% true, 20% false
+      });
+    }
+
+    await this.interactionModel.insertMany(interactions);
+    this.logger.log(`🌱 Interactions seeded: ${interactions.length}`);
   }
 }

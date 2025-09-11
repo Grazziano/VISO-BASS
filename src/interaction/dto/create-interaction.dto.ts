@@ -17,7 +17,7 @@ export class CreateInteractionDto {
     description: 'Objeto 1 da interação',
     example: 0,
   })
-  inter_obj_i: number;
+  inter_obj_i: string;
 
   @IsInt()
   @Min(0)
@@ -26,7 +26,7 @@ export class CreateInteractionDto {
     description: 'Objeto 2 da interação',
     example: 0,
   })
-  inter_obj_j: number;
+  inter_obj_j: string;
 
   @IsDate()
   @Type(() => Date)
