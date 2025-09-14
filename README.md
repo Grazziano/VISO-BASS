@@ -268,6 +268,7 @@ npm run seed
 | GET    | /class/:id                                 | Encontra classe pelo id           |
 | POST   | /class                                     | Cria uma nova classe              |
 | GET    | /interaction                               | Lista todas as interações         |
+| GET    | /interaction/count-by-day                  | Lista interações por mes/dia      |
 | GET    | /interaction/:id                           | Encontra interações por id        |
 | POST   | /interaction                               | Cria uma nova interação           |
 | GET    | /ona-enviroment                            | Lista todos os ambientes          |
