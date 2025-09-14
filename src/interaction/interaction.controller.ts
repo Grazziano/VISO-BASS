@@ -44,6 +44,9 @@ export class InteractionController {
   }
 
   @Get('count-by-day')
+  @ApiOperation({
+    summary: 'Lista o número de interações por dia no período especificado',
+  })
   @ApiQuery({
     name: 'period',
     enum: ['week', 'month'],
@@ -64,6 +67,27 @@ export class InteractionController {
   })
   async countByDay(@Query('period') period: 'week' | 'month' = 'week') {
     return this.interactionService.countInteractionsByDay(period);
+  }
+
+  @Get('time-series')
+  @ApiOperation({
+    summary:
+      'Lista o número interações agregadas em formato de série temporal (para montar gráficos)',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Retorna interações agregadas em formato de série temporal (ideal para montar gráficos)',
+    schema: {
+      example: [
+        { date: '2025-09-01', interactions: 12 },
+        { date: '2025-09-02', interactions: 8 },
+        { date: '2025-09-03', interactions: 15 },
+      ],
+    },
+  })
+  async getInteractionsTimeSeries(@Query('range') range: '7d' | '30d' = '7d') {
+    return this.interactionService.getTimeSeries(range);
   }
 
   @Get(':id')

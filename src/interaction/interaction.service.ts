@@ -68,6 +68,50 @@ export class InteractionService {
     }
   }
 
+  async getTimeSeries(
+    range: '7d' | '30d',
+  ): Promise<{ date: string; interactions: number }[]> {
+    try {
+      const days = range === '7d' ? 7 : 30;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const results = await this.interactionModel.aggregate<{
+        date: string;
+        interactions: number;
+      }>([
+        {
+          $match: {
+            createdAt: { $gte: startDate },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+            },
+            interactions: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+        {
+          $project: {
+            _id: 0,
+            date: '$_id',
+            interactions: 1,
+          },
+        },
+      ]);
+
+      return results;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find interaction: ${error.message}`);
+      }
+      throw new Error('Failed to find interaction due to an unknown error');
+    }
+  }
+
   findOne(id: string) {
     try {
       const interaction = this.interactionModel.findById(id).lean().exec();
