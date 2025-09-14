@@ -10,8 +10,8 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateInteractionDto {
-  @IsInt()
-  @Min(0)
+  // @IsInt()
+  // @Min(0)
   @IsNotEmpty()
   @ApiProperty({
     description: 'Objeto 1 da interação',
@@ -19,8 +19,8 @@ export class CreateInteractionDto {
   })
   inter_obj_i: string;
 
-  @IsInt()
-  @Min(0)
+  // @IsInt()
+  // @Min(0)
   @IsNotEmpty()
   @ApiProperty({
     description: 'Objeto 2 da interação',

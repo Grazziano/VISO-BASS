@@ -36,6 +36,38 @@ export class InteractionService {
     }
   }
 
+  async countInteractionsByDay(period: 'week' | 'month') {
+    try {
+      const now = new Date();
+      const startDate =
+        period === 'week'
+          ? new Date(now.setDate(now.getDate() - 7))
+          : new Date(now.setMonth(now.getMonth() - 1));
+
+      return this.interactionModel.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startDate }, // só interações recentes
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }, // agrupa por dia
+            },
+            total: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } }, // ordena por data crescente
+      ]);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to find interaction: ${error.message}`);
+      }
+      throw new Error('Failed to find interaction due to an unknown error');
+    }
+  }
+
   findOne(id: string) {
     try {
       const interaction = this.interactionModel.findById(id).lean().exec();

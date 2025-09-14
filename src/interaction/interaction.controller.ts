@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { InteractionService } from './interaction.service';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,6 +14,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -32,6 +41,29 @@ export class InteractionController {
   @ApiResponse({ status: 200, description: 'Retorna todas as interações' })
   findAll() {
     return this.interactionService.findAll();
+  }
+
+  @Get('count-by-day')
+  @ApiQuery({
+    name: 'period',
+    enum: ['week', 'month'],
+    required: false,
+    description: 'Define o período (week ou month)',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Retorna o número de interações por dia no período especificado',
+    schema: {
+      example: [
+        { _id: '2025-09-08', total: 5 },
+        { _id: '2025-09-09', total: 12 },
+        { _id: '2025-09-12', total: 3 },
+      ],
+    },
+  })
+  async countByDay(@Query('period') period: 'week' | 'month' = 'week') {
+    return this.interactionService.countInteractionsByDay(period);
   }
 
   @Get(':id')
