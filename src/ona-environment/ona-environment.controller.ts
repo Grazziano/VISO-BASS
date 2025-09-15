@@ -17,22 +17,23 @@ export class OnaEnvironmentController {
   constructor(private readonly onaEnvironmentService: OnaEnvironmentService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create an ona-environment' })
+  @ApiOperation({ summary: 'Cria novo ambiente' })
   @ApiBody({ type: CreateOnaEnvironmentDto })
   create(@Body() createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
     return this.onaEnvironmentService.create(createOnaEnvironmentDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'List all ona-environment' })
+  @ApiOperation({ summary: 'Lista todos os ambientes' })
   @ApiResponse({ status: 200, type: [CreateOnaEnvironmentDto] })
   findAll() {
     return this.onaEnvironmentService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get an ona-environment by id' })
+  @ApiOperation({ summary: 'Encontra ambiente pelo id' })
   @ApiParam({ name: 'id', type: String })
+  @ApiResponse({ status: 200, type: CreateOnaEnvironmentDto })
   findOne(@Param('id') id: string) {
     return this.onaEnvironmentService.findOne(id);
   }
