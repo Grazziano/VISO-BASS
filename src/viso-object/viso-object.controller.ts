@@ -26,7 +26,7 @@ export class VisoObjectController {
   constructor(private readonly visoObjectService: VisoObjectService) {}
 
   @ApiBody({ type: CreateVisoObjectDto })
-  @ApiOperation({ summary: 'Create a new object' })
+  @ApiOperation({ summary: 'Cria um novo objeto' })
   @ApiResponse({ status: 201, type: CreateVisoObjectDto })
   @Post()
   create(
@@ -37,7 +37,7 @@ export class VisoObjectController {
     return this.visoObjectService.create(createVisoObjectDto, user);
   }
 
-  @ApiOperation({ summary: 'Get all objects' })
+  @ApiOperation({ summary: 'Lista todos os objetos' })
   @ApiResponse({ status: 200, type: [CreateVisoObjectDto] })
   @Get()
   findAll(@Req() req: AuthenticatedRequest) {
@@ -46,7 +46,7 @@ export class VisoObjectController {
   }
 
   @ApiParam({ name: 'id', type: String, description: 'Object ID' })
-  @ApiOperation({ summary: 'Get a specific object' })
+  @ApiOperation({ summary: 'Busca um objeto por ID' })
   @ApiResponse({ status: 200, type: CreateVisoObjectDto })
   @Get(':id')
   findOne(@Param('id') id: string) {
