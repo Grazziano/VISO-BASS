@@ -17,23 +17,23 @@ export class MyClassController {
   constructor(private readonly visoClassService: VisoClassService) {}
 
   @ApiBody({ type: CreateVisoClassDto })
-  @ApiOperation({ summary: 'Create a new class' })
+  @ApiOperation({ summary: 'Cria uma nova class' })
   @ApiResponse({ type: CreateVisoClassDto })
   @Post()
   create(@Body() createVisoClassDto: CreateVisoClassDto) {
     return this.visoClassService.create(createVisoClassDto);
   }
 
-  @ApiOperation({ summary: 'Get all classes' })
+  @ApiOperation({ summary: 'Lista todas as classes' })
   @ApiResponse({ type: [CreateVisoClassDto] })
   @Get()
   findAll() {
     return this.visoClassService.findAll();
   }
 
-  @ApiParam({ name: 'id', type: String, description: 'ID of the class' })
+  @ApiParam({ name: 'id', type: String, description: 'ID da classe' })
   @ApiResponse({ type: CreateVisoClassDto })
-  @ApiOperation({ summary: 'Get a class by ID' })
+  @ApiOperation({ summary: 'Busca uma classe pelo id' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.visoClassService.findOne(id);
