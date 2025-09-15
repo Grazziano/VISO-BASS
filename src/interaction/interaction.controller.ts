@@ -27,10 +27,10 @@ export class InteractionController {
 
   @Post()
   @ApiBody({ type: CreateInteractionDto })
-  @ApiOperation({ summary: 'Create a new interaction' })
+  @ApiOperation({ summary: 'Cria nova interação' })
   @ApiResponse({
     status: 201,
-    description: 'The interaction has been successfully created',
+    description: 'A interação foi criada com sucesso',
   })
   create(@Body() createInteractionDto: CreateInteractionDto) {
     return this.interactionService.create(createInteractionDto);
@@ -38,7 +38,38 @@ export class InteractionController {
 
   @Get()
   @ApiOperation({ summary: 'Listar todas as interações' })
-  @ApiResponse({ status: 200, description: 'Retorna todas as interações' })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna todas as interações',
+    schema: {
+      example: [
+        {
+          _id: '68c2f089ec97807527b1108e',
+          inter_obj_i: '68c2f083ec97807527b10291',
+          inter_obj_j: '68c2f083ec97807527b102ce',
+          inter_start: '2025-09-11T15:53:45.314Z',
+          inter_end: '2025-09-11T15:54:14.985Z',
+          inter_feedback: false,
+          inter_service: 4,
+          __v: 0,
+          createdAt: '2025-09-11T15:53:45.338Z',
+          updatedAt: '2025-09-11T15:53:45.338Z',
+        },
+        {
+          _id: '68c2f089ec97807527b1108f',
+          inter_obj_i: '68c2f083ec97807527b103eb',
+          inter_obj_j: '68c2f083ec97807527b10118',
+          inter_start: '2025-09-11T15:53:45.314Z',
+          inter_end: '2025-09-11T15:54:04.060Z',
+          inter_feedback: true,
+          inter_service: 5,
+          __v: 0,
+          createdAt: '2025-09-11T15:53:45.338Z',
+          updatedAt: '2025-09-11T15:53:45.338Z',
+        },
+      ],
+    },
+  })
   findAll() {
     return this.interactionService.findAll();
   }
