@@ -12,6 +12,7 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Deploy on Render](https://img.shields.io/badge/Deploy-Render-0e1111?style=flat-square&logo=render&logoColor=white)](https://render.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/commits/main)
 [![GitHub issues](https://img.shields.io/github/issues/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/issues)
@@ -44,6 +45,7 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 - [TypeScript](https://www.typescriptlang.org/) — Linguagem tipada para JavaScript
 - [Dotenv](https://github.com/motdotla/dotenv) — Variáveis de ambiente
 - [Docker](https://www.docker.com/) — Plataforma de contêineres para isolamento e padronização de ambientes de desenvolvimento
+- [Render](https://render.com/) — Plataforma de hospedagem de aplicações na nuvem
 
 ---
 
@@ -220,6 +222,26 @@ docker-compose down -v
 * O Mongo Express é útil para **visualizar coleções, inserir, editar e excluir documentos** diretamente via navegador.
 * As alterações feitas no Mongo Express são refletidas imediatamente na API.
 * O volume `mongo_data` garante que os dados do banco persistam mesmo que os containers sejam reiniciados.
+
+---
+
+## 🌐 Aplicação em Deploy
+
+A aplicação está disponível em produção no seguinte endereço:
+
+**🔗 URL de Produção:** [https://viso-bass.onrender.com](https://viso-bass.onrender.com)
+
+### 📋 Status do Deploy
+
+[![Render Status](https://img.shields.io/badge/Render-Deploy%20Active-46E3B7?style=flat-square&logo=render&logoColor=white)](https://viso-bass.onrender.com)
+<!-- [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m795316729-2a46567d4b873d6c0ccee9f0?style=flat-square)](https://viso-bass.onrender.com) -->
+
+### ⚠️ Importante sobre o Deploy
+
+- O deploy é realizado automaticamente via **Render** quando há pushes para a branch `main`
+- O banco de dados utilizado é o **MongoDB Atlas** (nuvem)
+- A aplicação pode entrar em modo de hibernação após períodos de inatividade (política gratuita do Render)
+- O primeiro acesso após hibernação pode demorar alguns segundos para "acordar" a aplicação
 
 ---
 
