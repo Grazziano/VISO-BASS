@@ -28,21 +28,21 @@ export class PagerankFriendshipController {
   ) {}
 
   @ApiBody({ type: CreatePagerankFriendshipDto })
-  @ApiOperation({ summary: 'Create a pagerank-friendship' })
+  @ApiOperation({ summary: 'Cria nova amizade pagerank' })
   @ApiResponse({ status: 200, type: CreatePagerankFriendshipDto })
   @Post()
   create(@Body() createPagerankFriendshipDto: CreatePagerankFriendshipDto) {
     return this.pagerankFriendshipService.create(createPagerankFriendshipDto);
   }
 
-  @ApiOperation({ summary: 'Get all pagerank-friendships' })
+  @ApiOperation({ summary: 'Lista todas as amizades pagerank' })
   @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
   @Get()
   findAll() {
     return this.pagerankFriendshipService.findAll();
   }
 
-  @ApiOperation({ summary: 'Get most relevant pagerank-friendships' })
+  @ApiOperation({ summary: 'Lista as amizades pagerank mais relevantes' })
   @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
   @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
   @ApiQuery({ name: 'limit', type: Number, required: false })
@@ -54,9 +54,9 @@ export class PagerankFriendshipController {
   @ApiParam({
     name: 'id',
     type: String,
-    description: 'ID of the pagerank-friendship',
+    description: 'ID do pagerank-friendship',
   })
-  @ApiOperation({ summary: 'Get a pagerank-friendship' })
+  @ApiOperation({ summary: 'Busca amizades pagerank pelo id' })
   @ApiResponse({ status: 200, type: CreatePagerankFriendshipDto })
   @Get(':id')
   findOne(@Param('id') id: string) {
