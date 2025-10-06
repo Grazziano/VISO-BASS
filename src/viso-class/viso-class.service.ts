@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { VisoClass, VisoClassDocument } from './schemas/viso-class.schema';
 import { isValidObjectId, Model } from 'mongoose';
@@ -26,11 +30,10 @@ export class VisoClassService {
       const newMyClass = new this.visoClassModel(createVisoClassDto);
       const savedMyClass = await newMyClass.save();
       return plainToInstance(VisoClassResponseDto, savedMyClass.toJSON());
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to create MyClass: ${error.message}`);
-      }
-      throw new Error('Failed to create MyClass due to an unknown error');
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to create class: ${(error as Error).message}`,
+      );
     }
   }
 
@@ -38,11 +41,10 @@ export class VisoClassService {
     try {
       const myClasses = await this.visoClassModel.find().lean().exec();
       return plainToInstance(VisoClassResponseDto, myClasses);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to find MyClass: ${error.message}`);
-      }
-      throw new Error('Failed to find MyClass due to an unknown error');
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to find classes: ${(error as Error).message}`,
+      );
     }
   }
 
@@ -60,15 +62,14 @@ export class VisoClassService {
         .exec();
 
       if (!myClass) {
-        throw new NotFoundException(`MyClass with id ${id} not found 1223`);
+        throw new NotFoundException(`MyClass with id ${id} not found`);
       }
 
       return plainToInstance(VisoClassResponseDto, myClass);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to find MyClass: ${error.message}`);
-      }
-      throw new Error('Failed to find MyClass due to an unknown error');
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to find class: ${(error as Error).message}`,
+      );
     }
   }
 }

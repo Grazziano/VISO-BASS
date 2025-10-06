@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { VisoClassService } from './viso-class.service';
 import { CreateVisoClassDto } from './dto/create-viso-class.dto';
+import { VisoClassResponseDto } from './dto/viso-class-response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBody,
@@ -20,14 +21,14 @@ export class MyClassController {
   @ApiOperation({ summary: 'Cria uma nova class' })
   @ApiResponse({ type: CreateVisoClassDto })
   @Post()
-  create(@Body() createVisoClassDto: CreateVisoClassDto) {
+  async create(@Body() createVisoClassDto: CreateVisoClassDto) {
     return this.visoClassService.create(createVisoClassDto);
   }
 
   @ApiOperation({ summary: 'Lista todas as classes' })
   @ApiResponse({ type: [CreateVisoClassDto] })
   @Get()
-  findAll() {
+  async findAll(): Promise<VisoClassResponseDto[]> {
     return this.visoClassService.findAll();
   }
 
@@ -35,7 +36,7 @@ export class MyClassController {
   @ApiResponse({ type: CreateVisoClassDto })
   @ApiOperation({ summary: 'Busca uma classe pelo id' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.visoClassService.findOne(id);
   }
 }
