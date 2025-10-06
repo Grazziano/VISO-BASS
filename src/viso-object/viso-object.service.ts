@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { plainToInstance } from 'class-transformer';
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
@@ -14,7 +18,10 @@ export class VisoObjectService {
     private visoObjectModel: Model<VisoObjectDocument>,
   ) {}
 
-  async create(createVisoObjectDto: CreateVisoObjectDto, user: JwtPayload) {
+  async create(
+    createVisoObjectDto: CreateVisoObjectDto,
+    user: JwtPayload,
+  ): Promise<ResponseVisoObjectDto> {
     try {
       const object = new this.visoObjectModel({
         ...createVisoObjectDto,
@@ -23,39 +30,39 @@ export class VisoObjectService {
 
       const savedObject = await object.save();
       return plainToInstance(ResponseVisoObjectDto, savedObject.toJSON());
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to create object: ${error.message}`);
-      }
-      throw new Error('Failed to create object due to an unknown error');
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to create object: ${(error as Error).message}`,
+      );
     }
   }
 
-  findAll(ownerId: string) {
+  async findAll(): Promise<ResponseVisoObjectDto[]> {
     try {
-      const objects = this.visoObjectModel
-        .find({ obj_owner: ownerId })
-        .lean()
-        .exec();
+      const objects = await this.visoObjectModel.find().lean().exec();
 
       return plainToInstance(ResponseVisoObjectDto, objects);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to find objects: ${error.message}`);
-      }
-      throw new Error('Failed to find objects due to an unknown error');
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to find objects: ${(error as Error).message}`,
+      );
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string): Promise<ResponseVisoObjectDto> {
     try {
-      const object = this.visoObjectModel.findById(id).lean().exec();
-      return plainToInstance(ResponseVisoObjectDto, object);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to find object: ${error.message}`);
+      const object = await this.visoObjectModel.findById(id).lean().exec();
+
+      if (!object) {
+        throw new NotFoundException(`Object with id ${id} not found`);
       }
-      throw new Error('Failed to find object due to an unknown error');
+
+      return plainToInstance(ResponseVisoObjectDto, object);
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException(
+        `Failed to find object: ${(error as Error).message}`,
+      );
     }
   }
 }

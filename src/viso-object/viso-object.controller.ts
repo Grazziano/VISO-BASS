@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 
 @ApiTags('object')
 @UseGuards(AuthGuard('jwt'))
@@ -29,27 +30,26 @@ export class VisoObjectController {
   @ApiOperation({ summary: 'Cria um novo objeto' })
   @ApiResponse({ status: 201, type: CreateVisoObjectDto })
   @Post()
-  create(
+  async create(
     @Body() createVisoObjectDto: CreateVisoObjectDto,
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<ResponseVisoObjectDto> {
     const user = req.user;
     return this.visoObjectService.create(createVisoObjectDto, user);
   }
 
   @ApiOperation({ summary: 'Lista todos os objetos' })
-  @ApiResponse({ status: 200, type: [CreateVisoObjectDto] })
+  @ApiResponse({ status: 200, type: [ResponseVisoObjectDto] })
   @Get()
-  findAll(@Req() req: AuthenticatedRequest) {
-    const { userId } = req.user;
-    return this.visoObjectService.findAll(userId);
+  async findAll(): Promise<ResponseVisoObjectDto[]> {
+    return this.visoObjectService.findAll();
   }
 
   @ApiParam({ name: 'id', type: String, description: 'Object ID' })
   @ApiOperation({ summary: 'Busca um objeto por ID' })
-  @ApiResponse({ status: 200, type: CreateVisoObjectDto })
+  @ApiResponse({ status: 200, type: ResponseVisoObjectDto })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<ResponseVisoObjectDto> {
     return this.visoObjectService.findOne(id);
   }
 }
