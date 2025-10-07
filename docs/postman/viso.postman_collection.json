@@ -1,0 +1,618 @@
+{
+	"info": {
+		"_postman_id": "b8e8ccc6-613c-4320-b36e-692bfd77761e",
+		"name": "viso",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3887941"
+	},
+	"item": [
+		{
+			"name": "classe",
+			"item": [
+				{
+					"name": "lista todas as classes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/class",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"class"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "encontre por id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/class/68cf113eff283f9f686f3ac0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"class",
+								"68cf113eff283f9f686f3ac0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cria classe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"class_name\": \"Criando nova classe teste\",\r\n    \"class_function\": [\"123\", \"456\", \"789\"],\r\n    \"objects\": [\"6882817935b79067730bafeb\", \"6882817f35b79067730bafee\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/class",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"class"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "object",
+			"item": [
+				{
+					"name": "criar novo objeto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"obj_networkMAC\": \"00:1A:2B:3C:4D:5E\",\r\n  \"obj_name\": \"Sensor de Temperatura TESTE\",\r\n//   \"obj_owner\": \"João Silva\",\r\n  \"obj_model\": \"T1000\",\r\n  \"obj_brand\": \"TechSensors\",\r\n//   \"obj_class\": \"Sensor\",\r\n  \"obj_function\": [\"Medir temperatura\", \"Enviar dados\"],\r\n  \"obj_restriction\": [\"Uso interno\", \"Não expor à água\"],\r\n  \"obj_limitation\": [\"Precisão ±0.5°C\", \"Alcance -20°C a 60°C\"],\r\n  \"obj_access\": 1,\r\n  \"obj_location\": 2,\r\n  \"obj_qualification\": 3,\r\n  \"obj_status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/object",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"object"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lista todos objectos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/object",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"object"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lista objectos pelo id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/object/68e4408d61d7722b7f090c43",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"object",
+								"68e4408d61d7722b7f090c43"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pagerank-friendship",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rank_object\": \"obj1\",\r\n    \"rank_adjacency\": [\"obj2\", \"obj4\", \"obj5\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pagerank-friendship",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pagerank-friendship"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pagerank-friendship",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pagerank-friendship"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pagerank-friendship/68866607498eb4aef92aadfb",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pagerank-friendship",
+								"68866607498eb4aef92aadfb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amizades mais relevantes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/pagerank-friendship/relevant?limit=300",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pagerank-friendship",
+								"relevant"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "300"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ona-enviroment",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"env_object_i\": \"1\",\r\n    \"env_total_interactions\": 120,\r\n    \"env_total_valid\": 100,\r\n    \"env_total_new\": 20,\r\n    \"env_adjacency\": [2, 3, 4],\r\n    \"objects\": [\r\n      \"obj1\", \"obj2\", \"obj3\"\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/ona-environment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ona-environment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ona-environment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ona-environment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/ona-environment/68c2f088ec97807527b10ca5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ona-environment",
+								"68c2f088ec97807527b10ca5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "interactions",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"inter_obj_i\": \"68c2f083ec97807527b10446\",\r\n  \"inter_obj_j\": \"68c2f083ec97807527b1019a\",\r\n  \"inter_start\": \"2025-07-27T14:00:00.000Z\",\r\n  \"inter_end\": \"2025-07-27T15:00:00.000Z\",\r\n  \"inter_feedback\": true,\r\n  \"inter_service\": 5\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/interaction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list interactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/interaction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "most-referenced-objects",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/interaction/most-referenced-objects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interaction",
+								"most-referenced-objects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "most-referenced-objects Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/interaction/count-by-day?period=week",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interaction",
+								"count-by-day"
+							],
+							"query": [
+								{
+									"key": "period",
+									"value": "week"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "time-series",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/interaction/time-series",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"interaction",
+								"time-series"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"jill\",\r\n    \"email\": \"jill@mail.com\",\r\n    \"password\": \"123456\"\r\n    // \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"joao.silva@example.com\",\r\n  \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{base_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}",
+					"host": [
+						"{{base_url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "documentação",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

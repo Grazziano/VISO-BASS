@@ -1,6 +1,5 @@
-# VISO-B.A.S.S. 🛰️
+# 🧠 VISO-BASS – VISO-Based API for Structured Storage
 
-VISO-B.A.S.S. — VISO-Based API for Structured Storage
 Uma API projetada para armazenamento estruturado e eficiente de dados no contexto da Social IoT, implementada com NestJS e MongoDB.
 
 O sistema adota a abordagem estrutural do modelo [VISO](https://sol.sbc.org.br/index.php/semish/article/view/25072), garantindo organização, escalabilidade e consultas otimizadas para informações relacionadas a objetos, classes, interações, ambientes e relações sociais.
@@ -316,6 +315,184 @@ npm run test:e2e
 # Cobertura
 npm run test:cov
 ```
+
+---
+
+# 🚀 Como usar a API
+
+<details>
+  <summary>👀 Clique para expandir</summary>
+
+### 🔗 Base URL
+
+> A URL base depende do ambiente:
+>
+> * Local: `http://localhost:3000`
+> * Produção: `https://viso-bass.onrender.com`
+
+Todas as rotas abaixo são relativas a essa base.
+
+---
+
+#### Exemplo – Registro de usuário
+
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "username": "meu_usuario",
+  "email": "meu@email.com",
+  "password": "senha123"
+}
+```
+
+#### Exemplo – Login
+
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "meu@email.com",
+  "password": "senha123"
+}
+```
+
+**Resposta esperada:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+}
+```
+
+Use o token JWT retornado em todas as rotas protegidas no cabeçalho:
+
+```
+Authorization: Bearer <access_token>
+```
+
+---
+
+### 💻 Exemplo com `curl`
+
+```bash
+curl -X POST http://localhost:3000/object \
+  -H "Authorization: Bearer eyJhbGciOiJ..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sensor de temperatura",
+    "type": "sensor",
+    "metadata": {
+      "unit": "°C"
+    }
+  }'
+```
+
+**Resposta esperada:**
+
+```json
+{
+  "id": "obj123",
+  "name": "Sensor de temperatura",
+  "type": "sensor",
+  "metadata": {
+    "unit": "°C"
+  },
+  "createdAt": "2025-10-07T14:00:00.000Z",
+  "updatedAt": "2025-10-07T14:00:00.000Z"
+}
+```
+
+---
+
+### 🧠 Exemplo em JavaScript (`fetch`)
+
+```js
+async function login() {
+  const response = await fetch("http://localhost:3000/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: "meu@email.com",
+      password: "senha123"
+    })
+  });
+
+  const data = await response.json();
+  return data.access_token;
+}
+
+async function getObjects() {
+  const token = await login();
+
+  const response = await fetch("http://localhost:3000/object", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const objects = await response.json();
+  console.log(objects);
+}
+
+getObjects();
+```
+
+---
+
+### ⚙️ Exemplo em JavaScript (`Axios`)
+
+```js
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "http://localhost:3000"
+});
+
+async function main() {
+  const login = await api.post("/auth/login", {
+    email: "meu@email.com",
+    password: "senha123"
+  });
+
+  const token = login.data.access_token;
+
+  const objects = await api.get("/object", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  console.log(objects.data);
+}
+
+main();
+```
+
+---
+
+### 🧪 Testando no Postman
+
+1. Importe a coleção `viso.postman_collection.json` na pasta docs/postman.
+2. Configure variáveis:
+
+   * `base_url` = `http://localhost:3000`
+   * `token` = `<seu_token_jwt>`
+3. Teste os fluxos:
+
+   * `/auth/register` → `/auth/login` → `/auth/me`
+   * `/object` → `/class` → `/interaction`
+
+---
+
+## 🧰 Scripts úteis
+
+| Comando             | Descrição                                    |
+| :------------------ | :------------------------------------------- |
+| `npm run start`     | Inicia o servidor                            |
+| `npm run start:dev` | Inicia com hot-reload (modo desenvolvimento) |
+| `npm run build`     | Compila o projeto TypeScript                 |
+| `npm run test`      | Executa testes unitários                     |
+
+</details>
 
 ---
 
