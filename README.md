@@ -318,7 +318,7 @@ npm run test:cov
 
 ---
 
-# 🚀 Como usar a API
+## 🚀 Como usar a API
 
 <details>
   <summary>👀 Clique para expandir</summary>
