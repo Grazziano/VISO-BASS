@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('interaction')
 @UseGuards(AuthGuard('jwt'))
@@ -32,6 +33,7 @@ export class InteractionController {
     status: 201,
     description: 'A interação foi criada com sucesso',
   })
+  @Throttle({ medium: { limit: 10, ttl: 10000 } }) // 10 criações por 10 segundos
   create(@Body() createInteractionDto: CreateInteractionDto) {
     return this.interactionService.create(createInteractionDto);
   }
