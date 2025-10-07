@@ -341,7 +341,7 @@ POST /auth/register
 Content-Type: application/json
 
 {
-  "username": "meu_usuario",
+  "name": "meu_nome",
   "email": "meu@email.com",
   "password": "senha123"
 }
@@ -373,7 +373,7 @@ Use o token JWT retornado em todas as rotas protegidas no cabeçalho:
 Authorization: Bearer <access_token>
 ```
 
----
+<!-- ---
 
 ### 💻 Exemplo com `curl`
 
@@ -403,7 +403,7 @@ curl -X POST http://localhost:3000/object \
   "createdAt": "2025-10-07T14:00:00.000Z",
   "updatedAt": "2025-10-07T14:00:00.000Z"
 }
-```
+``` -->
 
 ---
 
