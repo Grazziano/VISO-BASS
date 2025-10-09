@@ -15,8 +15,22 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return a welcome HTML message containing "API VISO-BASS"', () => {
+      // Obtém o resultado da função
+      const result = appController.getHello();
+
+      // Verifica se o resultado é uma string
+      expect(typeof result).toBe('string');
+
+      // Verifica se a string contém um trecho específico
+      expect(result).toContain('API VISO-BASS');
+
+      expect(result).toContain(
+        'Desenvolvida com <strong>NestJS + TypeScript</strong>',
+      );
+      expect(result).toContain(
+        'Desenvolvido com ❤️ por <strong>Grazziano Borges Fagundes</strong>',
+      );
     });
   });
 });
