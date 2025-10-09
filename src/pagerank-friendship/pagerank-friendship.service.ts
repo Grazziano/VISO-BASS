@@ -11,12 +11,12 @@ export class PagerankFriendshipService {
     private pagerankFriendshipModel: Model<PageRankFriendship>,
   ) {}
 
-  create(createPagerankFriendshipDto: CreatePagerankFriendshipDto) {
+  async create(createPagerankFriendshipDto: CreatePagerankFriendshipDto) {
     try {
       const pagerankFriendship = new this.pagerankFriendshipModel(
         createPagerankFriendshipDto,
       );
-      const savedPagerankFriendship = pagerankFriendship.save();
+      const savedPagerankFriendship = await pagerankFriendship.save();
       return savedPagerankFriendship;
     } catch (error: unknown) {
       if (error instanceof Error) {
