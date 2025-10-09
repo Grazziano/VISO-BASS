@@ -11,10 +11,10 @@ export class InteractionService {
     private interactionModel: Model<Interaction>,
   ) {}
 
-  create(createInteractionDto: CreateInteractionDto) {
+  async create(createInteractionDto: CreateInteractionDto) {
     try {
       const interaction = new this.interactionModel(createInteractionDto);
-      const savedInteraction = interaction.save();
+      const savedInteraction = await interaction.save();
       return savedInteraction;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -24,9 +24,9 @@ export class InteractionService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      const interactions = this.interactionModel.find().lean().exec();
+      const interactions = await this.interactionModel.find().lean().exec();
       return interactions;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -36,7 +36,9 @@ export class InteractionService {
     }
   }
 
-  async countInteractionsByDay(period: 'week' | 'month') {
+  async countInteractionsByDay(
+    period: 'week' | 'month',
+  ): Promise<{ _id: string; total: number }[]> {
     try {
       const now = new Date();
       const startDate =
@@ -44,7 +46,10 @@ export class InteractionService {
           ? new Date(now.setDate(now.getDate() - 7))
           : new Date(now.setMonth(now.getMonth() - 1));
 
-      return this.interactionModel.aggregate([
+      return await this.interactionModel.aggregate<{
+        _id: string;
+        total: number;
+      }>([
         {
           $match: {
             createdAt: { $gte: startDate }, // só interações recentes
@@ -112,9 +117,12 @@ export class InteractionService {
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      const interaction = this.interactionModel.findById(id).lean().exec();
+      const interaction = await this.interactionModel
+        .findById(id)
+        .lean()
+        .exec();
       return interaction;
     } catch (error: unknown) {
       if (error instanceof Error) {
