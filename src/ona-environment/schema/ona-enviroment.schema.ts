@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { VisoObject } from 'src/viso-object/schema/viso-object.schema';
+import { VisoObject } from '../../viso-object/schema/viso-object.schema';
 
 @Schema({ timestamps: true })
 export class OnaEnvironment extends Document {

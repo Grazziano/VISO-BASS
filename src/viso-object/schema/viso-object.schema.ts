@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { OwnersModule } from 'src/owners/owners.module';
+import { OwnersModule } from '../../owners/owners.module';
 
 export type VisoObjectDocument = VisoObject & Document;
 
