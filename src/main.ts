@@ -1,15 +1,43 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+
+  // Configurar níveis de log baseado no ambiente
+  const logLevels =
+    process.env.NODE_ENV === 'production'
+      ? ['error', 'warn', 'log']
+      : ['error', 'warn', 'log', 'debug', 'verbose'];
+
+  const app = await NestFactory.create(AppModule, {
+    logger: logLevels as (
+      | 'error'
+      | 'warn'
+      | 'debug'
+      | 'log'
+      | 'verbose'
+      | 'fatal'
+    )[],
+  });
+
+  // Usar Winston logger como logger principal
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  logger.log(
+    `Aplicação iniciando em modo: ${process.env.NODE_ENV || 'development'}`,
+  );
+  logger.log(`Níveis de log ativos: ${logLevels.join(', ')}`);
 
   app.enableCors();
+  logger.log('CORS habilitado');
 
   app.useGlobalFilters(new HttpExceptionFilter());
+  logger.log('Filtros globais configurados');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +45,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  logger.log('Pipes de validação configurados');
 
   const config = new DocumentBuilder()
     .setTitle('VISO-B.A.S.S. API')
@@ -84,10 +113,17 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  logger.log('Documentação Swagger configurada em /api');
 
   const port = process.env.PORT || 3000;
 
   await app.listen(port, '0.0.0.0');
+  logger.log(`🚀 Aplicação rodando na porta ${port}`);
+  logger.log(`📚 Documentação disponível em: http://localhost:${port}/api`);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  const logger = new Logger('Bootstrap');
+  logger.error('Erro ao inicializar a aplicação:', error);
+  process.exit(1);
+});

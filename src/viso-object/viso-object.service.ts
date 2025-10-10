@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { plainToInstance } from 'class-transformer';
@@ -13,6 +14,8 @@ import { JwtPayload } from 'src/auth/types/jwt-payload.interface';
 
 @Injectable()
 export class VisoObjectService {
+  private readonly logger = new Logger(VisoObjectService.name);
+
   constructor(
     @InjectModel(VisoObject.name)
     private visoObjectModel: Model<VisoObjectDocument>,
@@ -23,46 +26,68 @@ export class VisoObjectService {
     user: JwtPayload,
   ): Promise<ResponseVisoObjectDto> {
     try {
-      const object = new this.visoObjectModel({
+      this.logger.log(
+        `Criando novo objeto VISO: ${createVisoObjectDto.obj_name} para usuário: ${user.email}`,
+      );
+
+      const visoObjectData = {
         ...createVisoObjectDto,
         obj_owner: user.userId,
-      });
+      };
 
-      const savedObject = await object.save();
-      return plainToInstance(ResponseVisoObjectDto, savedObject.toJSON());
+      const visoObject = new this.visoObjectModel(visoObjectData);
+      const savedVisoObject = await visoObject.save();
+
+      this.logger.log(`Objeto VISO criado com sucesso: ${savedVisoObject._id}`);
+
+      return plainToInstance(ResponseVisoObjectDto, savedVisoObject.toJSON());
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to create object: ${(error as Error).message}`,
+      this.logger.error(
+        `Erro ao criar objeto VISO: ${(error as Error).message}`,
+        (error as Error).stack,
       );
+      throw new InternalServerErrorException('Erro interno do servidor');
     }
   }
 
   async findAll(): Promise<ResponseVisoObjectDto[]> {
     try {
-      const objects = await this.visoObjectModel.find().lean().exec();
+      this.logger.debug('Buscando todos os objetos VISO');
 
-      return plainToInstance(ResponseVisoObjectDto, objects);
+      const visoObjects = await this.visoObjectModel.find().lean().exec();
+
+      this.logger.log(`${visoObjects.length} objetos VISO encontrados`);
+
+      return plainToInstance(ResponseVisoObjectDto, visoObjects);
     } catch (error) {
-      throw new InternalServerErrorException(
-        `Failed to find objects: ${(error as Error).message}`,
+      this.logger.error(
+        `Erro ao buscar objetos VISO: ${(error as Error).message}`,
+        (error as Error).stack,
       );
+      throw new InternalServerErrorException('Erro interno do servidor');
     }
   }
 
   async findOne(id: string): Promise<ResponseVisoObjectDto> {
-    try {
-      const object = await this.visoObjectModel.findById(id).lean().exec();
+    this.logger.debug(`Buscando objeto VISO por ID: ${id}`);
 
-      if (!object) {
+    try {
+      const visoObject = await this.visoObjectModel.findById(id).lean().exec();
+
+      if (!visoObject) {
+        this.logger.warn(`Objeto VISO não encontrado: ${id}`);
         throw new NotFoundException(`Object with id ${id} not found`);
       }
 
-      return plainToInstance(ResponseVisoObjectDto, object);
+      this.logger.log(`Objeto VISO encontrado: ${id}`);
+      return plainToInstance(ResponseVisoObjectDto, visoObject);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(
-        `Failed to find object: ${(error as Error).message}`,
+      this.logger.error(
+        `Erro ao buscar objeto VISO ${id}: ${(error as Error).message}`,
+        (error as Error).stack,
       );
+      throw new InternalServerErrorException('Erro interno do servidor');
     }
   }
 }
