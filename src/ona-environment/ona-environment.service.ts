@@ -11,12 +11,12 @@ export class OnaEnvironmentService {
     private onaEnvironmentModel: Model<OnaEnvironment>,
   ) {}
 
-  create(createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
+  async create(createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
     try {
       const onaEnvironment = new this.onaEnvironmentModel(
         createOnaEnvironmentDto,
       );
-      const savedOnaEnvironment = onaEnvironment.save();
+      const savedOnaEnvironment = await onaEnvironment.save();
       return savedOnaEnvironment;
     } catch (error: unknown) {
       if (error instanceof Error) {

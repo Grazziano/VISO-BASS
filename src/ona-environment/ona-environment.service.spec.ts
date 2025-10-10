@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { Test, TestingModule } from '@nestjs/testing';
 import { OnaEnvironmentService } from './ona-environment.service';
 import { getModelToken } from '@nestjs/mongoose';
@@ -6,7 +10,7 @@ import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 
 describe('OnaEnvironmentService', () => {
   let service: OnaEnvironmentService;
-  let mockOnaEnvironmentModel: Record<string, jest.Mock>;
+  let mockOnaEnvironmentModel: any;
 
   const mockOnaEnvironment = {
     _id: '507f1f77bcf86cd799439011',
@@ -29,11 +33,11 @@ describe('OnaEnvironmentService', () => {
   };
 
   beforeEach(async () => {
-    mockOnaEnvironmentModel = {
-      find: jest.fn(),
-      findById: jest.fn(),
+    mockOnaEnvironmentModel = jest.fn().mockImplementation(() => ({
       save: jest.fn(),
-    };
+    }));
+    (mockOnaEnvironmentModel as any).find = jest.fn();
+    (mockOnaEnvironmentModel as any).findById = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -77,23 +81,24 @@ describe('OnaEnvironmentService', () => {
     it('should create an ona environment successfully', async () => {
       const mockSavedEnvironment = {
         ...mockOnaEnvironment,
-        save: jest.fn().mockResolvedValue(mockOnaEnvironment),
       };
 
-      mockOnaEnvironmentModel.mockImplementation(() => mockSavedEnvironment);
+      const mockSave = jest.fn().mockResolvedValue(mockSavedEnvironment);
+      mockOnaEnvironmentModel.mockImplementation(() => ({
+        save: mockSave,
+      }));
 
       const result = await service.create(createOnaEnvironmentDto);
 
-      expect(mockSavedEnvironment.save).toHaveBeenCalled();
+      expect(mockSave).toHaveBeenCalled();
       expect(result).toBeDefined();
     });
 
     it('should throw Error when save fails', async () => {
-      const mockSavedEnvironment = {
-        save: jest.fn().mockRejectedValue(new Error('Database error')),
-      };
-
-      mockOnaEnvironmentModel.mockImplementation(() => mockSavedEnvironment);
+      const mockSave = jest.fn().mockRejectedValue(new Error('Database error'));
+      mockOnaEnvironmentModel.mockImplementation(() => ({
+        save: mockSave,
+      }));
 
       await expect(service.create(createOnaEnvironmentDto)).rejects.toThrow(
         'Failed to create onaEnvironment: Database error',
@@ -101,11 +106,10 @@ describe('OnaEnvironmentService', () => {
     });
 
     it('should throw Error for unknown error', async () => {
-      const mockSavedEnvironment = {
-        save: jest.fn().mockRejectedValue('Unknown error'),
-      };
-
-      mockOnaEnvironmentModel.mockImplementation(() => mockSavedEnvironment);
+      const mockSave = jest.fn().mockRejectedValue('Unknown error');
+      mockOnaEnvironmentModel.mockImplementation(() => ({
+        save: mockSave,
+      }));
 
       await expect(service.create(createOnaEnvironmentDto)).rejects.toThrow(
         'Failed to create onaEnvironment due to an unknown error',
