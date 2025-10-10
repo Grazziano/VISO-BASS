@@ -67,6 +67,7 @@ export class VisoClassService {
 
       return plainToInstance(VisoClassResponseDto, myClass);
     } catch (error) {
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException(
         `Failed to find class: ${(error as Error).message}`,
       );
