@@ -316,6 +316,9 @@ npm run test:e2e
 npm run test:cov
 ```
 
+![Demonstração da API](docs/testes_img.png)  
+<sub>*Relatório de testes unitários*</sub>
+
 ---
 
 ## 🚀 Como usar a API
