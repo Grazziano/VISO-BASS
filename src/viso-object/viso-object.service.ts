@@ -46,7 +46,7 @@ export class VisoObjectService {
         `Erro ao criar objeto VISO: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      throw new InternalServerErrorException('Erro interno do servidor');
+      throw new InternalServerErrorException('Failed to create object: Database error');
     }
   }
 
@@ -64,7 +64,7 @@ export class VisoObjectService {
         `Erro ao buscar objetos VISO: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      throw new InternalServerErrorException('Erro interno do servidor');
+      throw new InternalServerErrorException('Failed to find objects: Database error');
     }
   }
 
@@ -87,7 +87,7 @@ export class VisoObjectService {
         `Erro ao buscar objeto VISO ${id}: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      throw new InternalServerErrorException('Erro interno do servidor');
+      throw new InternalServerErrorException('Failed to find object: Database error');
     }
   }
 }
