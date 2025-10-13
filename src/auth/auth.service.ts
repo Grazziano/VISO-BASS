@@ -50,28 +50,19 @@ export class AuthService {
 
   login(user: any) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const payload = { email: user.email, sub: user._id };
+      const payload = { email: user.email, sub: user._id as string };
 
       this.logger.log(
         `Login realizado com sucesso para usuário: ${user.email}`,
       );
 
-      const userWithoutTimestamps = {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      }
-
       return {
         access_token: this.jwtService.sign(payload),
-        user: userWithoutTimestamps,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(
-        `Erro no login para usuário ${user.email}: ${error.message}`,
-        error.stack,
+        `Erro no login para usuário ${user?.email}: ${error?.message}`,
+        error?.stack,
       );
       throw error;
     }
