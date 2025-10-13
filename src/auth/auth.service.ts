@@ -57,8 +57,16 @@ export class AuthService {
         `Login realizado com sucesso para usuário: ${user.email}`,
       );
 
+      const userWithoutTimestamps = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+
       return {
         access_token: this.jwtService.sign(payload),
+        user: userWithoutTimestamps,
       };
     } catch (error) {
       this.logger.error(
