@@ -129,15 +129,15 @@ export class AuthController {
           description: 'Token JWT para autenticação',
           example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         },
-        user: {
-          type: 'object',
-          properties: {
-            _id: { type: 'string', example: '507f1f77bcf86cd799439011' },
-            name: { type: 'string', example: 'João Silva' },
-            email: { type: 'string', example: 'joao.silva@email.com' },
-            role: { type: 'string', example: 'user' },
-          },
-        },
+        // user: {
+        //   type: 'object',
+        //   properties: {
+        //     _id: { type: 'string', example: '507f1f77bcf86cd799439011' },
+        //     name: { type: 'string', example: 'João Silva' },
+        //     email: { type: 'string', example: 'joao.silva@email.com' },
+        //     role: { type: 'string', example: 'user' },
+        //   },
+        // },
       },
     },
   })
