@@ -13,6 +13,8 @@ import { classSeed } from './data/class.seed';
 // import { pagerankFriendshipSeed } from './data/pagerankFriendship.seed';
 import { onaEnvironmentSeed } from './data/onaEnviroment.seed';
 // import { interactionsSeed } from './data/interaction.seed';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class SeedService {
@@ -33,10 +35,80 @@ export class SeedService {
     private readonly interactionModel: Model<Interaction>,
   ) {}
 
+  private generateValidMAC(): string {
+    const hex = '0123456789ABCDEF';
+    const randomByte = () =>
+      hex[Math.floor(Math.random() * 16)] + hex[Math.floor(Math.random() * 16)];
+    return (
+      randomByte() +
+      ':' +
+      randomByte() +
+      ':' +
+      randomByte() +
+      ':' +
+      randomByte() +
+      ':' +
+      randomByte() +
+      ':' +
+      randomByte()
+    );
+  }
+
+  private resolveCsvPath(): string {
+    return path.resolve(process.cwd(), 'data', 'objects_profile.csv');
+  }
+
+  private csvFileExists(): boolean {
+    try {
+      return fs.existsSync(this.resolveCsvPath());
+    } catch {
+      return false;
+    }
+  }
+
+  private parseObjectsCsv(csvContent: string): Array<{
+    deviceType: number;
+    offeredServices: number[];
+    requiredApps: number[];
+  }> {
+    const lines = csvContent
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+    if (lines.length < 2) return [];
+
+    const rawHeaders = lines[0].split(',');
+    const headers = rawHeaders.map((h) => h.replace(/\s+/g, ''));
+
+    const deviceTypeIndex = headers.indexOf('device_type');
+    const offServiceIndexes = headers
+      .map((h, i) => (h.startsWith('id_off_service_') ? i : -1))
+      .filter((i) => i !== -1);
+    const reqAppIndexes = headers
+      .map((h, i) => (h.startsWith('id_req_application_') ? i : -1))
+      .filter((i) => i !== -1);
+
+    const rows = lines.slice(1);
+    const parsed = rows.map((row) => {
+      const cols = row.split(',');
+      const deviceType = parseInt(cols[deviceTypeIndex] || '0', 10) || 0;
+      const offeredServices: number[] = offServiceIndexes
+        .map((i) => parseInt((cols[i] || '').trim(), 10))
+        .filter((n) => !isNaN(n));
+      const requiredApps: number[] = reqAppIndexes
+        .map((i) => parseInt((cols[i] || '').trim(), 10))
+        .filter((n) => !isNaN(n));
+      return { deviceType, offeredServices, requiredApps };
+    });
+
+    return parsed;
+  }
+
   async run() {
     this.logger.log('🚀 Starting seeding...');
     await this.seedOwners();
-    await this.seedObjects();
+    // await this.seedObjects();
+    await this.seedObjectsCsv();
     await this.seedClasses();
     await this.seedPagerankFriendship();
     await this.seedOnaEnvironment();
@@ -59,6 +131,50 @@ export class SeedService {
       })
       .exec();
 
+    const objectSeedWithOwnerId = objectSeed.map((object) => ({
+      ...object,
+      obj_owner: owner?._id,
+    }));
+
+    await this.visoObjectsModel.insertMany(objectSeedWithOwnerId);
+    this.logger.log(`🌱 Objects seeded: ${objectSeedWithOwnerId.length}`);
+  }
+
+  private async seedObjectsCsv() {
+    await this.visoObjectsModel.deleteMany({});
+
+    const owner =
+      (await this.ownersModel
+        .findOne({ email: 'joao.silva@example.com' })
+        .exec()) || (await this.ownersModel.findOne().exec());
+
+    if (this.csvFileExists()) {
+      const csvPath = this.resolveCsvPath();
+      this.logger.log(`📄 CSV encontrado: ${csvPath}`);
+      const csvContent = fs.readFileSync(csvPath, 'utf-8');
+      const parsed = this.parseObjectsCsv(csvContent);
+
+      const objectsFromCsv = parsed.map((item, idx) => ({
+        obj_networkMAC: this.generateValidMAC(),
+        obj_name: `Dispositivo tipo ${item.deviceType}`,
+        obj_owner: owner?._id,
+        obj_model: `Tipo ${item.deviceType}`,
+        obj_brand: `Marca ${item.deviceType}`,
+        obj_function: item.offeredServices.map((id) => `service_${id}`),
+        obj_restriction: item.requiredApps.map((id) => `req_app_${id}`),
+        obj_limitation: ['none'],
+        obj_access: (idx % 3) + 1,
+        obj_location: (idx % 4) + 1,
+        obj_qualification: (idx % 5) + 1,
+        obj_status: 1,
+      }));
+
+      await this.visoObjectsModel.insertMany(objectsFromCsv);
+      this.logger.log(`🌱 Objects seeded (CSV): ${objectsFromCsv.length}`);
+      return;
+    }
+
+    // Fallback para seed estático
     const objectSeedWithOwnerId = objectSeed.map((object) => ({
       ...object,
       obj_owner: owner?._id,
