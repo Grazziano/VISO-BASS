@@ -30,9 +30,9 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 
 ## 📌 Status do Projeto
 
-| Status Geral          | API             | Banco de Dados | Documentação    | Testes          |
-| --------------------- | --------------- | -------------- | --------------- | --------------- |
-| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído   | ✅ Em andamento | ✅ Em andamento |
+| Status Geral          | API             | Banco de Dados | Documentação | Testes       |
+| --------------------- | --------------- | -------------- | ------------ | ------------ |
+| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído   | ✅ Concluído | ✅ Concluído |
 
 ---
 
