@@ -16,7 +16,7 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 [![GitHub last commit](https://img.shields.io/github/last-commit/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/commits/main)
 [![GitHub issues](https://img.shields.io/github/issues/Grazziano/VISO-BASS?style=flat-square)](https://github.com/Grazziano/VISO-BASS/issues)
 
-<!-- > **API desenvolvida com NestJS e MongoDB para persistência de dados no contexto da Social IoT**, seguindo a proposta estrutural da abordagem **VISO**.  
+<!-- > **API desenvolvida com NestJS e MongoDB para persistência de dados no contexto da Social IoT**, seguindo a proposta estrutural da abordagem **VISO**.
 > Parte da pesquisa de mestrado: **"VISO-BASS: Uma Proposta Estrutural para Persistência de Dados na Social IoT"**. -->
 
 ---
@@ -24,15 +24,15 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 ## 📸 Demonstração
 
 ![Demonstração da API](docs/gif_rodando_api.gif)  
-<sub>*Api rodando*</sub>
+<sub>_Api rodando_</sub>
 
 ---
 
 ## 📌 Status do Projeto
 
-| Status Geral      | API | Banco de Dados | Documentação | Testes |
-|-------------------|-----|---------------|--------------|--------|
-| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído | 🛠️ Em andamento | 🛠️ Em andamento |
+| Status Geral          | API             | Banco de Dados | Documentação    | Testes          |
+| --------------------- | --------------- | -------------- | --------------- | --------------- |
+| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído   | ✅ Em andamento | ✅ Em andamento |
 
 ---
 
@@ -74,7 +74,7 @@ test/                        # Testes unitários
 .gitignore                   # Arquivos e pastas a serem ignorados pelo Git
 docker-compose.yml           # Configuração Docker Compose para rodar API + MongoDB + Mongo Express
 Dockerfile                   # Instruções para criar a imagem Docker da API
-````
+```
 
 ---
 
@@ -92,9 +92,9 @@ O diagrama abaixo representa a modelagem utilizada no projeto, destacando as ent
 
 ## ⚙️ Pré-requisitos
 
-* [Node.js](https://nodejs.org/) **>= 18**
-* [MongoDB](https://www.mongodb.com/) ou [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-* [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) **>= 18**
+- [MongoDB](https://www.mongodb.com/) ou [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- [Git](https://git-scm.com/)
 
 ---
 
@@ -158,16 +158,16 @@ http://localhost:3000
 
 O projeto possui um **ambiente completo via Docker Compose**, incluindo:
 
-* **API NestJS** (porta `3000`)
-* **MongoDB** (porta `27017`)
-* **Mongo Express** – interface web para o banco (porta `8081`)
+- **API NestJS** (porta `3000`)
+- **MongoDB** (porta `27017`)
+- **Mongo Express** – interface web para o banco (porta `8081`)
 
 ---
 
 ### 📋 Pré-requisitos
 
-* [Docker](https://www.docker.com/get-started) instalado
-* [Docker Compose](https://docs.docker.com/compose/) instalado
+- [Docker](https://www.docker.com/get-started) instalado
+- [Docker Compose](https://docs.docker.com/compose/) instalado
 
 ---
 
@@ -194,11 +194,11 @@ docker-compose up --build
 
 Após a inicialização:
 
-* **API:** [http://localhost:3000](http://localhost:3000)
-* **Mongo Express:** [http://localhost:8081](http://localhost:8081)
+- **API:** [http://localhost:3000](http://localhost:3000)
+- **Mongo Express:** [http://localhost:8081](http://localhost:8081)
 
-  * Usuário: `admin`
-  * Senha: `admin`
+  - Usuário: `admin`
+  - Senha: `admin`
 
 ---
 
@@ -218,9 +218,9 @@ docker-compose down -v
 
 ### 💡 Dicas
 
-* O Mongo Express é útil para **visualizar coleções, inserir, editar e excluir documentos** diretamente via navegador.
-* As alterações feitas no Mongo Express são refletidas imediatamente na API.
-* O volume `mongo_data` garante que os dados do banco persistam mesmo que os containers sejam reiniciados.
+- O Mongo Express é útil para **visualizar coleções, inserir, editar e excluir documentos** diretamente via navegador.
+- As alterações feitas no Mongo Express são refletidas imediatamente na API.
+- O volume `mongo_data` garante que os dados do banco persistam mesmo que os containers sejam reiniciados.
 
 ---
 
@@ -233,6 +233,7 @@ A aplicação está disponível em produção no seguinte endereço:
 ### 📋 Status do Deploy
 
 [![Render Status](https://img.shields.io/badge/Render-Deploy%20Active-46E3B7?style=flat-square&logo=render&logoColor=white)](https://viso-bass.onrender.com)
+
 <!-- [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m795316729-2a46567d4b873d6c0ccee9f0?style=flat-square)](https://viso-bass.onrender.com) -->
 
 ### ⚠️ Importante sobre o Deploy
@@ -253,12 +254,12 @@ O projeto conta com **seeders** para popular o banco de dados com dados iniciais
 ```bash
 # Rodar todos os seeders
 npm run seed
-````
+```
 
 ### 💡 Observações
 
-* Certifique-se de que o **MongoDB** está rodando e que o arquivo `.env` contém a variável `MONGO_URI` configurada corretamente.
-* Caso use **Docker**, suba os containers antes de executar os seeders:
+- Certifique-se de que o **MongoDB** está rodando e que o arquivo `.env` contém a variável `MONGO_URI` configurada corretamente.
+- Caso use **Docker**, suba os containers antes de executar os seeders:
 
 ```bash
 docker-compose up -d
@@ -271,35 +272,35 @@ npm run seed
 
 ### 🔓 Rotas Públicas (sem autenticação)
 
-| Método | Rota                                       | Descrição                                          |
-| ------ | ------------------------------------------ | -------------------------------------------------- |
-| GET    | /api                                       | Lista todos os endpoints                           |
-| POST   | /auth/register                             | Cria um novo usuário                               |
-| POST   | /auth/login                                | Efetua login                                       |
+| Método | Rota           | Descrição                |
+| ------ | -------------- | ------------------------ |
+| GET    | /api           | Lista todos os endpoints |
+| POST   | /auth/register | Cria um novo usuário     |
+| POST   | /auth/login    | Efetua login             |
 
 ### 🔐 Rotas Protegidas (requer autenticação)
 
-| Método | Rota                                       | Descrição                                          |
-| ------ | ------------------------------------------ | -------------------------------------------------- |
-| GET    | /auth/me                                   | Retorna dados do usuário                           |
-| GET    | /object                                    | Lista todos os objetos                             |
-| GET    | /object/:id                                | Encontra objeto pelo id                            |
-| POST   | /object                                    | Cria um novo objeto                                |
-| GET    | /class                                     | Lista todas as classes                             |
-| GET    | /class/:id                                 | Encontra classe pelo id                            |
-| POST   | /class                                     | Cria uma nova classe                               |
-| GET    | /interaction                               | Lista todas as interações                          |
-| GET    | /interaction/time-series                   | Lista interações em série temporal (para gráficos) |
-| GET    | /interaction/count-by-day                  | Lista interações por mes/dia                       |
-| GET    | /interaction/:id                           | Encontra interações por id                         |
-| POST   | /interaction                               | Cria uma nova interação                            |
-| GET    | /ona-enviroment                            | Lista todos os ambientes                           |
-| GET    | /ona-enviroment/:id                        | Encontra ambiente por id                           |
-| POST   | /ona-enviroment                            | Cria um novo ambiente                              |
-| GET    | /pagerank-friendship                       | Lista relações de amizade                          |
-| GET    | /pagerank-friendship/:id                   | Encontra amizade por id                            |
-| POST   | /pagerank-friendship                       | Cria uma relação de amizade                        |
-| GET    | /pagerank-friendship/relevant?limit=10     | Lista as relações mais relevantes                  |
+| Método | Rota                                   | Descrição                                          |
+| ------ | -------------------------------------- | -------------------------------------------------- |
+| GET    | /auth/me                               | Retorna dados do usuário                           |
+| GET    | /object                                | Lista todos os objetos                             |
+| GET    | /object/:id                            | Encontra objeto pelo id                            |
+| POST   | /object                                | Cria um novo objeto                                |
+| GET    | /class                                 | Lista todas as classes                             |
+| GET    | /class/:id                             | Encontra classe pelo id                            |
+| POST   | /class                                 | Cria uma nova classe                               |
+| GET    | /interaction                           | Lista todas as interações                          |
+| GET    | /interaction/time-series               | Lista interações em série temporal (para gráficos) |
+| GET    | /interaction/count-by-day              | Lista interações por mes/dia                       |
+| GET    | /interaction/:id                       | Encontra interações por id                         |
+| POST   | /interaction                           | Cria uma nova interação                            |
+| GET    | /ona-enviroment                        | Lista todos os ambientes                           |
+| GET    | /ona-enviroment/:id                    | Encontra ambiente por id                           |
+| POST   | /ona-enviroment                        | Cria um novo ambiente                              |
+| GET    | /pagerank-friendship                   | Lista relações de amizade                          |
+| GET    | /pagerank-friendship/:id               | Encontra amizade por id                            |
+| POST   | /pagerank-friendship                   | Cria uma relação de amizade                        |
+| GET    | /pagerank-friendship/relevant?limit=10 | Lista as relações mais relevantes                  |
 
 ---
 
@@ -317,7 +318,7 @@ npm run test:cov
 ```
 
 ![Demonstração da API](docs/testes_img.png)  
-<sub>*Relatório de testes unitários*</sub>
+<sub>_Relatório de testes unitários_</sub>
 
 ---
 
@@ -330,8 +331,8 @@ npm run test:cov
 
 > A URL base depende do ambiente:
 >
-> * Local: `http://localhost:3000`
-> * Produção: `https://viso-bass.onrender.com`
+> - Local: `http://localhost:3000`
+> - Produção: `https://viso-bass.onrender.com`
 
 Todas as rotas abaixo são relativas a essa base.
 
@@ -366,7 +367,7 @@ Content-Type: application/json
 
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
@@ -414,13 +415,13 @@ curl -X POST http://localhost:3000/object \
 
 ```js
 async function login() {
-  const response = await fetch("http://localhost:3000/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const response = await fetch('http://localhost:3000/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: "meu@email.com",
-      password: "senha123"
-    })
+      email: 'meu@email.com',
+      password: 'senha123',
+    }),
   });
 
   const data = await response.json();
@@ -430,8 +431,8 @@ async function login() {
 async function getObjects() {
   const token = await login();
 
-  const response = await fetch("http://localhost:3000/object", {
-    headers: { Authorization: `Bearer ${token}` }
+  const response = await fetch('http://localhost:3000/object', {
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   const objects = await response.json();
@@ -446,22 +447,22 @@ getObjects();
 ### ⚙️ Exemplo em JavaScript (`Axios`)
 
 ```js
-import axios from "axios";
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://localhost:3000"
+  baseURL: 'http://localhost:3000',
 });
 
 async function main() {
-  const login = await api.post("/auth/login", {
-    email: "meu@email.com",
-    password: "senha123"
+  const login = await api.post('/auth/login', {
+    email: 'meu@email.com',
+    password: 'senha123',
   });
 
   const token = login.data.access_token;
 
-  const objects = await api.get("/object", {
-    headers: { Authorization: `Bearer ${token}` }
+  const objects = await api.get('/object', {
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   console.log(objects.data);
@@ -477,12 +478,13 @@ main();
 1. Importe a coleção `viso.postman_collection.json` na pasta docs/postman.
 2. Configure variáveis:
 
-   * `base_url` = `http://localhost:3000`
-   * `token` = `<seu_token_jwt>`
+   - `base_url` = `http://localhost:3000`
+   - `token` = `<seu_token_jwt>`
+
 3. Teste os fluxos:
 
-   * `/auth/register` → `/auth/login` → `/auth/me`
-   * `/object` → `/class` → `/interaction`
+   - `/auth/register` → `/auth/login` → `/auth/me`
+   - `/object` → `/class` → `/interaction`
 
 ---
 
@@ -507,17 +509,17 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para mais informações
 
 ## 🔗 Links
 
-* **Repositório:** [VISO-BASS no GitHub](https://github.com/Grazziano/VISO-BASS)
-* **Outros Projetos relacionados:** [Repositórios de Pesquisa - UFPel](https://grazziano.github.io/projetos-siot-ufpel/)
-* **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
-* **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
-
+- **Repositório:** [VISO-BASS no GitHub](https://github.com/Grazziano/VISO-BASS)
+- **Outros Projetos relacionados:** [Repositórios de Pesquisa - UFPel](https://grazziano.github.io/projetos-siot-ufpel/)
+- **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
+- **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
 
 ## 🌟 Contato & Suporte
 
 **Precisa de ajuda ou quer colaborar?** Estou disponível para trocar ideias e parcerias!
 
 📬 **Meios de contato:**
+
 - [LinkedIn](https://www.linkedin.com/in/grazziano-fagundes/)
 
 ---
