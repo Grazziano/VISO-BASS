@@ -62,7 +62,7 @@ export class AuthService {
     } catch (error: any) {
       this.logger.error(
         `Erro no login para usuário ${user?.email}: ${error?.message}`,
-        error?.stack,
+        (error as Error).stack,
       );
       throw error;
     }
@@ -80,8 +80,8 @@ export class AuthService {
       return userInfo;
     } catch (error) {
       this.logger.error(
-        `Erro ao buscar informações do usuário ${user.email}: ${error.message}`,
-        error.stack,
+        `Erro ao buscar informações do usuário ${user.email}: ${(error as Error).message}`,
+        (error as Error).stack,
       );
       throw error;
     }
