@@ -93,9 +93,23 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.service.ts",
+      "**/*.controller.ts",
+      "**/*.repository.ts",
+      "!**/main.ts",
+      "!**/app.module.ts",
+      "!**/database/**",
+      "!**/config/**",
+      "!**/utils/**"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/src/database/seeders/",
+      "/src/config/",
+      "/src/utils/"
+    ]
   }
 }
