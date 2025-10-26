@@ -64,17 +64,43 @@ export class PagerankFriendshipService {
     }
   }
 
+  // async findMostRelevant(limit: number) {
+  //   const results = await this.pagerankFriendshipModel.find().lean();
+
+  //   // Lógica para ordenar por número de adjacências (maior relevância = mais conexões)
+  //   const sorted = results
+  //     .map((result) => ({
+  //       ...result,
+  //       relevanceScore: result.rank_adjacency.length,
+  //     }))
+  //     .sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+  //   return sorted.slice(0, limit);
+  // }
+
   async findMostRelevant(limit: number) {
     const results = await this.pagerankFriendshipModel.find().lean();
 
-    // Lógica para ordenar por número de adjacências (maior relevância = mais conexões)
     const sorted = results
-      .map((result) => ({
-        ...result,
-        relevanceScore: result.rank_adjacency.length,
-      }))
+      .map((result) => {
+        // Garante que rank_adjacency é um array válido
+        const adjacency = Array.isArray(result.rank_adjacency)
+          ? result.rank_adjacency
+          : [];
+
+        // Conta apenas IDs únicos
+        const uniqueAdjacency = new Set(adjacency);
+        const uniqueCount = uniqueAdjacency.size;
+
+        return {
+          ...result,
+          relevanceScore: uniqueCount, // número de IDs diferentes
+        };
+      })
+      // Ordena em ordem decrescente pelo número de IDs únicos
       .sort((a, b) => b.relevanceScore - a.relevanceScore);
 
+    // Retorna apenas o número de resultados solicitado
     return sorted.slice(0, limit);
   }
 }
