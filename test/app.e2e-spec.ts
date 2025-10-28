@@ -20,6 +20,9 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect((res) => {
+        // The root route renders an HTML welcome page — assert on a stable fragment
+        expect(res.text).toContain('API VISO-BASS');
+      });
   });
 });
