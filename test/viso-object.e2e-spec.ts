@@ -1,83 +1,68 @@
-import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
-import { AuthGuard } from '@nestjs/passport';
-import { VisoObjectService } from '../src/viso-object/viso-object.service';
+import type { App } from 'supertest/types';
+import { createTestApp, closeTestApp } from './e2e-utils';
+import type { MongoMemoryServer } from 'mongodb-memory-server';
 
 describe('VisoObject (e2e)', () => {
   let app: INestApplication;
-
-  const mockVisoObjectService = {
-    create: jest
-      .fn()
-      .mockImplementation((dto: any, user: any) =>
-        Promise.resolve({ ...dto, _id: '1', owner: user }),
-      ),
-    findAll: jest
-      .fn()
-      .mockResolvedValue([
-        { _id: '1', name: 'obj', description: 'd', owner: { email: 'a' } },
-      ]),
-    findOne: jest
-      .fn()
-      .mockImplementation((id: string) =>
-        Promise.resolve({ _id: id, name: 'obj' }),
-      ),
-  };
+  let mongoServer: MongoMemoryServer;
+  let createdId: string | undefined;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(VisoObjectService)
-      .useValue(mockVisoObjectService)
-      .overrideGuard(AuthGuard('jwt'))
-      .useValue({
-        canActivate: (context: ExecutionContext) => {
-          const req = context.switchToHttp().getRequest();
-          req.user = { _id: 'ownerId', email: 'owner@example.com' };
-          return true;
-        },
-      })
-      .compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
+    const created = await createTestApp({
+      userId: 'frodoId',
+      email: 'frodo.baggins@shire.middleearth',
+    });
+    app = created.app;
+    mongoServer = created.mongoServer;
+    // createTestApp already overrides the AuthGuard when a mock user is provided
   });
 
   afterAll(async () => {
-    await app.close();
+    await closeTestApp(app, mongoServer);
   });
 
-  it('/object (POST) 201', () => {
-    return request(app.getHttpServer())
+  it('/object (POST) 201', async () => {
+    const payload = {
+      obj_networkMAC: '00:1B:44:11:3A:B7',
+      obj_name: 'Test Object',
+      obj_model: 'ModelX',
+      obj_brand: 'BrandY',
+      obj_function: ['temperature_sensing'],
+      obj_restriction: ['indoor_only'],
+      obj_limitation: ['battery_powered'],
+      obj_access: 5,
+      obj_location: 101,
+      obj_qualification: 85,
+      obj_status: 1,
+    };
+
+    const res = await request(app.getHttpServer() as unknown as App)
       .post('/object')
-      .send({ name: 'obj', description: 'desc' })
-      .expect(201)
-      .expect((res) => {
-        expect(res.body).toHaveProperty('_id');
-        expect(res.body.name).toBe('obj');
-        expect(res.body.owner).toMatchObject({ email: 'owner@example.com' });
-      });
+      .send(payload)
+      .expect(201);
+    const body = res.body as { _id: string; obj_name?: string };
+    expect(body).toHaveProperty('_id');
+    createdId = body._id;
+    expect(body.obj_name).toBe('Test Object');
   });
 
-  it('/object (GET) 200', () => {
-    return request(app.getHttpServer())
+  it('/object (GET) 200', async () => {
+    const res = await request(app.getHttpServer() as unknown as App)
       .get('/object')
-      .expect(200)
-      .expect((res) => {
-        expect(Array.isArray(res.body)).toBeTruthy();
-        expect(res.body[0].name).toBe('obj');
-      });
+      .expect(200);
+    const list = res.body as Array<{ _id: string }>;
+    expect(Array.isArray(list)).toBeTruthy();
+    expect(list.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('/object/:id (GET) 200', () => {
-    return request(app.getHttpServer())
-      .get('/object/123')
-      .expect(200)
-      .expect((res) => {
-        expect(res.body._id).toBe('123');
-      });
+  it('/object/:id (GET) 200', async () => {
+    const id = createdId || '507f1f77bcf86cd799439011';
+    const res = await request(app.getHttpServer() as unknown as App)
+      .get(`/object/${id}`)
+      .expect(200);
+    const obj = res.body as { _id: string };
+    expect(obj._id).toBe(id);
   });
 });
