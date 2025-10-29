@@ -1,0 +1,69 @@
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import type { App } from 'supertest/types';
+import { createTestApp, closeTestApp } from './e2e-utils';
+
+describe('Auth (e2e)', () => {
+  let app: INestApplication;
+  let mongoServer: import('mongodb-memory-server').MongoMemoryServer;
+  let jwtToken: string | undefined;
+
+  beforeAll(async () => {
+    // Ensure JWT env for JwtModule
+    process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+    process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '3600s';
+
+    const created = await createTestApp();
+    app = created.app;
+    mongoServer = created.mongoServer;
+  });
+
+  afterAll(async () => {
+    await closeTestApp(app, mongoServer);
+  });
+
+  it('/auth/register (POST) 201', async () => {
+    const payload = {
+      name: 'Gandalf The Grey',
+      email: `gandalf.thegrey+${Date.now()}@istari.middleearth`,
+      password: 'gandalfstrongpass',
+    };
+
+    const res = await request(app.getHttpServer() as unknown as App)
+      .post('/auth/register')
+      .send(payload)
+      .expect(201);
+    const body = res.body as { _id: string; email: string };
+    expect(body).toHaveProperty('_id');
+    expect(body.email).toBe(payload.email);
+  });
+
+  it('/auth/login (POST) 200', async () => {
+    const credentials = {
+      email: 'gandalf.thegrey@istari.middleearth',
+      password: 'gandalfstrongpass',
+    };
+
+    const res = await request(app.getHttpServer() as unknown as App)
+      .post('/auth/login')
+      .send(credentials)
+      .expect((r) => {
+        if (![200, 201].includes(r.status))
+          throw new Error(`Unexpected status ${r.status}`);
+      });
+    const body = res.body as { access_token?: string };
+    expect(body.access_token).toBeDefined();
+    jwtToken = body.access_token;
+  });
+
+  it('/auth/me (GET) 200', async () => {
+    expect(jwtToken).toBeDefined();
+    const res = await request(app.getHttpServer() as unknown as App)
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${jwtToken}`)
+      .expect(200);
+
+    const body = res.body as { email: string };
+    expect(body.email).toBe('gandalf.thegrey@istari.middleearth');
+  });
+});
