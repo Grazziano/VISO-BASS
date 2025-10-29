@@ -491,12 +491,15 @@ main();
 
 ## 🧰 Scripts úteis
 
-| Comando             | Descrição                                    |
-| :------------------ | :------------------------------------------- |
-| `npm run start`     | Inicia o servidor                            |
-| `npm run start:dev` | Inicia com hot-reload (modo desenvolvimento) |
-| `npm run build`     | Compila o projeto TypeScript                 |
-| `npm run test`      | Executa testes unitários                     |
+| Comando             | Descrição                                                             |
+| :------------------ | :-------------------------------------------------------------------- |
+| `npm start`         | Inicia o servidor                                                     |
+| `npm run start:dev` | Inicia com hot-reload (modo desenvolvimento)                          |
+| `npm run build`     | Compila o projeto TypeScript                                          |
+| `npm run test`      | Executa testes unitários                                              |
+| `npm run test:cov`  | Executa testes e gera relatório de cobertura de código                |
+| `npm run test:e2e`  | Executa testes End-to-End (e2e)                                       |
+| `npm run seed`      | Executa o seeding (popula o banco de dados com dados iniciais/falsos) |
 
 </details>
 
