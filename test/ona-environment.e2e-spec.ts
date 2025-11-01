@@ -3,6 +3,9 @@ import * as request from 'supertest';
 import type { App } from 'supertest/types';
 import { createTestApp, closeTestApp } from './e2e-utils';
 
+// Standardized e2e template
+jest.setTimeout(30000);
+
 describe('OnaEnvironment (e2e)', () => {
   let app: INestApplication;
   let mongoServer: import('mongodb-memory-server').MongoMemoryServer;
@@ -32,11 +35,10 @@ describe('OnaEnvironment (e2e)', () => {
       obj_status: 1,
     };
 
-    const res = await request(app.getHttpServer() as unknown as App)
-      .post('/object')
-      .send(payload)
-      .expect(201);
-    objectId = res.body._id;
+    const server = app.getHttpServer() as unknown as App;
+    const res = await request(server).post('/object').send(payload).expect(201);
+    const body = res.body as { _id: string };
+    objectId = body._id;
   });
 
   afterAll(async () => {

@@ -36,19 +36,22 @@ describe('Interaction (e2e)', () => {
       obj_status: 1,
     };
 
-    const resA = await request(app.getHttpServer() as unknown as App)
+    const server = app.getHttpServer() as unknown as App;
+    const resA = await request(server)
       .post('/object')
       .send(payload)
       .expect(201);
-    objAId = resA.body._id;
+    const bodyA = resA.body as { _id: string };
+    objAId = bodyA._id;
 
     payload.obj_networkMAC = '00:1B:44:11:3A:B2';
     payload.obj_name = 'Interaction Obj B';
-    const resB = await request(app.getHttpServer() as unknown as App)
+    const resB = await request(server)
       .post('/object')
       .send(payload)
       .expect(201);
-    objBId = resB.body._id;
+    const bodyB = resB.body as { _id: string };
+    objBId = bodyB._id;
   });
 
   afterAll(async () => {
@@ -65,11 +68,13 @@ describe('Interaction (e2e)', () => {
       inter_service: 1,
     };
 
-    const res = await request(app.getHttpServer() as unknown as App)
+    const server = app.getHttpServer() as unknown as App;
+    const res = await request(server)
       .post('/interaction')
       .send(payload)
       .expect(201);
-    interactionId = res.body._id;
+    const body = res.body as { _id: string };
+    interactionId = body._id;
     expect(interactionId).toBeDefined();
   });
 

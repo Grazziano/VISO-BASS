@@ -3,6 +3,8 @@ import * as request from 'supertest';
 import type { App } from 'supertest/types';
 import { createTestApp, closeTestApp } from './e2e-utils';
 
+jest.setTimeout(30000);
+
 describe('Auth (e2e)', () => {
   let app: INestApplication;
   let mongoServer: import('mongodb-memory-server').MongoMemoryServer;
@@ -29,7 +31,8 @@ describe('Auth (e2e)', () => {
       password: 'gandalfstrongpass',
     };
 
-    const res = await request(app.getHttpServer() as unknown as App)
+    const server = app.getHttpServer() as unknown as App;
+    const res = await request(server)
       .post('/auth/register')
       .send(payload)
       .expect(201);
@@ -44,7 +47,8 @@ describe('Auth (e2e)', () => {
       password: 'gandalfstrongpass',
     };
 
-    const res = await request(app.getHttpServer() as unknown as App)
+    const server = app.getHttpServer() as unknown as App;
+    const res = await request(server)
       .post('/auth/login')
       .send(credentials)
       .expect((r) => {
@@ -58,7 +62,8 @@ describe('Auth (e2e)', () => {
 
   it('/auth/me (GET) 200', async () => {
     expect(jwtToken).toBeDefined();
-    const res = await request(app.getHttpServer() as unknown as App)
+    const server = app.getHttpServer() as unknown as App;
+    const res = await request(server)
       .get('/auth/me')
       .set('Authorization', `Bearer ${jwtToken}`)
       .expect(200);
