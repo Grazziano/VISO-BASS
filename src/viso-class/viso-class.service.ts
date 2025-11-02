@@ -25,7 +25,7 @@ export class VisoClassService {
   ): Promise<VisoClassResponseDto> {
     try {
       this.logger.log(
-        `Criando nova classe VISO: ${createVisoClassDto.class_name}`,
+        `Criando nova classe VISO: ${String(createVisoClassDto.class_name)}`,
       );
 
       for (const object of createVisoClassDto.objects) {
@@ -38,7 +38,9 @@ export class VisoClassService {
       const newMyClass = new this.visoClassModel(createVisoClassDto);
       const savedMyClass = await newMyClass.save();
 
-      this.logger.log(`Classe VISO criada com sucesso: ${savedMyClass._id}`);
+      this.logger.log(
+        `Classe VISO criada com sucesso: ${String(savedMyClass._id)}`,
+      );
 
       return plainToInstance(VisoClassResponseDto, savedMyClass.toJSON());
     } catch (error) {

@@ -65,6 +65,7 @@ describe('AuthService', () => {
       const email = 'test@example.com';
       const password = 'plainPassword';
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       ownersService.findByEmail.mockResolvedValue(mockUser as any);
       mockedBcrypt.compare.mockResolvedValue(true as never);
 
@@ -72,6 +73,7 @@ describe('AuthService', () => {
       const result = await service.validateUser(email, password);
 
       // Assert
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(email);
       expect(bcrypt.compare).toHaveBeenCalledWith(password, mockUser.password);
       expect(result).toEqual({
@@ -93,7 +95,9 @@ describe('AuthService', () => {
       await expect(service.validateUser(email, password)).rejects.toThrow(
         UnauthorizedException,
       );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(email);
+
       expect(bcrypt.compare).not.toHaveBeenCalled();
     });
 
@@ -102,14 +106,18 @@ describe('AuthService', () => {
       const email = 'test@example.com';
       const password = 'wrongPassword';
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       ownersService.findByEmail.mockResolvedValue(mockUser as any);
+
       mockedBcrypt.compare.mockResolvedValue(false as never);
 
       // Act & Assert
       await expect(service.validateUser(email, password)).rejects.toThrow(
         UnauthorizedException,
       );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(email);
+
       expect(bcrypt.compare).toHaveBeenCalledWith(password, mockUser.password);
     });
 
@@ -124,6 +132,7 @@ describe('AuthService', () => {
       await expect(service.validateUser(email, password)).rejects.toThrow(
         UnauthorizedException,
       );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(email);
     });
   });
@@ -143,6 +152,7 @@ describe('AuthService', () => {
       const result = service.login(user);
 
       // Assert
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jwtService.sign).toHaveBeenCalledWith({
         email: user.email,
         sub: user._id,
@@ -167,6 +177,7 @@ describe('AuthService', () => {
       const result = await service.me(jwtPayload);
 
       // Assert
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(jwtPayload.email);
       expect(result).toBe(mockUser);
     });
@@ -184,6 +195,7 @@ describe('AuthService', () => {
       const result = await service.me(jwtPayload);
 
       // Assert
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(ownersService.findByEmail).toHaveBeenCalledWith(jwtPayload.email);
       expect(result).toBeNull();
     });

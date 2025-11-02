@@ -31,7 +31,7 @@ export class LoggingInterceptor implements NestInterceptor {
     });
 
     return next.handle().pipe(
-      tap((data) => {
+      tap(() => {
         const endTime = Date.now();
         const duration = endTime - startTime;
         const { statusCode } = response;
@@ -47,10 +47,23 @@ export class LoggingInterceptor implements NestInterceptor {
           timestamp: new Date().toISOString(),
         });
       }),
-      catchError((error) => {
+      catchError((err: unknown) => {
         const endTime = Date.now();
         const duration = endTime - startTime;
-        const statusCode = error.status || 500;
+
+        // Normalize error information safely
+        // Normalize error information safely - avoid accessing unknown members directly
+        const errorMessage: string = (() => {
+          try {
+            if (typeof err === 'object' && err !== null)
+              return JSON.stringify(err);
+            return String(err);
+          } catch {
+            return String(err);
+          }
+        })();
+        const errorStack: string | undefined = undefined;
+        const statusCode = 500;
 
         // Log do erro
         this.logger.error({
@@ -59,13 +72,13 @@ export class LoggingInterceptor implements NestInterceptor {
           url,
           statusCode,
           duration: `${duration}ms`,
-          error: error.message,
-          stack: error.stack,
+          error: errorMessage,
+          stack: errorStack,
           ip,
           timestamp: new Date().toISOString(),
         });
 
-        throw error;
+        throw err;
       }),
     );
   }

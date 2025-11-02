@@ -32,8 +32,16 @@ export class AuthService {
       }
 
       this.logger.log(`Usuário validado com sucesso: ${email}`);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unused-vars
-      const { password, ...result } = user.toObject();
+      // Build a safe user object without the password to avoid unsafe `any` usage
+      const uid = (user as unknown as { _id?: unknown })._id;
+      const idStr =
+        typeof uid === 'string' || typeof uid === 'number' ? String(uid) : '';
+      const result = {
+        _id: idStr,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      };
       return result;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -48,9 +56,9 @@ export class AuthService {
     }
   }
 
-  login(user: any) {
+  login(user: { email: string; _id: string }) {
     try {
-      const payload = { email: user.email, sub: user._id as string };
+      const payload = { email: user.email, sub: user._id };
 
       this.logger.log(
         `Login realizado com sucesso para usuário: ${user.email}`,
@@ -59,11 +67,9 @@ export class AuthService {
       return {
         access_token: this.jwtService.sign(payload),
       };
-    } catch (error: any) {
-      this.logger.error(
-        `Erro no login para usuário ${user?.email}: ${error?.message}`,
-        (error as Error).stack,
-      );
+    } catch (error: unknown) {
+      const errMsg = String(error);
+      this.logger.error(`Erro no login para usuário ${user?.email}: ${errMsg}`);
       throw error;
     }
   }

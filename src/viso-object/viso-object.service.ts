@@ -27,7 +27,9 @@ export class VisoObjectService {
   ): Promise<ResponseVisoObjectDto> {
     try {
       this.logger.log(
-        `Criando novo objeto VISO: ${createVisoObjectDto.obj_name} para usuário: ${user.email}`,
+        `Criando novo objeto VISO: ${String(createVisoObjectDto.obj_name)} para usuário: ${String(
+          user.email,
+        )}`,
       );
 
       const visoObjectData = {
@@ -38,7 +40,9 @@ export class VisoObjectService {
       const visoObject = new this.visoObjectModel(visoObjectData);
       const savedVisoObject = await visoObject.save();
 
-      this.logger.log(`Objeto VISO criado com sucesso: ${savedVisoObject._id}`);
+      this.logger.log(
+        `Objeto VISO criado com sucesso: ${String(savedVisoObject._id)}`,
+      );
 
       return plainToInstance(ResponseVisoObjectDto, savedVisoObject.toJSON());
     } catch (error) {

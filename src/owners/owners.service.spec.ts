@@ -43,6 +43,7 @@ describe('OwnersService', () => {
 
     it('should throw ConflictException when owner already exists', async () => {
       // mock findByEmail behavior (ownerModel.findOne().exec())
+
       service['ownerModel'].findOne = jest.fn().mockReturnValue({
         exec: () =>
           Promise.resolve({ email: 'gandalf.o.cinzento@example.com' }),
@@ -73,9 +74,11 @@ describe('OwnersService', () => {
       const modelCtor = jest
         .fn()
         .mockImplementation(() => ({ save: saveMock }));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       (modelCtor as any).findOne = jest
         .fn()
         .mockReturnValue({ exec: () => Promise.resolve(null) });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       service['ownerModel'] = modelCtor as any;
 
       const result = await service.create({
@@ -97,9 +100,11 @@ describe('OwnersService', () => {
       const modelCtor = jest
         .fn()
         .mockImplementation(() => ({ save: saveMock }));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       (modelCtor as any).findOne = jest
         .fn()
         .mockReturnValue({ exec: () => Promise.resolve(null) });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       service['ownerModel'] = modelCtor as any;
 
       await expect(
@@ -114,6 +119,7 @@ describe('OwnersService', () => {
   describe('findByEmail', () => {
     it('should return owner when found', async () => {
       const owner = { email: 'gimli.filho.de.gloin@montanha.com' };
+
       service['ownerModel'].findOne = jest
         .fn()
         .mockReturnValue({ exec: () => Promise.resolve(owner) });
@@ -122,6 +128,7 @@ describe('OwnersService', () => {
         'gimli.filho.de.gloin@montanha.com',
       );
       expect(result).toBe(owner);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(service['ownerModel'].findOne).toHaveBeenCalledWith({
         email: 'gimli.filho.de.gloin@montanha.com',
       });

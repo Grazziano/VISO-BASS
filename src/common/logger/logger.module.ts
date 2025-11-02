@@ -21,13 +21,28 @@ import * as DailyRotateFile from 'winston-daily-rotate-file';
               format: winston.format.combine(
                 winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
                 winston.format.colorize({ all: true }),
-                winston.format.printf(
-                  ({ timestamp, level, message, context, trace }) => {
-                    return `${timestamp} [${context || 'Application'}] ${level}: ${message}${
-                      trace ? `\n${trace}` : ''
-                    }`;
-                  },
-                ),
+                winston.format.printf((info: unknown) => {
+                  const i =
+                    (info as Record<string, unknown> | undefined) || undefined;
+                  const timestamp =
+                    typeof i?.timestamp === 'string' ? i.timestamp : undefined;
+                  const level =
+                    typeof i?.level === 'string' ? i.level : undefined;
+                  const message =
+                    typeof i?.message === 'string' ? i.message : undefined;
+                  const context = i?.context;
+                  const trace = i?.trace;
+
+                  const ctx = context
+                    ? typeof context === 'string'
+                      ? context
+                      : JSON.stringify(context)
+                    : 'Application';
+                  const t = trace
+                    ? `\n${typeof trace === 'string' ? trace : JSON.stringify(trace)}`
+                    : '';
+                  return `${timestamp ?? ''} [${ctx}] ${level ?? ''}: ${message ?? ''}${t}`;
+                }),
               ),
             }),
           );

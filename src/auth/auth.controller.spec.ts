@@ -28,17 +28,16 @@ describe('AuthController', () => {
   };
 
   beforeEach(async () => {
+    const mockOwnersService = {
+      create: jest.fn(),
+    };
+
     const mockAuthService = {
       validateUser: jest.fn(),
       login: jest.fn(),
       me: jest.fn(),
-      ownersService: {
-        create: jest.fn(),
-      },
-    };
-
-    const mockOwnersService = {
-      create: jest.fn(),
+      // reuse the same ownersService mock so tests can assert calls on it safely
+      ownersService: mockOwnersService,
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -67,29 +66,35 @@ describe('AuthController', () => {
   describe('register', () => {
     it('should create a new user successfully', async () => {
       // Arrange
-      const expectedUser = { ...mockUser, password: undefined };
-      (authService as any).ownersService.create.mockResolvedValue(expectedUser);
+      const expectedUser = {
+        ...mockUser,
+        password: 'password123',
+        // include toObject to match Owner shape used by some code paths
+        toObject: () => ({ ...mockUser, password: 'password123' }),
+      };
+
+      ownersService.create.mockResolvedValue(expectedUser);
 
       // Act
       const result = await controller.register(mockOwnerData);
 
-      // Assert
-      expect((authService as any).ownersService.create).toHaveBeenCalledWith(
-        mockOwnerData,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const createMock = ownersService.create as jest.Mock;
+      expect(createMock).toHaveBeenCalledWith(mockOwnerData);
       expect(result).toEqual(expectedUser);
     });
 
     it('should throw error when registration fails', async () => {
       // Arrange
       const error = new Error('Email já está em uso');
-      (authService as any).ownersService.create.mockRejectedValue(error);
+
+      ownersService.create.mockRejectedValue(error);
 
       // Act & Assert
       await expect(controller.register(mockOwnerData)).rejects.toThrow(error);
-      expect((authService as any).ownersService.create).toHaveBeenCalledWith(
-        mockOwnerData,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const createMock2 = ownersService.create as jest.Mock;
+      expect(createMock2).toHaveBeenCalledWith(mockOwnerData);
     });
   });
 
@@ -112,11 +117,16 @@ describe('AuthController', () => {
       const result = await controller.login(loginData);
 
       // Assert
-      expect(authService.validateUser).toHaveBeenCalledWith(
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const validateUserMock = authService.validateUser as jest.Mock;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const loginMock = authService.login as jest.Mock;
+
+      expect(validateUserMock).toHaveBeenCalledWith(
         loginData.email,
         loginData.password,
       );
-      expect(authService.login).toHaveBeenCalledWith(validatedUser);
+      expect(loginMock).toHaveBeenCalledWith(validatedUser);
       expect(result).toEqual(expectedResponse);
     });
 
@@ -135,11 +145,16 @@ describe('AuthController', () => {
       await expect(controller.login(loginData)).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(authService.validateUser).toHaveBeenCalledWith(
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const validateUserMock2 = authService.validateUser as jest.Mock;
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const loginMock2 = authService.login as jest.Mock;
+
+      expect(validateUserMock2).toHaveBeenCalledWith(
         loginData.email,
         loginData.password,
       );
-      expect(authService.login).not.toHaveBeenCalled();
+      expect(loginMock2).not.toHaveBeenCalled();
     });
   });
 
@@ -153,13 +168,17 @@ describe('AuthController', () => {
         },
       } as AuthenticatedRequest;
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authService.me.mockResolvedValue(mockUser as any);
 
       // Act
       const result = await controller.me(mockRequest);
 
       // Assert
-      expect(authService.me).toHaveBeenCalledWith(mockRequest.user);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const meMock = authService.me as jest.Mock;
+
+      expect(meMock).toHaveBeenCalledWith(mockRequest.user);
       expect(result).toEqual(mockUser);
     });
 
@@ -178,7 +197,10 @@ describe('AuthController', () => {
       const result = await controller.me(mockRequest);
 
       // Assert
-      expect(authService.me).toHaveBeenCalledWith(mockRequest.user);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const meMock2 = authService.me as jest.Mock;
+
+      expect(meMock2).toHaveBeenCalledWith(mockRequest.user);
       expect(result).toBeNull();
     });
 
@@ -192,11 +214,15 @@ describe('AuthController', () => {
       } as AuthenticatedRequest;
 
       const error = new Error('Database error');
+
       authService.me.mockRejectedValue(error);
 
       // Act & Assert
       await expect(controller.me(mockRequest)).rejects.toThrow(error);
-      expect(authService.me).toHaveBeenCalledWith(mockRequest.user);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const meMock3 = authService.me as jest.Mock;
+
+      expect(meMock3).toHaveBeenCalledWith(mockRequest.user);
     });
   });
 

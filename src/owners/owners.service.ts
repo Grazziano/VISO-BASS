@@ -20,11 +20,11 @@ export class OwnersService {
   ) {}
 
   async create(body: IOwner): Promise<Owner> {
-    this.logger.log(`Tentativa de criação de usuário: ${body.email}`);
+    this.logger.log(`Tentativa de criação de usuário: ${String(body.email)}`);
 
     if (!body.email || !body.password) {
       this.logger.warn(
-        `Tentativa de criação de usuário com dados incompletos: ${body.email}`,
+        `Tentativa de criação de usuário com dados incompletos: ${String(body.email)}`,
       );
       throw new BadRequestException('Email e senha são obrigatórios');
     }
@@ -34,7 +34,7 @@ export class OwnersService {
 
       if (ownerExists) {
         this.logger.warn(
-          `Tentativa de criação de usuário já existente: ${body.email}`,
+          `Tentativa de criação de usuário já existente: ${String(body.email)}`,
         );
         throw new ConflictException('Usuário ja cadastrado');
       }
@@ -48,7 +48,9 @@ export class OwnersService {
 
       const savedUser = await user.save();
       this.logger.log(
-        `Usuário criado com sucesso: ${savedUser.email} (ID: ${savedUser._id})`,
+        `Usuário criado com sucesso: ${String(savedUser.email)} (ID: ${String(
+          savedUser._id,
+        )})`,
       );
 
       return savedUser;
@@ -57,7 +59,7 @@ export class OwnersService {
         throw error;
       }
       this.logger.error(
-        `Erro ao processar cadastro para ${body.email}: ${(error as Error).message}`,
+        `Erro ao processar cadastro para ${String(body.email)}: ${(error as Error).message}`,
         (error as Error).stack,
       );
       throw new InternalServerErrorException('Erro ao processar cadastro');
