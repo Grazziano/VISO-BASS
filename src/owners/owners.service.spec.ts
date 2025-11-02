@@ -74,11 +74,11 @@ describe('OwnersService', () => {
       const modelCtor = jest
         .fn()
         .mockImplementation(() => ({ save: saveMock }));
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       (modelCtor as any).findOne = jest
         .fn()
         .mockReturnValue({ exec: () => Promise.resolve(null) });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       service['ownerModel'] = modelCtor as any;
 
       const result = await service.create({
@@ -100,11 +100,11 @@ describe('OwnersService', () => {
       const modelCtor = jest
         .fn()
         .mockImplementation(() => ({ save: saveMock }));
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       (modelCtor as any).findOne = jest
         .fn()
         .mockReturnValue({ exec: () => Promise.resolve(null) });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       service['ownerModel'] = modelCtor as any;
 
       await expect(
@@ -128,7 +128,7 @@ describe('OwnersService', () => {
         'gimli.filho.de.gloin@montanha.com',
       );
       expect(result).toBe(owner);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(service['ownerModel'].findOne).toHaveBeenCalledWith({
         email: 'gimli.filho.de.gloin@montanha.com',
       });

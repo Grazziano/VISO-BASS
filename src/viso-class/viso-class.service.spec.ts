@@ -7,7 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateVisoClassDto } from './dto/create-viso-class.dto';
-import { VisoClassResponseDto } from './dto/viso-class-response.dto';
 import { isValidObjectId } from 'mongoose';
 
 // Mock mongoose isValidObjectId
@@ -28,13 +27,7 @@ describe('VisoClassService', () => {
     updatedAt: new Date(),
   };
 
-  const mockVisoClassResponseDto: VisoClassResponseDto = {
-    id: '507f1f77bcf86cd799439011',
-    class_name: 'Test Class',
-    class_function: ['sensor', 'actuator'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  // mockVisoClassResponseDto removed (unused) - tests use mockVisoClass directly
 
   beforeEach(async () => {
     mockVisoClassModel = jest.fn().mockImplementation(() => ({

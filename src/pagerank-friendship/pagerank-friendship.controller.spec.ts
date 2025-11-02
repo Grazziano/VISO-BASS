@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { PagerankFriendshipController } from './pagerank-friendship.controller';
 import { PagerankFriendshipService } from './pagerank-friendship.service';

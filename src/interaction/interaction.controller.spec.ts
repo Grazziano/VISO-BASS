@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { Test, TestingModule } from '@nestjs/testing';
 import { InteractionController } from './interaction.controller';

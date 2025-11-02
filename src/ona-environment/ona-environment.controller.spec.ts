@@ -6,7 +6,6 @@ import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 
 describe('OnaEnvironmentController', () => {
   let controller: OnaEnvironmentController;
-  let service: OnaEnvironmentService;
 
   const mockOnaEnvironment = {
     _id: '507f1f77bcf86cd799439011',
@@ -49,7 +48,6 @@ describe('OnaEnvironmentController', () => {
       .compile();
 
     controller = module.get<OnaEnvironmentController>(OnaEnvironmentController);
-    service = module.get<OnaEnvironmentService>(OnaEnvironmentService);
   });
 
   afterEach(() => {

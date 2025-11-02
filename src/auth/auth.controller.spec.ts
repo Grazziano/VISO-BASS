@@ -78,7 +78,6 @@ describe('AuthController', () => {
       // Act
       const result = await controller.register(mockOwnerData);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       const createMock = ownersService.create as jest.Mock;
       expect(createMock).toHaveBeenCalledWith(mockOwnerData);
       expect(result).toEqual(expectedUser);
@@ -92,7 +91,7 @@ describe('AuthController', () => {
 
       // Act & Assert
       await expect(controller.register(mockOwnerData)).rejects.toThrow(error);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const createMock2 = ownersService.create as jest.Mock;
       expect(createMock2).toHaveBeenCalledWith(mockOwnerData);
     });
@@ -117,9 +116,9 @@ describe('AuthController', () => {
       const result = await controller.login(loginData);
 
       // Assert
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const validateUserMock = authService.validateUser as jest.Mock;
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const loginMock = authService.login as jest.Mock;
 
       expect(validateUserMock).toHaveBeenCalledWith(
@@ -145,9 +144,9 @@ describe('AuthController', () => {
       await expect(controller.login(loginData)).rejects.toThrow(
         UnauthorizedException,
       );
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const validateUserMock2 = authService.validateUser as jest.Mock;
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const loginMock2 = authService.login as jest.Mock;
 
       expect(validateUserMock2).toHaveBeenCalledWith(
@@ -168,14 +167,13 @@ describe('AuthController', () => {
         },
       } as AuthenticatedRequest;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authService.me.mockResolvedValue(mockUser as any);
 
       // Act
       const result = await controller.me(mockRequest);
 
       // Assert
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const meMock = authService.me as jest.Mock;
 
       expect(meMock).toHaveBeenCalledWith(mockRequest.user);
@@ -197,7 +195,7 @@ describe('AuthController', () => {
       const result = await controller.me(mockRequest);
 
       // Assert
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const meMock2 = authService.me as jest.Mock;
 
       expect(meMock2).toHaveBeenCalledWith(mockRequest.user);
@@ -219,7 +217,7 @@ describe('AuthController', () => {
 
       // Act & Assert
       await expect(controller.me(mockRequest)).rejects.toThrow(error);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       const meMock3 = authService.me as jest.Mock;
 
       expect(meMock3).toHaveBeenCalledWith(mockRequest.user);

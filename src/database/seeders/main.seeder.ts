@@ -8,4 +8,4 @@ async function bootstrap() {
   await seeder.run();
   await app.close();
 }
-bootstrap();
+void bootstrap();
