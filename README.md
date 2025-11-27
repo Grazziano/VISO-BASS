@@ -31,9 +31,9 @@ Este projeto integra a pesquisa de mestrado realizada na Universidade Federal de
 
 ## 📌 Status do Projeto
 
-| Status Geral          | API             | Banco de Dados | Documentação | Testes       |
-| --------------------- | --------------- | -------------- | ------------ | ------------ |
-| 🚀 Em desenvolvimento | 🛠️ Em andamento | ✅ Concluído   | ✅ Concluído | ✅ Concluído |
+| Status Geral          | Frontend        | API             | Banco de Dados | Documentação | Testes       |
+| --------------------- | --------------- | --------------- | -------------- | ------------ | ------------ |
+| 🚀 Em desenvolvimento | 🛠️ Em andamento | 🛠️ Em andamento | ✅ Concluído   | ✅ Concluído | ✅ Concluído |
 
 ---
 
@@ -517,6 +517,16 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para mais informações
 - **Outros Projetos relacionados:** [Repositórios de Pesquisa - UFPel](https://grazziano.github.io/projetos-siot-ufpel/)
 - **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
 - **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
+
+---
+
+## ⚛️ Frontend (Em desenvolvimento)
+
+Frontend está sendo desenvolvido com ReactJS
+
+[Link para o repositório do Frontend](https://github.com/Grazziano/VISO-BASS-REACT)
+
+---
 
 ## 🌟 Contato & Suporte
 
