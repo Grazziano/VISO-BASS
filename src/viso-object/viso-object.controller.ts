@@ -17,6 +17,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 
@@ -43,6 +44,27 @@ export class VisoObjectController {
   @Get()
   async findAll(): Promise<ResponseVisoObjectDto[]> {
     return this.visoObjectService.findAll();
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Contar total de objetos',
+    description:
+      'Retorna o número total de registros existentes na coleção de objetos.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Total de objetos retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', example: 125 },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  countEnvironments() {
+    return this.visoObjectService.countObjects();
   }
 
   @ApiParam({ name: 'id', type: String, description: 'Object ID' })

@@ -76,6 +76,11 @@ export class VisoObjectService {
     }
   }
 
+  async countObjects(): Promise<{ total: number }> {
+    const total = await this.visoObjectModel.countDocuments().exec();
+    return { total };
+  }
+
   async findOne(id: string): Promise<ResponseVisoObjectDto> {
     this.logger.debug(`Buscando objeto VISO por ID: ${id}`);
 
