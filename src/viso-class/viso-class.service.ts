@@ -74,6 +74,11 @@ export class VisoClassService {
     }
   }
 
+  async countClasses(): Promise<{ total: number }> {
+    const total = await this.visoClassModel.countDocuments().exec();
+    return { total };
+  }
+
   async findOne(id: string): Promise<VisoClassResponseDto> {
     this.logger.debug(`Buscando classe VISO por ID: ${id}`);
 

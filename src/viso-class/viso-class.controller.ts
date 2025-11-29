@@ -9,6 +9,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('class')
@@ -30,6 +31,27 @@ export class MyClassController {
   @Get()
   async findAll(): Promise<VisoClassResponseDto[]> {
     return this.visoClassService.findAll();
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Contar total de classes',
+    description:
+      'Retorna o número total de registros existentes na coleção de classes.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Total de classes retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', example: 125 },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  countEnvironments() {
+    return this.visoClassService.countClasses();
   }
 
   @ApiParam({ name: 'id', type: String, description: 'ID da classe' })
