@@ -117,6 +117,11 @@ export class InteractionService {
     }
   }
 
+  async countInteractions(): Promise<{ total: number }> {
+    const total = await this.interactionModel.countDocuments().exec();
+    return { total };
+  }
+
   async findOne(id: string) {
     try {
       const interaction = await this.interactionModel

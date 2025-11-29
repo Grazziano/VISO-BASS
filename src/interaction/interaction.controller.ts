@@ -294,6 +294,27 @@ export class InteractionController {
     return this.interactionService.getTimeSeries(range);
   }
 
+  @Get('count')
+  @ApiOperation({
+    summary: 'Contar total de interações',
+    description:
+      'Retorna o número total de registros existentes na coleção de interações.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Total de interações retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', example: 125 },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async countInteractions() {
+    return this.interactionService.countInteractions();
+  }
+
   @Get(':id')
   @ApiParam({
     name: 'id',
