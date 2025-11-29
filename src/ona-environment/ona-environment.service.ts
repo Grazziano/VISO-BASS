@@ -68,6 +68,11 @@ export class OnaEnvironmentService {
     }
   }
 
+  async countEnvironments(): Promise<{ total: number }> {
+    const total = await this.onaEnvironmentModel.countDocuments().exec();
+    return { total };
+  }
+
   async findOne(id: string) {
     this.logger.debug(`Buscando ambiente ONA por ID: ${id}`);
 

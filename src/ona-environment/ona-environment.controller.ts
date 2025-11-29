@@ -8,6 +8,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('ona-environment')
@@ -28,6 +29,27 @@ export class OnaEnvironmentController {
   @ApiResponse({ status: 200, type: [CreateOnaEnvironmentDto] })
   findAll() {
     return this.onaEnvironmentService.findAll();
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Contar total de ambientes',
+    description:
+      'Retorna o número total de registros existentes na coleção de ambientes.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Total de ambientes retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', example: 125 },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  countEnvironments() {
+    return this.onaEnvironmentService.countEnvironments();
   }
 
   @Get(':id')
