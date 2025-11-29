@@ -73,6 +73,13 @@ export class OnaEnvironmentService {
     return { total };
   }
 
+  async findLast(): Promise<any> {
+    return this.onaEnvironmentModel
+      .findOne()
+      .sort({ createdAt: -1 }) // último registro inserido
+      .exec();
+  }
+
   async findOne(id: string) {
     this.logger.debug(`Buscando ambiente ONA por ID: ${id}`);
 

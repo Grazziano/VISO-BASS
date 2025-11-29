@@ -315,6 +315,35 @@ export class InteractionController {
     return this.interactionService.countInteractions();
   }
 
+  @Get('last')
+  @ApiOperation({
+    summary: 'Buscar último registro inserido',
+    description:
+      'Retorna o registro mais recente inserido na coleção de interações.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Última interação retornada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        _id: { type: 'string', example: '68c2f089ec97807527b1108e' },
+        inter_obj_i: { type: 'string', example: '68c2f083ec97807527b10291' },
+        inter_obj_j: { type: 'string', example: '68c2f083ec97807527b102ce' },
+        inter_start: { type: 'string', format: 'date-time' },
+        inter_end: { type: 'string', format: 'date-time' },
+        inter_feedback: { type: 'boolean' },
+        inter_service: { type: 'number' },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async getLast() {
+    return this.interactionService.findLast();
+  }
+
   @Get(':id')
   @ApiParam({
     name: 'id',

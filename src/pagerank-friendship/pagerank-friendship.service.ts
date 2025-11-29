@@ -49,6 +49,13 @@ export class PagerankFriendshipService {
     return { total };
   }
 
+  async findLast(): Promise<any> {
+    return this.pagerankFriendshipModel
+      .findOne()
+      .sort({ createdAt: -1 }) // último inserido
+      .exec();
+  }
+
   async findOne(id: string) {
     try {
       const pagerankFriendship =

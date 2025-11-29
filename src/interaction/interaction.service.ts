@@ -122,6 +122,13 @@ export class InteractionService {
     return { total };
   }
 
+  async findLast(): Promise<any> {
+    return this.interactionModel
+      .findOne()
+      .sort({ createdAt: -1 }) // ordena do mais recente para o mais antigo
+      .exec();
+  }
+
   async findOne(id: string) {
     try {
       const interaction = await this.interactionModel

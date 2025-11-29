@@ -67,6 +67,21 @@ export class VisoObjectController {
     return this.visoObjectService.countObjects();
   }
 
+  @Get('last')
+  @ApiOperation({
+    summary: 'Retorna o último objeto cadastrado',
+    description: 'Busca o último registro inserido com base no createdAt.',
+  })
+  @ApiResponse({
+    status: 200,
+    type: ResponseVisoObjectDto,
+    description: 'Último objeto retornado com sucesso',
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async findLast(): Promise<ResponseVisoObjectDto> {
+    return this.visoObjectService.findLast();
+  }
+
   @ApiParam({ name: 'id', type: String, description: 'Object ID' })
   @ApiOperation({ summary: 'Busca um objeto por ID' })
   @ApiResponse({ status: 200, type: ResponseVisoObjectDto })

@@ -79,6 +79,10 @@ export class VisoClassService {
     return { total };
   }
 
+  async findLast(): Promise<any> {
+    return this.visoClassModel.findOne().sort({ createdAt: -1 }).lean().exec();
+  }
+
   async findOne(id: string): Promise<VisoClassResponseDto> {
     this.logger.debug(`Buscando classe VISO por ID: ${id}`);
 

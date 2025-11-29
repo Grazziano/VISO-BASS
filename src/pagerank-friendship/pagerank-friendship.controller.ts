@@ -73,6 +73,40 @@ export class PagerankFriendshipController {
     return this.pagerankFriendshipService.countFriendships();
   }
 
+  @Get('last')
+  @ApiOperation({
+    summary: 'Retorna a última amizade PageRank criada',
+    description:
+      'Busca e retorna o registro mais recente da coleção pagerank-friendship.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Último registro retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        _id: { type: 'string', example: '68c3b2efbc71370247719ab1' },
+        pr_obj_i: { type: 'string', example: '507f1f77bcf86cd799439011' },
+        pr_obj_j: { type: 'string', example: '507f1f77bcf86cd799439012' },
+        pr_score: { type: 'number', example: 0.87 },
+        createdAt: {
+          type: 'string',
+          format: 'date-time',
+          example: '2025-10-05T12:32:11.123Z',
+        },
+        updatedAt: {
+          type: 'string',
+          format: 'date-time',
+          example: '2025-10-05T12:32:11.123Z',
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  getLastFriendship() {
+    return this.pagerankFriendshipService.findLast();
+  }
+
   @ApiParam({
     name: 'id',
     type: String,

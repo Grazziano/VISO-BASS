@@ -54,6 +54,22 @@ export class MyClassController {
     return this.visoClassService.countClasses();
   }
 
+  @Get('last')
+  @ApiOperation({
+    summary: 'Retorna o último registro inserido',
+    description:
+      'Busca a última classe cadastrada com base no campo createdAt.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Último registro retornado com sucesso',
+    type: CreateVisoClassDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async findLast() {
+    return this.visoClassService.findLast();
+  }
+
   @ApiParam({ name: 'id', type: String, description: 'ID da classe' })
   @ApiResponse({ type: CreateVisoClassDto })
   @ApiOperation({ summary: 'Busca uma classe pelo id' })

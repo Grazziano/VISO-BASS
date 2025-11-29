@@ -52,6 +52,42 @@ export class OnaEnvironmentController {
     return this.onaEnvironmentService.countEnvironments();
   }
 
+  @Get('last')
+  @ApiOperation({
+    summary: 'Retorna o último ambiente criado',
+    description:
+      'Busca e retorna o registro mais recente da coleção de ambientes.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Último ambiente retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        _id: { type: 'string', example: '68c3a1a9bd91370247719ab1' },
+        env_name: { type: 'string', example: 'Sala 01' },
+        env_description: {
+          type: 'string',
+          example: 'Ambiente principal da IoT',
+        },
+        createdAt: {
+          type: 'string',
+          format: 'date-time',
+          example: '2025-09-11T15:53:45.314Z',
+        },
+        updatedAt: {
+          type: 'string',
+          format: 'date-time',
+          example: '2025-09-11T15:53:45.314Z',
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  getLastEnvironment() {
+    return this.onaEnvironmentService.findLast();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Encontra ambiente pelo id' })
   @ApiParam({ name: 'id', type: String })
