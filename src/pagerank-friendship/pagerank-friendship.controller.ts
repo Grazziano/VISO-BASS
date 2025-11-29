@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 @ApiTags('pagerank-friendship')
@@ -49,6 +50,27 @@ export class PagerankFriendshipController {
   @Get('relevant')
   async getRelevant(@Query('limit') limit: number = 10) {
     return this.pagerankFriendshipService.findMostRelevant(limit);
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Contar total de amizades',
+    description:
+      'Retorna o número total de registros existentes na coleção de amizades.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Total de amizades retornado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        total: { type: 'number', example: 125 },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  countEnvironments() {
+    return this.pagerankFriendshipService.countFriendships();
   }
 
   @ApiParam({

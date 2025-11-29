@@ -44,6 +44,11 @@ export class PagerankFriendshipService {
     }
   }
 
+  async countFriendships(): Promise<{ total: number }> {
+    const total = await this.pagerankFriendshipModel.countDocuments().exec();
+    return { total };
+  }
+
   async findOne(id: string) {
     try {
       const pagerankFriendship =
