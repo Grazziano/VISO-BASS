@@ -189,8 +189,10 @@ export class InteractionController {
     },
   })
   @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
-  findAll() {
-    return this.interactionService.findAll();
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.interactionService.findAll(Number(page), Number(limit));
   }
 
   @Get('count-by-day')

@@ -24,10 +24,19 @@ export class InteractionService {
     }
   }
 
-  async findAll() {
+  async findAll(
+    page = 1,
+    limit = 10,
+  ): Promise<{ items: any[]; total: number; page: number; limit: number }> {
     try {
-      const interactions = await this.interactionModel.find().lean().exec();
-      return interactions;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+      const [total, interactions] = await Promise.all([
+        this.interactionModel.countDocuments().exec(),
+        this.interactionModel.find().skip(skip).limit(limit).lean().exec(),
+      ]);
+      return { items: interactions, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find interaction: ${error.message}`);
@@ -162,7 +171,7 @@ export class InteractionService {
     return { total };
   }
 
-  async findLast(): Promise<any> {
+  async findLast(): Promise<unknown> {
     return this.interactionModel
       .findOne()
       .sort({ createdAt: -1 }) // ordena do mais recente para o mais antigo

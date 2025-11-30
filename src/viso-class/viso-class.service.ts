@@ -54,15 +54,37 @@ export class VisoClassService {
     }
   }
 
-  async findAll(): Promise<VisoClassResponseDto[]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+  ): Promise<{
+    items: VisoClassResponseDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     try {
       this.logger.debug('Buscando todas as classes VISO');
 
-      const myClasses = await this.visoClassModel.find().lean().exec();
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
 
-      this.logger.log(`${myClasses.length} classes VISO encontradas`);
+      const [total, myClasses] = await Promise.all([
+        this.visoClassModel.countDocuments().exec(),
+        this.visoClassModel.find().skip(skip).limit(limit).lean().exec(),
+      ]);
 
-      return plainToInstance(VisoClassResponseDto, myClasses);
+      this.logger.log(
+        `${myClasses.length} classes VISO retornadas (total: ${total})`,
+      );
+
+      return {
+        items: plainToInstance(VisoClassResponseDto, myClasses),
+        total,
+        page,
+        limit,
+      };
     } catch (error) {
       this.logger.error(
         `Erro ao buscar classes VISO: ${(error as Error).message}`,
@@ -79,7 +101,7 @@ export class VisoClassService {
     return { total };
   }
 
-  async findLast(): Promise<any> {
+  async findLast(): Promise<unknown> {
     return this.visoClassModel.findOne().sort({ createdAt: -1 }).lean().exec();
   }
 

@@ -107,7 +107,7 @@ export class VisoObjectService {
     return { total };
   }
 
-  async findLast(): Promise<any> {
+  async findLast(): Promise<unknown> {
     return await this.visoObjectModel
       .findOne()
       .sort({ createdAt: -1 })

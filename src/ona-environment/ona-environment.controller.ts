@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { OnaEnvironmentService } from './ona-environment.service';
 import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,6 +14,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -27,8 +36,10 @@ export class OnaEnvironmentController {
   @Get()
   @ApiOperation({ summary: 'Lista todos os ambientes' })
   @ApiResponse({ status: 200, type: [CreateOnaEnvironmentDto] })
-  findAll() {
-    return this.onaEnvironmentService.findAll();
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.onaEnvironmentService.findAll(Number(page), Number(limit));
   }
 
   @Get('count')

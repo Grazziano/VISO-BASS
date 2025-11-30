@@ -30,10 +30,24 @@ export class PagerankFriendshipService {
     }
   }
 
-  async findAll() {
+  async findAll(
+    page = 1,
+    limit = 10,
+  ): Promise<{ items: any[]; total: number; page: number; limit: number }> {
     try {
-      const pagerankFriendships = await this.pagerankFriendshipModel.find();
-      return pagerankFriendships;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+      const [total, items] = await Promise.all([
+        this.pagerankFriendshipModel.countDocuments().exec(),
+        this.pagerankFriendshipModel
+          .find()
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+      return { items, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find pagerankFriendship: ${error.message}`);

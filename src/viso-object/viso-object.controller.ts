@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
@@ -43,8 +44,8 @@ export class VisoObjectController {
   @ApiResponse({ status: 200, type: [ResponseVisoObjectDto] })
   @Get()
   async findAll(
-    @Param('page') page = 1,
-    @Param('limit') limit = 10,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
   ): Promise<{
     items: ResponseVisoObjectDto[];
     total: number;
@@ -86,7 +87,7 @@ export class VisoObjectController {
     description: 'Último objeto retornado com sucesso',
   })
   @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
-  async findLast(): Promise<ResponseVisoObjectDto> {
+  async findLast(): Promise<unknown> {
     return this.visoObjectService.findLast();
   }
 

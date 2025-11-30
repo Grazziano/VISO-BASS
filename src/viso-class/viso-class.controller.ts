@@ -1,7 +1,14 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { VisoClassService } from './viso-class.service';
 import { CreateVisoClassDto } from './dto/create-viso-class.dto';
-import { VisoClassResponseDto } from './dto/viso-class-response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBody,
@@ -29,8 +36,8 @@ export class MyClassController {
   @ApiOperation({ summary: 'Lista todas as classes' })
   @ApiResponse({ type: [CreateVisoClassDto] })
   @Get()
-  async findAll(): Promise<VisoClassResponseDto[]> {
-    return this.visoClassService.findAll();
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.visoClassService.findAll(Number(page), Number(limit));
   }
 
   @Get('count')

@@ -39,8 +39,10 @@ export class PagerankFriendshipController {
   @ApiOperation({ summary: 'Lista todas as amizades pagerank' })
   @ApiResponse({ status: 200, type: [CreatePagerankFriendshipDto] })
   @Get()
-  findAll() {
-    return this.pagerankFriendshipService.findAll();
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.pagerankFriendshipService.findAll(Number(page), Number(limit));
   }
 
   @ApiOperation({ summary: 'Lista as amizades pagerank mais relevantes' })

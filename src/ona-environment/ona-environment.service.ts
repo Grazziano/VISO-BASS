@@ -44,17 +44,24 @@ export class OnaEnvironmentService {
     }
   }
 
-  async findAll() {
+  async findAll(
+    page = 1,
+    limit = 10,
+  ): Promise<{ items: any[]; total: number; page: number; limit: number }> {
     this.logger.debug('Buscando todos os ambientes ONA');
 
     try {
-      const onaEnvironments = await this.onaEnvironmentModel
-        .find()
-        .lean()
-        .exec();
-
-      this.logger.log(`${onaEnvironments.length} ambientes ONA encontrados`);
-      return onaEnvironments;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+      const [total, items] = await Promise.all([
+        this.onaEnvironmentModel.countDocuments().exec(),
+        this.onaEnvironmentModel.find().skip(skip).limit(limit).lean().exec(),
+      ]);
+      this.logger.log(
+        `${items.length} ambientes ONA retornados (total: ${total})`,
+      );
+      return { items, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(
