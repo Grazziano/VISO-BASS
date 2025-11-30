@@ -56,15 +56,41 @@ export class VisoObjectService {
     }
   }
 
-  async findAll(): Promise<ResponseVisoObjectDto[]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+  ): Promise<{
+    items: ResponseVisoObjectDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     try {
-      this.logger.debug('Buscando todos os objetos VISO');
+      this.logger.debug(
+        `Buscando objetos VISO - page: ${page}, limit: ${limit}`,
+      );
 
-      const visoObjects = await this.visoObjectModel.find().lean().exec();
+      // sanitize inputs
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10))); // cap limit to 100
 
-      this.logger.log(`${visoObjects.length} objetos VISO encontrados`);
+      const skip = (page - 1) * limit;
 
-      return plainToInstance(ResponseVisoObjectDto, visoObjects);
+      const [total, visoObjects] = await Promise.all([
+        this.visoObjectModel.countDocuments().exec(),
+        this.visoObjectModel.find().skip(skip).limit(limit).lean().exec(),
+      ]);
+
+      this.logger.log(
+        `${visoObjects.length} objetos VISO retornados (total: ${total})`,
+      );
+
+      return {
+        items: plainToInstance(ResponseVisoObjectDto, visoObjects),
+        total,
+        page,
+        limit,
+      };
     } catch (error) {
       this.logger.error(
         `Erro ao buscar objetos VISO: ${(error as Error).message}`,

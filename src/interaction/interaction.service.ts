@@ -117,6 +117,46 @@ export class InteractionService {
     }
   }
 
+  // async getTimeSeries(
+  //   range: '7d' | '30d',
+  // ): Promise<{ date: string; interactions: number }[]> {
+  //   try {
+  //     const days = range === '7d' ? 7 : 30;
+  //     const startDate = new Date();
+  //     startDate.setDate(startDate.getDate() - days);
+
+  //     const results = await this.interactionModel.aggregate([
+  //       {
+  //         $match: {
+  //           inter_start: { $gte: startDate }, // filtra pelas datas da interação!
+  //         },
+  //       },
+  //       {
+  //         $group: {
+  //           _id: {
+  //             $dateToString: { format: '%Y-%m-%d', date: '$inter_start' },
+  //           },
+  //           interactions: { $sum: 1 },
+  //         },
+  //       },
+  //       { $sort: { _id: 1 } },
+  //       {
+  //         $project: {
+  //           _id: 0,
+  //           date: '$_id',
+  //           interactions: 1,
+  //         },
+  //       },
+  //     ]);
+
+  //     return results;
+  //   } catch (error) {
+  //     throw new Error(
+  //       `Failed to get time-series: ${error instanceof Error ? error.message : error}`,
+  //     );
+  //   }
+  // }
+
   async countInteractions(): Promise<{ total: number }> {
     const total = await this.interactionModel.countDocuments().exec();
     return { total };

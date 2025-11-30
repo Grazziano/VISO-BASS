@@ -42,8 +42,16 @@ export class VisoObjectController {
   @ApiOperation({ summary: 'Lista todos os objetos' })
   @ApiResponse({ status: 200, type: [ResponseVisoObjectDto] })
   @Get()
-  async findAll(): Promise<ResponseVisoObjectDto[]> {
-    return this.visoObjectService.findAll();
+  async findAll(
+    @Param('page') page = 1,
+    @Param('limit') limit = 10,
+  ): Promise<{
+    items: ResponseVisoObjectDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    return this.visoObjectService.findAll(page, limit);
   }
 
   @Get('count')

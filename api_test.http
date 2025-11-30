@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdyYXp6aWFub2ZhZ3VuZGVzQGdtYWlsLmNvbSIsInN1YiI6IjY5MmEyM2NhMjRlODE4NzMwNzZkM2RhOSIsImlhdCI6MTc2NDQxMDI2NywiZXhwIjoxNzY1MDE1MDY3fQ.Ep1sA_ru7Sk1GgWf1iZecmA49biFBa-upCF59GUGIM4
+
+### Find all with pagination
+GET {{baseUrl}}/object?page=100&limit=10
+Authorization: Bearer {{token}}
+
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "ana.oliveira@example.com",
+    "password": "123456"
+}
+
+### Time Series Interaction
+GET {{baseUrl}}/interaction/time-series
+Authorization: Bearer {{token}}
+
+### Classes
+GET {{baseUrl}}/class
+Authorization: Bearer {{token}}
+
+### Interactions
+GET {{baseUrl}}/interaction
+Authorization: Bearer {{token}}
+
+### Count By Day
+GET {{baseUrl}}/interaction/count-by-day?period=month
+Authorization: Bearer {{token}}
+
+### Create interaction
+POST {{baseUrl}}/interaction
+Authorization: Bearer {{token}}
+
+{
+  "inter_obj_i": "",
+  "inter_obj_j": "",
+  "inter_start": "",
+  "inter_start": "",
+  "inter_feedback": "",
+  "inter_feedback": "",
+  "inter_service": "",
+  "inter_service": "",
+  "inter_service": ""
+}
+
