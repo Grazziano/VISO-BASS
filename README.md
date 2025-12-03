@@ -287,21 +287,31 @@ npm run seed
 | GET    | /object                                | Lista todos os objetos                             |
 | GET    | /object/:id                            | Encontra objeto pelo id                            |
 | POST   | /object                                | Cria um novo objeto                                |
+| POST   | /object/last                           | Retorna o último objeto cadastrado                 |
+| POST   | /object/count                          | Conta total de objetos                             |
 | GET    | /class                                 | Lista todas as classes                             |
 | GET    | /class/:id                             | Encontra classe pelo id                            |
+| GET    | /class/last                            | Retorna o última classe cadastrada                 |
+| GET    | /class/count                           | Conta total de classes                             |
 | POST   | /class                                 | Cria uma nova classe                               |
 | GET    | /interaction                           | Lista todas as interações                          |
 | GET    | /interaction/time-series               | Lista interações em série temporal (para gráficos) |
 | GET    | /interaction/count-by-day              | Lista interações por mes/dia                       |
 | GET    | /interaction/:id                       | Encontra interações por id                         |
+| POST   | /interaction/last                      | Retorna a última interação                         |
+| POST   | /interaction/count                     | Conta total de interações                          |
 | POST   | /interaction                           | Cria uma nova interação                            |
 | GET    | /ona-enviroment                        | Lista todos os ambientes                           |
 | GET    | /ona-enviroment/:id                    | Encontra ambiente por id                           |
+| GET    | /ona-enviroment/last                   | Retorna o último ambiente cadastrado               |
+| GET    | /ona-enviroment/count                  | Conta total de ambientes                           |
 | POST   | /ona-enviroment                        | Cria um novo ambiente                              |
 | GET    | /pagerank-friendship                   | Lista relações de amizade                          |
 | GET    | /pagerank-friendship/:id               | Encontra amizade por id                            |
 | POST   | /pagerank-friendship                   | Cria uma relação de amizade                        |
 | GET    | /pagerank-friendship/relevant?limit=10 | Lista as relações mais relevantes                  |
+| GET    | /pagerank-friendship/last              | Retorna a último amizade cadastrada                |
+| GET    | /pagerank-friendship/count             | Conta total de amizades                            |
 
 ---
 
