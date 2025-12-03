@@ -56,7 +56,13 @@ export class OnaEnvironmentService {
       const skip = (page - 1) * limit;
       const [total, items] = await Promise.all([
         this.onaEnvironmentModel.countDocuments().exec(),
-        this.onaEnvironmentModel.find().skip(skip).limit(limit).lean().exec(),
+        this.onaEnvironmentModel
+          .find()
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
       ]);
       this.logger.log(
         `${items.length} ambientes ONA retornados (total: ${total})`,

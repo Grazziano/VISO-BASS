@@ -72,7 +72,13 @@ export class VisoClassService {
 
       const [total, myClasses] = await Promise.all([
         this.visoClassModel.countDocuments().exec(),
-        this.visoClassModel.find().skip(skip).limit(limit).lean().exec(),
+        this.visoClassModel
+          .find()
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
       ]);
 
       this.logger.log(

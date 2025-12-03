@@ -42,6 +42,7 @@ export class PagerankFriendshipService {
         this.pagerankFriendshipModel.countDocuments().exec(),
         this.pagerankFriendshipModel
           .find()
+          .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)
           .lean()

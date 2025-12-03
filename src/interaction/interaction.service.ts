@@ -34,7 +34,13 @@ export class InteractionService {
       const skip = (page - 1) * limit;
       const [total, interactions] = await Promise.all([
         this.interactionModel.countDocuments().exec(),
-        this.interactionModel.find().skip(skip).limit(limit).lean().exec(),
+        this.interactionModel
+          .find()
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
       ]);
       return { items: interactions, total, page, limit };
     } catch (error: unknown) {
