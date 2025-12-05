@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types, PipelineStage } from 'mongoose';
 import { OnaEnvironment } from './schema/ona-enviroment.schema';
 
 @Injectable()
@@ -81,9 +81,180 @@ export class OnaEnvironmentService {
     }
   }
 
-  async countEnvironments(): Promise<{ total: number }> {
-    const total = await this.onaEnvironmentModel.countDocuments().exec();
-    return { total };
+  // async countEnvironments(): Promise<{ objects: string[]; total: number }> {
+  //   this.logger.debug('Listando objetos únicos em ambientes ONA');
+  //   try {
+  //     const result = await this.onaEnvironmentModel
+  //       .aggregate([
+  //         {
+  //           $facet: {
+  //             neighbors: [
+  //               { $unwind: '$objects' },
+  //               { $group: { _id: '$objects' } },
+  //             ],
+  //             envI: [{ $group: { _id: '$env_object_i' } }],
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             neighborsIds: {
+  //               $map: { input: '$neighbors', as: 'd', in: '$$d._id' },
+  //             },
+  //             envIIds: { $map: { input: '$envI', as: 'd', in: '$$d._id' } },
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             all: { $setUnion: ['$neighborsIds', '$envIIds'] },
+  //           },
+  //         },
+  //       ])
+  //       .exec();
+  //     const all = (result && result[0] && result[0].all) || [];
+  //     const items = all.map((x: any) => String(x));
+  //     this.logger.log(`Objetos únicos em ambientes ONA: ${items.length}`);
+  //     return { objects: items, total: items.length };
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) {
+  //       this.logger.error(
+  //         `Erro ao listar objetos únicos de ambientes ONA: ${error.message}`,
+  //         error.stack,
+  //       );
+  //       throw new Error(
+  //         `Failed to list unique environment objects: ${error.message}`,
+  //       );
+  //     }
+  //     this.logger.error(
+  //       'Erro desconhecido ao listar objetos únicos de ambientes ONA',
+  //     );
+  //     throw new Error(
+  //       'Failed to list unique environment objects due to an unknown error',
+  //     );
+  //   }
+  // }
+
+  async countEnvironments(): Promise<{ objects: string[]; total: number }> {
+    this.logger.debug('Listando objetos únicos em ambientes ONA');
+    try {
+      const neighborsIds = (
+        await this.onaEnvironmentModel.distinct('objects').exec()
+      ).map((v: unknown) => String(v));
+      const envIIds = (
+        await this.onaEnvironmentModel.distinct('env_object_i').exec()
+      ).map((v: unknown) => String(v));
+
+      const unique = Array.from(new Set([...neighborsIds, ...envIIds]));
+
+      this.logger.log(`Objetos únicos em ambientes ONA: ${unique.length}`);
+      return { objects: unique, total: unique.length };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Erro ao listar objetos únicos de ambientes ONA: ${error.message}`,
+          error.stack,
+        );
+        throw new Error(
+          `Failed to list unique environment objects: ${error.message}`,
+        );
+      }
+      this.logger.error(
+        'Erro desconhecido ao listar objetos únicos de ambientes ONA',
+      );
+      throw new Error(
+        'Failed to list unique environment objects due to an unknown error',
+      );
+    }
+  }
+
+  async countObjectsAggregation(environmentId?: string): Promise<{
+    environments: { environmentId: string; objectsCount: number }[];
+    totalObjects: number;
+  }> {
+    this.logger.debug('Agregando número de objetos por ambiente ONA');
+    try {
+      const pipeline: PipelineStage[] = [];
+      if (environmentId) {
+        pipeline.push({ $match: { _id: new Types.ObjectId(environmentId) } });
+      }
+      pipeline.push({
+        $project: {
+          environmentId: { $toString: '$_id' },
+          objectsCount: { $size: { $ifNull: ['$objects', []] } },
+        },
+      });
+
+      if (!environmentId) {
+        pipeline.push({
+          $group: {
+            _id: null,
+            environments: {
+              $push: {
+                environmentId: '$environmentId',
+                objectsCount: '$objectsCount',
+              },
+            },
+            totalObjects: { $sum: '$objectsCount' },
+          },
+        });
+        pipeline.push({
+          $project: { _id: 0, environments: 1, totalObjects: 1 },
+        });
+        const [res] = await this.onaEnvironmentModel.aggregate(pipeline).exec();
+        const resDoc = (res ?? {}) as Record<string, unknown>;
+        const envsUnknown = resDoc.environments;
+        const environments = Array.isArray(envsUnknown)
+          ? envsUnknown.map((e) => {
+              const obj = e as Record<string, unknown>;
+              const environmentIdStr = String(obj.environmentId);
+              const countVal = obj.objectsCount;
+              const objectsCount =
+                typeof countVal === 'number' ? countVal : Number(countVal ?? 0);
+              return { environmentId: environmentIdStr, objectsCount };
+            })
+          : [];
+        const totalRaw = resDoc.totalObjects;
+        const totalObjects =
+          typeof totalRaw === 'number' ? totalRaw : Number(totalRaw ?? 0);
+        this.logger.log(
+          `Agregação concluída: ${environments.length} ambientes, total de objetos ${totalObjects}`,
+        );
+        return { environments, totalObjects };
+      } else {
+        const res = await this.onaEnvironmentModel.aggregate(pipeline).exec();
+        const firstDoc = (res?.[0] ?? {}) as Record<string, unknown>;
+        const envIdRaw = firstDoc.environmentId;
+        const envIdStr =
+          typeof envIdRaw === 'string'
+            ? envIdRaw
+            : String(envIdRaw ?? environmentId);
+        const countRaw = firstDoc.objectsCount;
+        const count =
+          typeof countRaw === 'number' ? countRaw : Number(countRaw ?? 0);
+        this.logger.log(
+          `Ambiente ${envIdStr} possui ${count} objetos agregados`,
+        );
+        return {
+          environments: [{ environmentId: envIdStr, objectsCount: count }],
+          totalObjects: count,
+        };
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        this.logger.error(
+          `Erro ao agregar objetos por ambiente ONA: ${error.message}`,
+          error.stack,
+        );
+        throw new Error(
+          `Failed to aggregate environment objects: ${error.message}`,
+        );
+      }
+      this.logger.error(
+        'Erro desconhecido na agregação de objetos por ambiente ONA',
+      );
+      throw new Error(
+        'Failed to aggregate environment objects due to an unknown error',
+      );
+    }
   }
 
   async findLast(): Promise<any> {

@@ -46,14 +46,18 @@ export class OnaEnvironmentController {
   @ApiOperation({
     summary: 'Contar total de ambientes',
     description:
-      'Retorna o número total de registros existentes na coleção de ambientes.',
+      'Retorna todos os objetos presentes em ambientes distintos (únicos) e o total.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Total de ambientes retornado com sucesso',
+    description: 'Objetos únicos e total retornados com sucesso',
     schema: {
       type: 'object',
       properties: {
+        objects: {
+          type: 'array',
+          items: { type: 'string', example: '68c3a1a9bd91370247719ab1' },
+        },
         total: { type: 'number', example: 125 },
       },
     },
@@ -61,6 +65,45 @@ export class OnaEnvironmentController {
   @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
   countEnvironments() {
     return this.onaEnvironmentService.countEnvironments();
+  }
+
+  @Get('objects-count')
+  @ApiOperation({
+    summary: 'Agrega número de objetos por ambiente',
+    description:
+      'Retorna a contagem de objetos por ambiente. Se `environmentId` for informado, retorna apenas a contagem desse ambiente.',
+  })
+  @ApiQuery({
+    name: 'environmentId',
+    type: String,
+    required: false,
+    description: 'ID do ambiente para filtrar (opcional)',
+    example: '68c3a1a9bd91370247719ab1',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Contagem de objetos agregada por ambiente retornada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        environments: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              environmentId: { type: 'string' },
+              objectsCount: { type: 'number' },
+            },
+          },
+        },
+        totalObjects: { type: 'number' },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  getObjectsCount(@Query('environmentId') environmentId?: string) {
+    return this.onaEnvironmentService.countObjectsAggregation(environmentId);
   }
 
   @Get('last')

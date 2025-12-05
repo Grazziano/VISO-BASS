@@ -109,8 +109,20 @@ export class VisoObjectService {
   }
 
   async countObjects(): Promise<{ total: number }> {
-    const total = await this.visoObjectModel.countDocuments().exec();
-    return { total };
+    this.logger.debug('Contando objetos VISO');
+    try {
+      const total = await this.visoObjectModel.countDocuments().exec();
+      this.logger.log(`Total de objetos VISO: ${total}`);
+      return { total };
+    } catch (error) {
+      this.logger.error(
+        `Erro ao contar objetos VISO: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to count objects: Database error',
+      );
+    }
   }
 
   async findLast(): Promise<unknown> {
