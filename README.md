@@ -246,6 +246,15 @@ A aplicação está disponível em produção no seguinte endereço:
 
 ---
 
+## ⚛️ Frontend (Em desenvolvimento)
+
+Frontend está sendo desenvolvido com ReactJS
+
+[Link para o repositório do Frontend](https://github.com/Grazziano/VISO-BASS-REACT)
+[Link para a aplicação em produção](https://viso-bass-react.vercel.app/login)
+
+---
+
 ## 🌱 Rodando os Seeders (Populando o Banco)
 
 O projeto conta com **seeders** para popular o banco de dados com dados iniciais de usuários, objetos, classes, interações, ambientes e relações sociais.
@@ -527,14 +536,6 @@ Distribuído sob a licença MIT. Veja [LICENSE](LICENSE) para mais informações
 - **Outros Projetos relacionados:** [Repositórios de Pesquisa - UFPel](https://grazziano.github.io/projetos-siot-ufpel/)
 - **NestJS:** [Documentação Oficial](https://docs.nestjs.com/)
 - **MongoDB:** [Documentação Oficial](https://www.mongodb.com/docs/)
-
----
-
-## ⚛️ Frontend (Em desenvolvimento)
-
-Frontend está sendo desenvolvido com ReactJS
-
-[Link para o repositório do Frontend](https://github.com/Grazziano/VISO-BASS-REACT)
 
 ---
 
