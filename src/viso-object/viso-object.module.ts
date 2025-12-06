@@ -12,5 +12,6 @@ import { VisoObject, VisoObjectSchema } from './schema/viso-object.schema';
   ],
   controllers: [VisoObjectController],
   providers: [VisoObjectService],
+  exports: [MongooseModule],
 })
 export class VisoObjectModule {}

@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateInteractionDto } from './dto/create-interaction.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Interaction } from './schema/interaction.schema';
 import { Model } from 'mongoose';
+import {
+  VisoObject,
+  VisoObjectDocument,
+} from 'src/viso-object/schema/viso-object.schema';
 
 @Injectable()
 export class InteractionService {
+  private readonly logger = new Logger(InteractionService.name);
+
   constructor(
     @InjectModel(Interaction.name)
     private interactionModel: Model<Interaction>,
+    @InjectModel(VisoObject.name)
+    private visoObjectModel: Model<VisoObjectDocument>,
   ) {}
 
   async create(createInteractionDto: CreateInteractionDto) {
@@ -42,7 +50,35 @@ export class InteractionService {
           .lean()
           .exec(),
       ]);
-      return { items: interactions, total, page, limit };
+      // collect unique object ids referenced in interactions
+      const objectIds = new Set<string>();
+      for (const it of interactions) {
+        if (it?.inter_obj_i) objectIds.add(String(it.inter_obj_i));
+        if (it?.inter_obj_j) objectIds.add(String(it.inter_obj_j));
+      }
+
+      let items = interactions;
+      if (objectIds.size > 0) {
+        const visoObjects = await this.visoObjectModel
+          .find({ _id: { $in: Array.from(objectIds) } })
+          .lean()
+          .exec();
+        const visoMap = new Map<string, any>(
+          visoObjects.map((o: any) => [String(o._id), o]),
+        );
+
+        items = interactions.map((it) => ({
+          ...it,
+          inter_obj_i: visoMap.get(String(it.inter_obj_i)) || it.inter_obj_i,
+          inter_obj_j: visoMap.get(String(it.inter_obj_j)) || it.inter_obj_j,
+        }));
+      }
+
+      this.logger.debug(
+        `${items.length} interações retornadas (total: ${total})`,
+      );
+
+      return { items, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find interaction: ${error.message}`);
