@@ -3,6 +3,10 @@ import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, PipelineStage } from 'mongoose';
 import { OnaEnvironment } from './schema/ona-enviroment.schema';
+import {
+  VisoObject,
+  VisoObjectDocument,
+} from 'src/viso-object/schema/viso-object.schema';
 
 @Injectable()
 export class OnaEnvironmentService {
@@ -11,6 +15,8 @@ export class OnaEnvironmentService {
   constructor(
     @InjectModel(OnaEnvironment.name)
     private onaEnvironmentModel: Model<OnaEnvironment>,
+    @InjectModel(VisoObject.name)
+    private visoObjectModel: Model<VisoObjectDocument>,
   ) {}
 
   async create(createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
@@ -64,10 +70,33 @@ export class OnaEnvironmentService {
           .lean()
           .exec(),
       ]);
+      // populate env_object_i with corresponding VisoObject documents (batch fetch)
+      const envObjectIds = new Set<string>();
+      for (const it of items) {
+        if (it?.env_object_i) envObjectIds.add(String(it.env_object_i));
+      }
+
+      let populatedItems = items;
+      if (envObjectIds.size > 0) {
+        const visoObjects = await this.visoObjectModel
+          .find({ _id: { $in: Array.from(envObjectIds) } })
+          .lean()
+          .exec();
+        const visoMap = new Map<string, any>(
+          visoObjects.map((o: any) => [String(o._id), o]),
+        );
+
+        populatedItems = items.map((it) => ({
+          ...it,
+          env_object_i: visoMap.get(String(it.env_object_i)) || it.env_object_i,
+        }));
+      }
+
       this.logger.log(
-        `${items.length} ambientes ONA retornados (total: ${total})`,
+        `${populatedItems.length} ambientes ONA retornados (total: ${total})`,
       );
-      return { items, total, page, limit };
+
+      return { items: populatedItems, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(
