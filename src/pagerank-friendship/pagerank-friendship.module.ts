@@ -6,12 +6,14 @@ import {
   PageRankFriendship,
   PageRankFriendshipSchema,
 } from './schema/pagerank-friendship.schema';
+import { VisoObjectModule } from 'src/viso-object/viso-object.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: PageRankFriendship.name, schema: PageRankFriendshipSchema },
     ]),
+    VisoObjectModule,
   ],
   controllers: [PagerankFriendshipController],
   providers: [PagerankFriendshipService],

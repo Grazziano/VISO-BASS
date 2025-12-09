@@ -6,12 +6,14 @@ import {
   OnaEnvironment,
   OnaEnvironmentSchema,
 } from './schema/ona-enviroment.schema';
+import { VisoObjectModule } from 'src/viso-object/viso-object.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: OnaEnvironment.name, schema: OnaEnvironmentSchema },
     ]),
+    VisoObjectModule,
   ],
   controllers: [OnaEnvironmentController],
   providers: [OnaEnvironmentService],

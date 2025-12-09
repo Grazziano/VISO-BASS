@@ -3,12 +3,18 @@ import { CreatePagerankFriendshipDto } from './dto/create-pagerank-friendship.dt
 import { PageRankFriendship } from './schema/pagerank-friendship.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  VisoObject,
+  VisoObjectDocument,
+} from 'src/viso-object/schema/viso-object.schema';
 
 @Injectable()
 export class PagerankFriendshipService {
   constructor(
     @InjectModel(PageRankFriendship.name)
     private pagerankFriendshipModel: Model<PageRankFriendship>,
+    @InjectModel(VisoObject.name)
+    private visoObjectModel: Model<VisoObjectDocument>,
   ) {}
 
   async create(createPagerankFriendshipDto: CreatePagerankFriendshipDto) {
@@ -48,7 +54,30 @@ export class PagerankFriendshipService {
           .lean()
           .exec(),
       ]);
-      return { items, total, page, limit };
+
+      // collect unique rank_object ids
+      const objectIds = new Set<string>();
+      for (const it of items) {
+        if (it?.rank_object) objectIds.add(String(it.rank_object));
+      }
+
+      let populatedItems = items;
+      if (objectIds.size > 0) {
+        const visoObjects = await this.visoObjectModel
+          .find({ _id: { $in: Array.from(objectIds) } })
+          .lean()
+          .exec();
+        const visoMap = new Map<string, any>(
+          visoObjects.map((o: any) => [String(o._id), o]),
+        );
+
+        populatedItems = items.map((it) => ({
+          ...it,
+          rank_object: visoMap.get(String(it.rank_object)) || it.rank_object,
+        }));
+      }
+
+      return { items: populatedItems, total, page, limit };
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Failed to find pagerankFriendship: ${error.message}`);
