@@ -209,8 +209,16 @@ export class InteractionService {
   // }
 
   async countInteractions(): Promise<{ total: number }> {
-    const total = await this.interactionModel.countDocuments().exec();
-    return { total };
+    try {
+      const total = await this.interactionModel.countDocuments().exec();
+      this.logger.debug(`Total de interações: ${total}`);
+      return { total };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to count interactions: ${error.message}`);
+      }
+      throw new Error('Failed to count interactions due to an unknown error');
+    }
   }
 
   async findLast(): Promise<unknown> {
