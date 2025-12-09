@@ -89,8 +89,25 @@ export class PagerankFriendshipService {
   }
 
   async countFriendships(): Promise<{ total: number }> {
-    const total = await this.pagerankFriendshipModel.countDocuments().exec();
-    return { total };
+    try {
+      const res = await this.pagerankFriendshipModel
+        .aggregate([
+          {
+            $project: {
+              edges: { $size: { $ifNull: ['$rank_adjacency', []] } },
+            },
+          },
+          { $group: { _id: null, total: { $sum: '$edges' } } },
+        ])
+        .exec();
+      const total = (res?.[0]?.total as number) ?? 0;
+      return { total };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to count friendships: ${error.message}`);
+      }
+      throw new Error('Failed to count friendships due to an unknown error');
+    }
   }
 
   async findLast(): Promise<any> {

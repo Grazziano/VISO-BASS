@@ -162,36 +162,22 @@ export class OnaEnvironmentService {
   //   }
   // }
 
-  async countEnvironments(): Promise<{ objects: string[]; total: number }> {
-    this.logger.debug('Listando objetos únicos em ambientes ONA');
+  async countEnvironments(): Promise<{ total: number }> {
+    this.logger.debug('Contando ambientes ONA');
     try {
-      const neighborsIds = (
-        await this.onaEnvironmentModel.distinct('objects').exec()
-      ).map((v: unknown) => String(v));
-      const envIIds = (
-        await this.onaEnvironmentModel.distinct('env_object_i').exec()
-      ).map((v: unknown) => String(v));
-
-      const unique = Array.from(new Set([...neighborsIds, ...envIIds]));
-
-      this.logger.log(`Objetos únicos em ambientes ONA: ${unique.length}`);
-      return { objects: unique, total: unique.length };
+      const total = await this.onaEnvironmentModel.countDocuments().exec();
+      this.logger.log(`Total de ambientes ONA: ${total}`);
+      return { total };
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error(
-          `Erro ao listar objetos únicos de ambientes ONA: ${error.message}`,
+          `Erro ao contar ambientes ONA: ${error.message}`,
           error.stack,
         );
-        throw new Error(
-          `Failed to list unique environment objects: ${error.message}`,
-        );
+        throw new Error(`Failed to count onaEnvironment: ${error.message}`);
       }
-      this.logger.error(
-        'Erro desconhecido ao listar objetos únicos de ambientes ONA',
-      );
-      throw new Error(
-        'Failed to list unique environment objects due to an unknown error',
-      );
+      this.logger.error('Erro desconhecido ao contar ambientes ONA');
+      throw new Error('Failed to count onaEnvironment due to an unknown error');
     }
   }
 

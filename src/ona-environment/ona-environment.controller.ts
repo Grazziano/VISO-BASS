@@ -45,19 +45,14 @@ export class OnaEnvironmentController {
   @Get('count')
   @ApiOperation({
     summary: 'Contar total de ambientes',
-    description:
-      'Retorna todos os objetos presentes em ambientes distintos (únicos) e o total.',
+    description: 'Retorna o número total de ambientes registrados.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Objetos únicos e total retornados com sucesso',
+    description: 'Total de ambientes retornado com sucesso',
     schema: {
       type: 'object',
       properties: {
-        objects: {
-          type: 'array',
-          items: { type: 'string', example: '68c3a1a9bd91370247719ab1' },
-        },
         total: { type: 'number', example: 125 },
       },
     },
