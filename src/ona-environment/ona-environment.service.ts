@@ -199,8 +199,10 @@ export class OnaEnvironmentService {
         pipeline.push({
           $project: { _id: 0, environments: 1, totalObjects: 1 },
         });
-        const [res] = await this.onaEnvironmentModel.aggregate(pipeline).exec();
-        const resDoc = (res ?? {}) as Record<string, unknown>;
+        const resArr = await this.onaEnvironmentModel
+          .aggregate(pipeline)
+          .exec();
+        const resDoc = (resArr?.[0] ?? {}) as Record<string, unknown>;
         const envsUnknown = resDoc.environments;
         const environments = Array.isArray(envsUnknown)
           ? envsUnknown.map((e) => {
@@ -220,13 +222,19 @@ export class OnaEnvironmentService {
         );
         return { environments, totalObjects };
       } else {
-        const res = await this.onaEnvironmentModel.aggregate(pipeline).exec();
-        const firstDoc = (res?.[0] ?? {}) as Record<string, unknown>;
+        const resArr = await this.onaEnvironmentModel
+          .aggregate(pipeline)
+          .exec();
+        const firstDoc = (resArr?.[0] ?? {}) as Record<string, unknown>;
         const envIdRaw = firstDoc.environmentId;
         const envIdStr =
           typeof envIdRaw === 'string'
             ? envIdRaw
-            : String(envIdRaw ?? environmentId);
+            : envIdRaw &&
+                typeof (envIdRaw as { toString: () => string }).toString ===
+                  'function'
+              ? (envIdRaw as { toString: () => string }).toString()
+              : String(environmentId);
         const countRaw = firstDoc.objectsCount;
         const count =
           typeof countRaw === 'number' ? countRaw : Number(countRaw ?? 0);

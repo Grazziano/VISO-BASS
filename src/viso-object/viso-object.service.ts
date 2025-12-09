@@ -7,7 +7,7 @@ import {
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { plainToInstance } from 'class-transformer';
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { VisoObject, VisoObjectDocument } from './schema/viso-object.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'src/auth/types/jwt-payload.interface';
@@ -104,6 +104,131 @@ export class VisoObjectService {
       );
       throw new InternalServerErrorException(
         'Failed to find objects: Database error',
+      );
+    }
+  }
+
+  async search(params: {
+    name?: string;
+    brand?: string;
+    model?: string;
+    ownerId?: string;
+    mac?: string;
+    status?: number;
+    access?: number;
+    location?: number;
+    qualification?: number;
+    functionIncludes?: string[];
+    restrictionIncludes?: string[];
+    limitationIncludes?: string[];
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    items: ResponseVisoObjectDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    try {
+      const {
+        name,
+        brand,
+        model,
+        ownerId,
+        mac,
+        status,
+        access,
+        location,
+        qualification,
+        functionIncludes,
+        restrictionIncludes,
+        limitationIncludes,
+      } = params;
+
+      let { page = 1, limit = 10 } = params;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+
+      const filter: Record<string, unknown> = {};
+
+      if (name && name.trim().length > 0) {
+        filter.obj_name = { $regex: name.trim(), $options: 'i' };
+      }
+      if (brand && brand.trim().length > 0) {
+        filter.obj_brand = { $regex: brand.trim(), $options: 'i' };
+      }
+      if (model && model.trim().length > 0) {
+        filter.obj_model = { $regex: model.trim(), $options: 'i' };
+      }
+      if (mac && mac.trim().length > 0) {
+        filter.obj_networkMAC = { $regex: mac.trim(), $options: 'i' };
+      }
+      if (typeof status === 'number') {
+        filter.obj_status = status;
+      }
+      if (typeof access === 'number') {
+        filter.obj_access = access;
+      }
+      if (typeof location === 'number') {
+        filter.obj_location = location;
+      }
+      if (typeof qualification === 'number') {
+        filter.obj_qualification = qualification;
+      }
+      if (ownerId && ownerId.trim().length > 0) {
+        try {
+          filter.obj_owner = new Types.ObjectId(ownerId.trim());
+        } catch {
+          // ignore invalid id
+        }
+      }
+      if (Array.isArray(functionIncludes) && functionIncludes.length > 0) {
+        filter.obj_function = { $all: functionIncludes };
+      }
+      if (
+        Array.isArray(restrictionIncludes) &&
+        restrictionIncludes.length > 0
+      ) {
+        filter.obj_restriction = { $all: restrictionIncludes };
+      }
+      if (Array.isArray(limitationIncludes) && limitationIncludes.length > 0) {
+        filter.obj_limitation = { $all: limitationIncludes };
+      }
+
+      const skip = (page - 1) * limit;
+
+      this.logger.debug(
+        `Busca avançada de objetos VISO - filtros: ${JSON.stringify(filter)} | page: ${page}, limit: ${limit}`,
+      );
+
+      const [total, visoObjects] = await Promise.all([
+        this.visoObjectModel.countDocuments(filter).exec(),
+        this.visoObjectModel
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+
+      this.logger.log(
+        `${visoObjects.length} objetos VISO retornados na busca (total filtrado: ${total})`,
+      );
+
+      return {
+        items: plainToInstance(ResponseVisoObjectDto, visoObjects),
+        total,
+        page,
+        limit,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Erro na busca avançada de objetos VISO: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to search objects: Database error',
       );
     }
   }
