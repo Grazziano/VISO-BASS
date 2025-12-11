@@ -8,6 +8,7 @@ import { CreatePagerankFriendshipDto } from './dto/create-pagerank-friendship.dt
 describe('PagerankFriendshipService', () => {
   let service: PagerankFriendshipService;
   let mockPagerankFriendshipModel: any;
+  let mockVisoObjectModel: any;
 
   const mockPageRankFriendship = {
     _id: '507f1f77bcf86cd799439011',
@@ -29,6 +30,10 @@ describe('PagerankFriendshipService', () => {
     // Add static methods to the mock constructor
     (mockPagerankFriendshipModel as any).find = jest.fn();
     (mockPagerankFriendshipModel as any).findById = jest.fn();
+    (mockPagerankFriendshipModel as any).countDocuments = jest.fn();
+
+    mockVisoObjectModel = jest.fn();
+    (mockVisoObjectModel as any).find = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -36,6 +41,12 @@ describe('PagerankFriendshipService', () => {
         {
           provide: getModelToken(PageRankFriendship.name),
           useValue: mockPagerankFriendshipModel,
+        },
+        {
+          provide: getModelToken(
+            require('../viso-object/schema/viso-object.schema').VisoObject.name,
+          ),
+          useValue: mockVisoObjectModel,
         },
       ],
     }).compile();
@@ -101,28 +112,60 @@ describe('PagerankFriendshipService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all pagerank friendships', async () => {
+    it('should return paginated pagerank friendships', async () => {
       const mockFriendships = [
         mockPageRankFriendship,
         { ...mockPageRankFriendship, _id: '507f1f77bcf86cd799439014' },
       ];
 
-      (mockPagerankFriendshipModel as any).find.mockResolvedValue(
-        mockFriendships,
-      );
+      const mockCountExec = jest.fn().mockResolvedValue(2);
+      const mockExec = jest.fn().mockResolvedValue(mockFriendships);
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockPagerankFriendshipModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (mockPagerankFriendshipModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
+
+      (mockVisoObjectModel as any).find = jest.fn().mockReturnValue({
+        lean: jest
+          .fn()
+          .mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),
+      });
 
       const result = await service.findAll();
 
+      expect(
+        (mockPagerankFriendshipModel as any).countDocuments,
+      ).toHaveBeenCalled();
       expect((mockPagerankFriendshipModel as any).find).toHaveBeenCalled();
       expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(2);
+      expect(result.items.length).toBe(2);
     });
 
     it('should throw Error when find fails', async () => {
-      (mockPagerankFriendshipModel as any).find.mockRejectedValue(
-        new Error('Database error'),
-      );
+      const mockCountExec = jest.fn().mockResolvedValue(1);
+      const mockExec = jest.fn().mockRejectedValue(new Error('Database error'));
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockPagerankFriendshipModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (mockPagerankFriendshipModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       await expect(service.findAll()).rejects.toThrow(
         'Failed to find pagerankFriendship: Database error',
@@ -130,9 +173,20 @@ describe('PagerankFriendshipService', () => {
     });
 
     it('should throw Error for unknown error', async () => {
-      (mockPagerankFriendshipModel as any).find.mockRejectedValue(
-        'Unknown error',
-      );
+      const mockCountExec = jest.fn().mockResolvedValue(1);
+      const mockExec = jest.fn().mockRejectedValue('Unknown error');
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockPagerankFriendshipModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (mockPagerankFriendshipModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       await expect(service.findAll()).rejects.toThrow(
         'Failed to find pagerankFriendship due to an unknown error',

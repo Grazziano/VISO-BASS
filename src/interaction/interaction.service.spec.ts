@@ -8,6 +8,7 @@ import { CreateInteractionDto } from './dto/create-interaction.dto';
 describe('InteractionService', () => {
   let service: InteractionService;
   let model: Model<Interaction>;
+  let mockVisoObjectModel: any;
 
   const mockInteraction = {
     _id: '507f1f77bcf86cd799439011',
@@ -39,6 +40,14 @@ describe('InteractionService', () => {
     (mockModel as any).find = jest.fn();
     (mockModel as any).findById = jest.fn();
     (mockModel as any).aggregate = jest.fn();
+    (mockModel as any).countDocuments = jest.fn();
+
+    mockVisoObjectModel = jest.fn();
+    (mockVisoObjectModel as any).find = jest.fn().mockReturnValue({
+      lean: jest
+        .fn()
+        .mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -46,6 +55,12 @@ describe('InteractionService', () => {
         {
           provide: getModelToken(Interaction.name),
           useValue: mockModel,
+        },
+        {
+          provide: getModelToken(
+            require('../viso-object/schema/viso-object.schema').VisoObject.name,
+          ),
+          useValue: mockVisoObjectModel,
         },
       ],
     }).compile();
@@ -104,31 +119,52 @@ describe('InteractionService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all interactions', async () => {
+    it('should return paginated interactions', async () => {
       // Arrange
       const mockInteractions = [mockInteraction];
+      const mockCountExec = jest.fn().mockResolvedValue(1);
       const mockExec = jest.fn().mockResolvedValue(mockInteractions);
       const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
 
-      model.find = jest.fn().mockReturnValue({ lean: mockLean });
+      (model as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (model as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       // Act
       const result = await service.findAll();
 
       // Assert
-      expect(model.find).toHaveBeenCalled();
-      expect(mockLean).toHaveBeenCalled();
-      expect(mockExec).toHaveBeenCalled();
-      expect(result).toEqual(mockInteractions);
+      expect((model as any).countDocuments).toHaveBeenCalled();
+      expect((model as any).find).toHaveBeenCalled();
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.items.length).toBe(1);
+      expect(result.total).toBe(1);
     });
 
     it('should throw error when find fails', async () => {
       // Arrange
       const error = new Error('Database error');
+      const mockCountExec = jest.fn().mockResolvedValue(1);
       const mockExec = jest.fn().mockRejectedValue(error);
       const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
 
-      model.find = jest.fn().mockReturnValue({ lean: mockLean });
+      (model as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (model as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       // Act & Assert
       await expect(service.findAll()).rejects.toThrow(

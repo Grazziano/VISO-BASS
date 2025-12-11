@@ -6,7 +6,7 @@ import { OnaEnvironment } from './schema/ona-enviroment.schema';
 import {
   VisoObject,
   VisoObjectDocument,
-} from 'src/viso-object/schema/viso-object.schema';
+} from '../viso-object/schema/viso-object.schema';
 
 @Injectable()
 export class OnaEnvironmentService {

@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import {
   VisoObject,
   VisoObjectDocument,
-} from 'src/viso-object/schema/viso-object.schema';
+} from '../viso-object/schema/viso-object.schema';
 
 @Injectable()
 export class InteractionService {

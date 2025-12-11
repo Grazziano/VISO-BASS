@@ -89,29 +89,39 @@ describe('InteractionController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all interactions', async () => {
+    it('should return paginated interactions', async () => {
       // Arrange
-      const mockInteractions = [mockInteraction];
-      service.findAll.mockResolvedValue([mockInteraction] as any);
+      const mockResult = {
+        items: [mockInteraction],
+        total: 1,
+        page: 1,
+        limit: 10,
+      };
+      service.findAll.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await controller.findAll();
 
       // Assert
       expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual(mockInteractions);
+      expect(result).toEqual(mockResult);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(1);
     });
 
-    it('should return empty array when no interactions exist', async () => {
+    it('should return empty items when no interactions exist', async () => {
       // Arrange
-      service.findAll.mockResolvedValue([]);
+      const mockResult = { items: [], total: 0, page: 1, limit: 10 };
+      service.findAll.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await controller.findAll();
 
       // Assert
       expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual([]);
+      expect(result).toEqual(mockResult);
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
     });
 
     it('should throw error when service fails', async () => {

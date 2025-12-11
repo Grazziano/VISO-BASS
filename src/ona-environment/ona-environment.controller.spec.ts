@@ -31,6 +31,8 @@ describe('OnaEnvironmentController', () => {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
+    countEnvironments: jest.fn(),
+    countObjectsAggregation: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -99,19 +101,24 @@ describe('OnaEnvironmentController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all ona environments', async () => {
-      const mockEnvironments = [
-        mockOnaEnvironment,
-        { ...mockOnaEnvironment, _id: '507f1f77bcf86cd799439014' },
-      ];
-      mockOnaEnvironmentService.findAll.mockResolvedValue(mockEnvironments);
+    it('should return paginated ona environments', async () => {
+      const mockResult = {
+        items: [
+          mockOnaEnvironment,
+          { ...mockOnaEnvironment, _id: '507f1f77bcf86cd799439014' },
+        ],
+        total: 2,
+        page: 1,
+        limit: 10,
+      };
+      mockOnaEnvironmentService.findAll.mockResolvedValue(mockResult as any);
 
       const result = await controller.findAll();
 
       expect(mockOnaEnvironmentService.findAll).toHaveBeenCalled();
-      expect(result).toEqual(mockEnvironments);
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
+      expect(result).toEqual(mockResult);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(2);
     });
 
     it('should throw Error when service fails', async () => {
@@ -122,6 +129,60 @@ describe('OnaEnvironmentController', () => {
       await expect(controller.findAll()).rejects.toThrow(
         'Failed to find onaEnvironment',
       );
+    });
+  });
+
+  describe('count', () => {
+    it('should return total environments', async () => {
+      const mockCount = { total: 5 };
+      mockOnaEnvironmentService.countEnvironments.mockResolvedValue(mockCount);
+
+      const result = await controller.countEnvironments();
+
+      expect(mockOnaEnvironmentService.countEnvironments).toHaveBeenCalled();
+      expect(result).toEqual(mockCount);
+    });
+  });
+
+  describe('objects-count', () => {
+    it('should return aggregated objects count for all environments', async () => {
+      const mockAgg = {
+        environments: [
+          { environmentId: '507f1f77bcf86cd799439011', objectsCount: 3 },
+        ],
+        totalObjects: 3,
+      };
+      mockOnaEnvironmentService.countObjectsAggregation.mockResolvedValue(
+        mockAgg,
+      );
+
+      const result = await controller.getObjectsCount();
+
+      expect(
+        mockOnaEnvironmentService.countObjectsAggregation,
+      ).toHaveBeenCalledWith(undefined);
+      expect(result).toEqual(mockAgg);
+    });
+
+    it('should accept environmentId filter', async () => {
+      const mockAgg = {
+        environments: [
+          { environmentId: '507f1f77bcf86cd799439011', objectsCount: 3 },
+        ],
+        totalObjects: 3,
+      };
+      mockOnaEnvironmentService.countObjectsAggregation.mockResolvedValue(
+        mockAgg,
+      );
+
+      const result = await controller.getObjectsCount(
+        '507f1f77bcf86cd799439011',
+      );
+
+      expect(
+        mockOnaEnvironmentService.countObjectsAggregation,
+      ).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+      expect(result).toEqual(mockAgg);
     });
   });
 

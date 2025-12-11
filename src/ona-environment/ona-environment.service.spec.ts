@@ -3,11 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OnaEnvironmentService } from './ona-environment.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { OnaEnvironment } from './schema/ona-enviroment.schema';
+import { VisoObject } from '../viso-object/schema/viso-object.schema';
 import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 
 describe('OnaEnvironmentService', () => {
   let service: OnaEnvironmentService;
   let mockOnaEnvironmentModel: any;
+  let mockVisoObjectModel: any;
 
   const mockOnaEnvironment = {
     _id: '507f1f77bcf86cd799439011',
@@ -36,12 +38,19 @@ describe('OnaEnvironmentService', () => {
     (mockOnaEnvironmentModel as any).find = jest.fn();
     (mockOnaEnvironmentModel as any).findById = jest.fn();
 
+    mockVisoObjectModel = jest.fn();
+    (mockVisoObjectModel as any).find = jest.fn();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OnaEnvironmentService,
         {
           provide: getModelToken(OnaEnvironment.name),
           useValue: mockOnaEnvironmentModel,
+        },
+        {
+          provide: getModelToken(VisoObject.name),
+          useValue: mockVisoObjectModel,
         },
       ],
     }).compile();
@@ -115,32 +124,60 @@ describe('OnaEnvironmentService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all ona environments', async () => {
+    it('should return paginated ona environments', async () => {
       const mockEnvironments = [
         mockOnaEnvironment,
         { ...mockOnaEnvironment, _id: '507f1f77bcf86cd799439014' },
       ];
 
-      mockOnaEnvironmentModel.find.mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-          exec: jest.fn().mockResolvedValue(mockEnvironments),
-        }),
+      const mockCountExec = jest.fn().mockResolvedValue(2);
+      const mockExec = jest.fn().mockResolvedValue(mockEnvironments);
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockOnaEnvironmentModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (mockOnaEnvironmentModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
+
+      (mockVisoObjectModel as any).find = jest.fn().mockReturnValue({
+        lean: jest
+          .fn()
+          .mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),
       });
 
       const result = await service.findAll();
 
-      expect(mockOnaEnvironmentModel.find).toHaveBeenCalled();
+      expect(
+        (mockOnaEnvironmentModel as any).countDocuments,
+      ).toHaveBeenCalled();
+      expect((mockOnaEnvironmentModel as any).find).toHaveBeenCalled();
       expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(2);
+      expect(result.items.length).toBe(2);
     });
 
     it('should throw Error when find fails', async () => {
-      mockOnaEnvironmentModel.find.mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-          exec: jest.fn().mockRejectedValue(new Error('Database error')),
-        }),
+      const mockCountExec = jest.fn().mockResolvedValue(1);
+      const mockExec = jest.fn().mockRejectedValue(new Error('Database error'));
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockOnaEnvironmentModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
       });
+      (mockOnaEnvironmentModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       await expect(service.findAll()).rejects.toThrow(
         'Failed to find onaEnvironment: Database error',
@@ -148,11 +185,20 @@ describe('OnaEnvironmentService', () => {
     });
 
     it('should throw Error for unknown error', async () => {
-      mockOnaEnvironmentModel.find.mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-          exec: jest.fn().mockRejectedValue('Unknown error'),
-        }),
+      const mockCountExec = jest.fn().mockResolvedValue(1);
+      const mockExec = jest.fn().mockRejectedValue('Unknown error');
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
+      (mockOnaEnvironmentModel as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
       });
+      (mockOnaEnvironmentModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       await expect(service.findAll()).rejects.toThrow(
         'Failed to find onaEnvironment due to an unknown error',

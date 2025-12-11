@@ -49,6 +49,7 @@ describe('VisoObjectController', () => {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
+    search: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -123,29 +124,39 @@ describe('VisoObjectController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all viso objects', async () => {
+    it('should return paginated viso objects', async () => {
       // Arrange
-      const mockObjects = [mockVisoObject];
-      service.findAll.mockResolvedValue(mockObjects);
+      const mockResult = {
+        items: [mockVisoObject],
+        total: 1,
+        page: 1,
+        limit: 10,
+      };
+      service.findAll.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await controller.findAll();
 
       // Assert
       expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual(mockObjects);
+      expect(result).toEqual(mockResult);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(1);
     });
 
-    it('should return empty array when no objects exist', async () => {
+    it('should return empty items when no objects exist', async () => {
       // Arrange
-      service.findAll.mockResolvedValue([]);
+      const mockResult = { items: [], total: 0, page: 1, limit: 10 };
+      service.findAll.mockResolvedValue(mockResult as any);
 
       // Act
       const result = await controller.findAll();
 
       // Assert
       expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual([]);
+      expect(result).toEqual(mockResult);
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
     });
 
     it('should throw error when service fails', async () => {
@@ -156,6 +167,51 @@ describe('VisoObjectController', () => {
       // Act & Assert
       await expect(controller.findAll()).rejects.toThrow('Service error');
       expect(service.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('search', () => {
+    it('should call service.search with parsed query params', async () => {
+      // Arrange
+      const mockResult = { items: [], total: 0, page: 1, limit: 10 };
+      service.search.mockResolvedValue(mockResult as any);
+
+      // Act
+      const result = await controller.search(
+        'name',
+        'brand',
+        'model',
+        'mac',
+        '507f1f77bcf86cd799439011',
+        '1',
+        '2',
+        '3',
+        '4',
+        'a,b,c',
+        undefined,
+        ['x', 'y'],
+        '1',
+        '10',
+      );
+
+      // Assert
+      expect(service.search).toHaveBeenCalledWith({
+        name: 'name',
+        brand: 'brand',
+        model: 'model',
+        mac: 'mac',
+        ownerId: '507f1f77bcf86cd799439011',
+        status: 1,
+        access: 2,
+        location: 3,
+        qualification: 4,
+        functionIncludes: ['a', 'b', 'c'],
+        restrictionIncludes: undefined,
+        limitationIncludes: ['x', 'y'],
+        page: 1,
+        limit: 10,
+      });
+      expect(result).toEqual(mockResult);
     });
   });
 

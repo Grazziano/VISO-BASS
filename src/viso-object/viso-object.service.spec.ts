@@ -58,6 +58,7 @@ describe('VisoObjectService', () => {
     }));
     (mockModel as any).find = jest.fn();
     (mockModel as any).findById = jest.fn();
+    (mockModel as any).countDocuments = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -123,47 +124,85 @@ describe('VisoObjectService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all viso objects', async () => {
+    it('should return all viso objects with pagination', async () => {
       // Arrange
       const mockObjects = [mockVisoObject];
+      const mockCountExec = jest.fn().mockResolvedValue(1);
       const mockExec = jest.fn().mockResolvedValue(mockObjects);
       const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
 
-      model.find = jest.fn().mockReturnValue({ lean: mockLean });
+      (model as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (model as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       // Act
       const result = await service.findAll();
 
       // Assert
-      expect(model.find).toHaveBeenCalled();
+      expect((model as any).countDocuments).toHaveBeenCalled();
+      expect((model as any).find).toHaveBeenCalled();
       expect(mockLean).toHaveBeenCalled();
       expect(mockExec).toHaveBeenCalled();
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBeInstanceOf(ResponseVisoObjectDto);
+      expect(result.total).toBe(1);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toBeInstanceOf(ResponseVisoObjectDto);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBeGreaterThan(0);
     });
 
     it('should return empty array when no objects exist', async () => {
       // Arrange
+      const mockCountExec = jest.fn().mockResolvedValue(0);
       const mockExec = jest.fn().mockResolvedValue([]);
       const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
 
-      model.find = jest.fn().mockReturnValue({ lean: mockLean });
+      (model as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (model as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       // Act
       const result = await service.findAll();
 
       // Assert
-      expect(model.find).toHaveBeenCalled();
-      expect(result).toEqual([]);
+      expect((model as any).countDocuments).toHaveBeenCalled();
+      expect((model as any).find).toHaveBeenCalled();
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
     });
 
     it('should throw InternalServerErrorException when find fails', async () => {
       // Arrange
       const error = new Error('Database error');
+      const mockCountExec = jest.fn().mockResolvedValue(1);
       const mockExec = jest.fn().mockRejectedValue(error);
       const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
 
-      model.find = jest.fn().mockReturnValue({ lean: mockLean });
+      (model as any).find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
+      });
+      (model as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       // Act & Assert
       await expect(service.findAll()).rejects.toThrow(

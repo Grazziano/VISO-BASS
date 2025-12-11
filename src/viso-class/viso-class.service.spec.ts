@@ -107,24 +107,36 @@ describe('VisoClassService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all viso classes', async () => {
+    it('should return paginated viso classes', async () => {
       const mockClasses = [
         mockVisoClass,
         { ...mockVisoClass, _id: '507f1f77bcf86cd799439014' },
       ];
 
+      const mockCountExec = jest.fn().mockResolvedValue(2);
+      const mockExec = jest.fn().mockResolvedValue(mockClasses);
+      const mockLean = jest.fn().mockReturnValue({ exec: mockExec });
+
       mockVisoClassModel.find.mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-          exec: jest.fn().mockResolvedValue(mockClasses),
-        }),
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        lean: mockLean,
+        exec: mockExec,
       });
+
+      (mockVisoClassModel as any).countDocuments = jest
+        .fn()
+        .mockReturnValue({ exec: mockCountExec });
 
       const result = await service.findAll();
 
+      expect((mockVisoClassModel as any).countDocuments).toHaveBeenCalled();
       expect(mockVisoClassModel.find).toHaveBeenCalled();
       expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(2);
+      expect(result.items.length).toBe(2);
     });
 
     it('should throw InternalServerErrorException when find fails', async () => {

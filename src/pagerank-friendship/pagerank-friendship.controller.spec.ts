@@ -25,6 +25,7 @@ describe('PagerankFriendshipController', () => {
     findAll: jest.fn(),
     findOne: jest.fn(),
     findMostRelevant: jest.fn(),
+    countFriendships: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -88,19 +89,26 @@ describe('PagerankFriendshipController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all pagerank friendships', async () => {
-      const mockFriendships = [
-        mockPageRankFriendship,
-        { ...mockPageRankFriendship, _id: '507f1f77bcf86cd799439014' },
-      ];
-      mockPagerankFriendshipService.findAll.mockResolvedValue(mockFriendships);
+    it('should return paginated pagerank friendships', async () => {
+      const mockResult = {
+        items: [
+          mockPageRankFriendship,
+          { ...mockPageRankFriendship, _id: '507f1f77bcf86cd799439014' },
+        ],
+        total: 2,
+        page: 1,
+        limit: 10,
+      };
+      mockPagerankFriendshipService.findAll.mockResolvedValue(
+        mockResult as any,
+      );
 
       const result = await controller.findAll();
 
       expect(service.findAll).toHaveBeenCalled();
-      expect(result).toEqual(mockFriendships);
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(2);
+      expect(result).toEqual(mockResult);
+      expect(Array.isArray(result.items)).toBe(true);
+      expect(result.total).toBe(2);
     });
 
     it('should throw Error when service fails', async () => {
@@ -160,6 +168,20 @@ describe('PagerankFriendshipController', () => {
       await expect(controller.getRelevant()).rejects.toThrow(
         'Failed to find relevant friendships',
       );
+    });
+  });
+
+  describe('count', () => {
+    it('should return total friendships (sum of adjacencies)', async () => {
+      const mockCount = { total: 7 };
+      mockPagerankFriendshipService.countFriendships.mockResolvedValue(
+        mockCount,
+      );
+
+      const controllerResult = await controller.countEnvironments();
+
+      expect(mockPagerankFriendshipService.countFriendships).toHaveBeenCalled();
+      expect(controllerResult).toEqual(mockCount);
     });
   });
 

@@ -104,6 +104,14 @@ describe('Interaction (e2e)', () => {
     expect(Array.isArray(stats)).toBeTruthy();
   });
 
+  it('/interaction/count (GET) 200', async () => {
+    const res = await request(app.getHttpServer() as unknown as App)
+      .get('/interaction/count')
+      .expect(200);
+    const body = res.body as { total: number };
+    expect(typeof body.total).toBe('number');
+  });
+
   it('/interaction/time-series (GET) 200', async () => {
     const res = await request(app.getHttpServer() as unknown as App)
       .get('/interaction/time-series')
