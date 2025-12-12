@@ -64,8 +64,14 @@ describe('VisoClass (e2e)', () => {
     const res = await request(app.getHttpServer() as unknown as App)
       .get('/class')
       .expect(200);
-    const list = res.body as Array<{ _id: string }>;
-    expect(Array.isArray(list)).toBeTruthy();
+    const payload = res.body as {
+      items: Array<{ _id: string }>;
+      total: number;
+      page: number;
+      limit: number;
+    };
+    expect(Array.isArray(payload.items)).toBeTruthy();
+    expect(typeof payload.total).toBe('number');
   });
 
   it('/class/:id (GET) 200', async () => {

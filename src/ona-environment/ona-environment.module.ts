@@ -6,7 +6,7 @@ import {
   OnaEnvironment,
   OnaEnvironmentSchema,
 } from './schema/ona-enviroment.schema';
-import { VisoObjectModule } from 'src/viso-object/viso-object.module';
+import { VisoObjectModule } from '../viso-object/viso-object.module';
 
 @Module({
   imports: [

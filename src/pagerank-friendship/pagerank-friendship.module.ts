@@ -6,7 +6,7 @@ import {
   PageRankFriendship,
   PageRankFriendshipSchema,
 } from './schema/pagerank-friendship.schema';
-import { VisoObjectModule } from 'src/viso-object/viso-object.module';
+import { VisoObjectModule } from '../viso-object/viso-object.module';
 
 @Module({
   imports: [

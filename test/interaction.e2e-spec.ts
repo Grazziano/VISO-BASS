@@ -82,9 +82,15 @@ describe('Interaction (e2e)', () => {
     const res = await request(app.getHttpServer() as unknown as App)
       .get('/interaction')
       .expect(200);
-    const list = res.body as Array<{ _id: string }>;
-    expect(Array.isArray(list)).toBeTruthy();
-    expect(list.length).toBeGreaterThanOrEqual(1);
+    const payload = res.body as {
+      items: Array<{ _id: string }>;
+      total: number;
+      page: number;
+      limit: number;
+    };
+    expect(Array.isArray(payload.items)).toBeTruthy();
+    expect(payload.items.length).toBeGreaterThanOrEqual(1);
+    expect(typeof payload.total).toBe('number');
   });
 
   it('/interaction/:id (GET) 200', async () => {

@@ -9,6 +9,7 @@ describe('Auth (e2e)', () => {
   let app: INestApplication;
   let mongoServer: import('mongodb-memory-server').MongoMemoryServer;
   let jwtToken: string | undefined;
+  let registeredEmail: string | undefined;
 
   beforeAll(async () => {
     // Ensure JWT env for JwtModule
@@ -39,11 +40,12 @@ describe('Auth (e2e)', () => {
     const body = res.body as { _id: string; email: string };
     expect(body).toHaveProperty('_id');
     expect(body.email).toBe(payload.email);
+    registeredEmail = payload.email;
   });
 
   it('/auth/login (POST) 200', async () => {
     const credentials = {
-      email: 'gandalf.thegrey@istari.middleearth',
+      email: registeredEmail as string,
       password: 'gandalfstrongpass',
     };
 
@@ -69,6 +71,6 @@ describe('Auth (e2e)', () => {
       .expect(200);
 
     const body = res.body as { email: string };
-    expect(body.email).toBe('gandalf.thegrey@istari.middleearth');
+    expect(body.email).toBe(registeredEmail);
   });
 });

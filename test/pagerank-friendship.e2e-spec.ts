@@ -77,8 +77,14 @@ describe('PagerankFriendship (e2e)', () => {
   it('/pagerank-friendship (GET) 200', async () => {
     const server = app.getHttpServer() as unknown as App;
     const res = await request(server).get('/pagerank-friendship').expect(200);
-    const list = res.body as Array<{ _id: string }>;
-    expect(Array.isArray(list)).toBeTruthy();
+    const payload = res.body as {
+      items: Array<{ _id: string }>;
+      total: number;
+      page: number;
+      limit: number;
+    };
+    expect(Array.isArray(payload.items)).toBeTruthy();
+    expect(typeof payload.total).toBe('number');
   });
 
   it('/pagerank-friendship/relevant (GET) 200', async () => {
