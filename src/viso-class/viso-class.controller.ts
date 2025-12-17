@@ -61,6 +61,44 @@ export class MyClassController {
     return this.visoClassService.countClasses();
   }
 
+  @Get('object-counts')
+  @ApiOperation({
+    summary: 'Quantidade de objetos por classe',
+    description:
+      'Retorna uma lista com cada classe e a quantidade de objetos associados a ela.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Contagem de objetos por classe retornada com sucesso',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          class_id: { type: 'string', example: '677f1f77bcf86cd799439011' },
+          class_name: { type: 'string', example: 'Sensores de Temperatura' },
+          total: { type: 'number', example: 42 },
+        },
+      },
+      example: [
+        {
+          class_id: '677f1f77bcf86cd799439011',
+          class_name: 'Classe A',
+          total: 12,
+        },
+        {
+          class_id: '677f1f77bcf86cd799439012',
+          class_name: 'Classe B',
+          total: 7,
+        },
+      ],
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async countObjectsByClass() {
+    return this.visoClassService.countObjectsByClass();
+  }
+
   @Get('last')
   @ApiOperation({
     summary: 'Retorna o último registro inserido',

@@ -107,6 +107,43 @@ export class VisoClassService {
     return { total };
   }
 
+  async countObjectsByClass(): Promise<
+    { class_id: string; class_name: string; total: number }[]
+  > {
+    try {
+      const results = await this.visoClassModel
+        .aggregate<{
+          class_id: string;
+          class_name: string;
+          total: number;
+        }>([
+          {
+            $project: {
+              class_id: '$_id',
+              class_name: 1,
+              total: { $size: { $ifNull: ['$objects', []] } },
+            },
+          },
+          { $sort: { total: -1, class_name: 1 } },
+        ])
+        .exec();
+
+      return results.map((r) => ({
+        class_id: String(r.class_id),
+        class_name: r.class_name,
+        total: r.total,
+      }));
+    } catch (error) {
+      this.logger.error(
+        `Erro ao contar objetos por classe: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        `Failed to count objects by class: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async findLast(): Promise<unknown> {
     return this.visoClassModel.findOne().sort({ createdAt: -1 }).lean().exec();
   }

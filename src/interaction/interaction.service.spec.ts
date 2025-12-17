@@ -43,7 +43,7 @@ describe('InteractionService', () => {
     (mockModel as any).countDocuments = jest.fn();
 
     mockVisoObjectModel = jest.fn();
-    (mockVisoObjectModel as any).find = jest.fn().mockReturnValue({
+    mockVisoObjectModel.find = jest.fn().mockReturnValue({
       lean: jest
         .fn()
         .mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),

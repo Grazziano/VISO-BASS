@@ -125,13 +125,13 @@ describe('VisoClassService', () => {
         exec: mockExec,
       });
 
-      (mockVisoClassModel as any).countDocuments = jest
+      mockVisoClassModel.countDocuments = jest
         .fn()
         .mockReturnValue({ exec: mockCountExec });
 
       const result = await service.findAll();
 
-      expect((mockVisoClassModel as any).countDocuments).toHaveBeenCalled();
+      expect(mockVisoClassModel.countDocuments).toHaveBeenCalled();
       expect(mockVisoClassModel.find).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(Array.isArray(result.items)).toBe(true);
