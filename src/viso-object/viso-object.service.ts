@@ -250,6 +250,42 @@ export class VisoObjectService {
     }
   }
 
+  async countObjectsByStatus(): Promise<
+    { status_code: number; status: string; total: number }[]
+  > {
+    try {
+      const agg = await this.visoObjectModel
+        .aggregate<{
+          _id: number;
+          total: number;
+        }>([
+          { $group: { _id: '$obj_status', total: { $sum: 1 } } },
+          { $sort: { _id: 1 } },
+        ])
+        .exec();
+
+      const labels: Record<number, string> = {
+        1: 'online',
+        2: 'offline',
+        3: 'manutenção',
+      };
+
+      return agg.map((r) => ({
+        status_code: Number(r._id),
+        status: labels[Number(r._id)] ?? String(r._id),
+        total: r.total,
+      }));
+    } catch (error) {
+      this.logger.error(
+        `Erro ao contar objetos por status: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        `Failed to count objects by status: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async findLast(): Promise<unknown> {
     return await this.visoObjectModel
       .findOne()

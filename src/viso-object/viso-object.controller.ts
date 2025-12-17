@@ -77,6 +77,37 @@ export class VisoObjectController {
     return this.visoObjectService.countObjects();
   }
 
+  @Get('status-counts')
+  @ApiOperation({
+    summary: 'Quantidade de objetos por status',
+    description:
+      'Retorna contagem de objetos agrupada por status (online, offline, manutenção).',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Contagem por status retornada com sucesso',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          status_code: { type: 'number', example: 1 },
+          status: { type: 'string', example: 'online' },
+          total: { type: 'number', example: 42 },
+        },
+      },
+      example: [
+        { status_code: 1, status: 'online', total: 15 },
+        { status_code: 2, status: 'offline', total: 7 },
+        { status_code: 3, status: 'manutenção', total: 3 },
+      ],
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
+  async countByStatus() {
+    return this.visoObjectService.countObjectsByStatus();
+  }
+
   @Get('search')
   @ApiOperation({ summary: 'Busca avançada de objetos' })
   @ApiQuery({ name: 'name', required: false, type: String })
