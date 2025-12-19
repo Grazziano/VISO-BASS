@@ -10,6 +10,8 @@ import {
 import { VisoClassService } from './viso-class.service';
 import { CreateVisoClassDto } from './dto/create-viso-class.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import {
   ApiBody,
   ApiOperation,
@@ -20,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('class')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('class')
 export class MyClassController {
   constructor(private readonly visoClassService: VisoClassService) {}
@@ -29,6 +31,7 @@ export class MyClassController {
   @ApiOperation({ summary: 'Cria uma nova class' })
   @ApiResponse({ type: CreateVisoClassDto })
   @Post()
+  @Roles('admin')
   async create(@Body() createVisoClassDto: CreateVisoClassDto) {
     return this.visoClassService.create(createVisoClassDto);
   }

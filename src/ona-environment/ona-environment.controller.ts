@@ -10,6 +10,8 @@ import {
 import { OnaEnvironmentService } from './ona-environment.service';
 import { CreateOnaEnvironmentDto } from './dto/create-ona-environment.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import {
   ApiBody,
   ApiOperation,
@@ -21,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('ona-environment')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('ona-environment')
 export class OnaEnvironmentController {
   constructor(private readonly onaEnvironmentService: OnaEnvironmentService) {}
@@ -29,6 +31,7 @@ export class OnaEnvironmentController {
   @Post()
   @ApiOperation({ summary: 'Cria novo ambiente' })
   @ApiBody({ type: CreateOnaEnvironmentDto })
+  @Roles('admin')
   create(@Body() createOnaEnvironmentDto: CreateOnaEnvironmentDto) {
     return this.onaEnvironmentService.create(createOnaEnvironmentDto);
   }

@@ -23,9 +23,11 @@ import {
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('interaction')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth('JWT-auth')
 @Controller('interaction')
 export class InteractionController {
@@ -114,6 +116,7 @@ export class InteractionController {
     description: 'Limite de criação excedido: 10 interações por 10 segundos',
   })
   @Throttle({ medium: { limit: 10, ttl: 10000 } }) // 10 criações por 10 segundos
+  @Roles('admin')
   create(@Body() createInteractionDto: CreateInteractionDto) {
     return this.interactionService.create(createInteractionDto);
   }

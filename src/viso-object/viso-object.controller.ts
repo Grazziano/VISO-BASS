@@ -12,6 +12,8 @@ import { VisoObjectService } from './viso-object.service';
 import { CreateVisoObjectDto } from './dto/create-viso-object.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from 'src/auth/types/jwt-payload.interface';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import {
   ApiBody,
   ApiOperation,
@@ -24,7 +26,7 @@ import {
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
 
 @ApiTags('object')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('object')
 export class VisoObjectController {
   constructor(private readonly visoObjectService: VisoObjectService) {}
@@ -33,6 +35,7 @@ export class VisoObjectController {
   @ApiOperation({ summary: 'Cria um novo objeto' })
   @ApiResponse({ status: 201, type: CreateVisoObjectDto })
   @Post()
+  @Roles('admin')
   async create(
     @Body() createVisoObjectDto: CreateVisoObjectDto,
     @Req() req: AuthenticatedRequest,
