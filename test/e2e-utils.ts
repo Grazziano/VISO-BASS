@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request } from 'express';
 
-type MockUser = { userId: string; email: string };
+type MockUser = { userId: string; email: string; role?: string };
 
 interface TestRequest extends Request {
   user?: MockUser;
@@ -28,7 +28,7 @@ export async function createTestApp(
     moduleBuilder.overrideGuard(AuthGuard('jwt')).useValue({
       canActivate: (context: ExecutionContext) => {
         const req = context.switchToHttp().getRequest<TestRequest>();
-        req.user = mockUser;
+        req.user = { ...mockUser, role: mockUser.role ?? 'admin' };
         return true;
       },
     });
