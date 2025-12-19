@@ -56,9 +56,9 @@ export class AuthService {
     }
   }
 
-  login(user: { email: string; _id: string }) {
+  login(user: { email: string; _id: string; role?: string }) {
     try {
-      const payload = { email: user.email, sub: user._id };
+      const payload = { email: user.email, sub: user._id, role: user.role };
 
       this.logger.log(
         `Login realizado com sucesso para usuário: ${user.email}`,
