@@ -24,6 +24,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { ResponseVisoObjectDto } from './dto/response-viso-object.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('object')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -34,6 +35,7 @@ export class VisoObjectController {
   @ApiBody({ type: CreateVisoObjectDto })
   @ApiOperation({ summary: 'Cria um novo objeto' })
   @ApiResponse({ status: 201, type: CreateVisoObjectDto })
+  @Throttle({ short: { limit: 100, ttl: 1000 } })
   @Post()
   @Roles('admin')
   async create(
