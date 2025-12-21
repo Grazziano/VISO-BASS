@@ -183,4 +183,55 @@ export class VisoClassService {
       );
     }
   }
+
+  async findByName(
+    name: string,
+    page = 1,
+    limit = 10,
+  ): Promise<{
+    items: VisoClassResponseDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    try {
+      this.logger.debug(`Buscando classes VISO por nome: ${name}`);
+
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+
+      const filter = { class_name: { $regex: name, $options: 'i' } };
+
+      const [total, myClasses] = await Promise.all([
+        this.visoClassModel.countDocuments(filter).exec(),
+        this.visoClassModel
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+
+      this.logger.log(
+        `${myClasses.length} classes retornadas (total: ${total})`,
+      );
+
+      return {
+        items: plainToInstance(VisoClassResponseDto, myClasses),
+        total,
+        page,
+        limit,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Erro ao buscar classes por nome: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        `Failed to find classes by name: ${(error as Error).message}`,
+      );
+    }
+  }
 }

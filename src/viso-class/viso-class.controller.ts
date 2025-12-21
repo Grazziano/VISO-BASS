@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -116,6 +117,28 @@ export class MyClassController {
   @ApiUnauthorizedResponse({ description: 'Token JWT inválido ou ausente' })
   async findLast() {
     return this.visoClassService.findLast();
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Busca classes por nome' })
+  @ApiQuery({
+    name: 'name',
+    required: true,
+    description: 'Nome ou parte do nome da classe',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Página (padrão 1)' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Limite por página (padrão 10)',
+  })
+  @ApiResponse({ type: [CreateVisoClassDto] })
+  async findByName(
+    @Query('name') name: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.visoClassService.findByName(name, Number(page), Number(limit));
   }
 
   @ApiParam({ name: 'id', type: String, description: 'ID da classe' })
