@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { VisoObject } from '../../viso-object/schema/viso-object.schema';
 
 @Schema({ timestamps: true })
 export class OnaEnvironment extends Document {
@@ -19,7 +18,7 @@ export class OnaEnvironment extends Document {
   @Prop({ type: [[Number]], default: [] })
   env_adjacency: number[];
 
-  @Prop({ type: [Types.ObjectId], ref: VisoObject.name })
+  @Prop({ type: [Types.ObjectId], ref: 'VisoObject' })
   objects: Types.ObjectId[];
 }
 

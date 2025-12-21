@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { OwnersModule } from '../../owners/owners.module';
 
 export type VisoObjectDocument = VisoObject & Document;
 
@@ -17,7 +16,7 @@ export class VisoObject {
   @Prop({ required: true })
   obj_name: string;
 
-  @Prop({ type: Types.ObjectId, ref: OwnersModule.name })
+  @Prop({ type: Types.ObjectId, ref: 'Owner' })
   obj_owner: Types.ObjectId;
 
   @Prop({ required: true })
@@ -47,7 +46,7 @@ export class VisoObject {
   @Prop({ required: true, default: 1 })
   obj_status: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'Class' })
+  @Prop({ type: Types.ObjectId, ref: 'VisoClass' })
   class: Types.ObjectId;
 }
 
