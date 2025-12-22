@@ -349,6 +349,35 @@ export class InteractionController {
     return this.interactionService.findLast();
   }
 
+  @Get('search')
+  @ApiOperation({
+    summary: 'Buscar interações por nome dos objetos',
+    description:
+      'Filtra interações cujo objeto de origem ou destino corresponda ao nome informado.',
+  })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Nome (ou trecho) do objeto envolvido na interação',
+  })
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de interações filtradas',
+  })
+  search(
+    @Query('name') name?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.interactionService.search({
+      name,
+      page: typeof page === 'string' ? Number(page) : page,
+      limit: typeof limit === 'string' ? Number(limit) : limit,
+    });
+  }
+
   @Get(':id')
   @ApiParam({
     name: 'id',

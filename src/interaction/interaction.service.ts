@@ -242,4 +242,97 @@ export class InteractionService {
       throw new Error('Failed to find interaction due to an unknown error');
     }
   }
+
+  async search(params: {
+    name?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ items: any[]; total: number; page: number; limit: number }> {
+    try {
+      let { page = 1, limit = 10 } = params;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+
+      const filter: Record<string, unknown> = {};
+      const { name } = params;
+
+      if (typeof name === 'string' && name.trim().length > 0) {
+        const visoObjects = (await this.visoObjectModel
+          .find({
+            obj_name: { $regex: name.trim(), $options: 'i' },
+          })
+          .select({ _id: 1 })
+          .lean()
+          .exec()) as unknown as Array<{ _id: string }>;
+        const ids = visoObjects.map((o) => String(o._id));
+        if (ids.length === 0) {
+          return { items: [], total: 0, page, limit };
+        }
+        filter.$or = [
+          { inter_obj_i: { $in: ids } },
+          { inter_obj_j: { $in: ids } },
+        ];
+      }
+
+      const [total, interactionsRaw] = await Promise.all([
+        this.interactionModel.countDocuments(filter).exec(),
+        this.interactionModel
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+      const interactions = interactionsRaw as unknown as Array<
+        Record<string, unknown>
+      >;
+
+      const objectIds = new Set<string>();
+      for (const it of interactions) {
+        const oi = it['inter_obj_i'];
+        const oj = it['inter_obj_j'];
+        const toIdStr = (v: unknown) =>
+          typeof v === 'string'
+            ? v
+            : v &&
+                typeof (v as { toString: () => string }).toString === 'function'
+              ? (v as { toString: () => string }).toString()
+              : '';
+        if (oi !== undefined && oi !== null) objectIds.add(toIdStr(oi));
+        if (oj !== undefined && oj !== null) objectIds.add(toIdStr(oj));
+      }
+
+      let items: Array<Record<string, unknown>> = interactions;
+      if (objectIds.size > 0) {
+        const visoObjects = (await this.visoObjectModel
+          .find({ _id: { $in: Array.from(objectIds) } })
+          .lean()
+          .exec()) as unknown as Array<
+          Record<string, unknown> & { _id: string }
+        >;
+        const visoMap = new Map<string, Record<string, unknown>>(
+          visoObjects.map((o) => [String(o._id), o]),
+        );
+
+        items = interactions.map((it) => ({
+          ...it,
+          inter_obj_i: visoMap.get(String(it.inter_obj_i)) || it.inter_obj_i,
+          inter_obj_j: visoMap.get(String(it.inter_obj_j)) || it.inter_obj_j,
+        })) as Array<Record<string, unknown>>;
+      }
+
+      this.logger.debug(
+        `${items.length} interações retornadas na busca (total filtrado: ${total})`,
+      );
+
+      return { items, total, page, limit };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to search interactions: ${error.message}`);
+      }
+      throw new Error('Failed to search interactions due to an unknown error');
+    }
+  }
 }
