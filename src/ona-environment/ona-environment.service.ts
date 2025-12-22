@@ -60,7 +60,7 @@ export class OnaEnvironmentService {
       page = Math.max(1, Math.floor(Number(page) || 1));
       limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
       const skip = (page - 1) * limit;
-      const [total, items] = await Promise.all([
+      const [total, itemsRaw] = await Promise.all([
         this.onaEnvironmentModel.countDocuments().exec(),
         this.onaEnvironmentModel
           .find()
@@ -70,26 +70,40 @@ export class OnaEnvironmentService {
           .lean()
           .exec(),
       ]);
+      const items = itemsRaw as unknown as Array<
+        Record<string, unknown> & { env_object_i: string }
+      >;
       // populate env_object_i with corresponding VisoObject documents (batch fetch)
       const envObjectIds = new Set<string>();
       for (const it of items) {
         if (it?.env_object_i) envObjectIds.add(String(it.env_object_i));
       }
 
-      let populatedItems = items;
+      let populatedItems: Array<Record<string, unknown>> = items as Array<
+        Record<string, unknown>
+      >;
       if (envObjectIds.size > 0) {
-        const visoObjects = await this.visoObjectModel
+        const visoObjects = (await this.visoObjectModel
           .find({ _id: { $in: Array.from(envObjectIds) } })
           .lean()
-          .exec();
-        const visoMap = new Map<string, any>(
-          visoObjects.map((o: any) => [String(o._id), o]),
+          .exec()) as unknown as Array<
+          Record<string, unknown> & { _id: Types.ObjectId | string }
+        >;
+        const visoMap = new Map<string, Record<string, unknown>>(
+          visoObjects.map((o) => [
+            typeof o._id === 'string' ? o._id : o._id.toString(),
+            o,
+          ]),
         );
 
-        populatedItems = items.map((it) => ({
-          ...it,
-          env_object_i: visoMap.get(String(it.env_object_i)) || it.env_object_i,
-        }));
+        populatedItems = items.map((it) => {
+          const key = String(it.env_object_i);
+          const envObj = visoMap.get(key);
+          return {
+            ...it,
+            env_object_i: envObj ?? it.env_object_i,
+          };
+        });
       }
 
       this.logger.log(
@@ -313,6 +327,97 @@ export class OnaEnvironmentService {
       }
       this.logger.error(`Erro desconhecido ao buscar ambiente ONA: ${id}`);
       throw new Error('Failed to find onaEnvironment due to an unknown error');
+    }
+  }
+
+  async search(params: {
+    name?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ items: any[]; total: number; page: number; limit: number }> {
+    try {
+      let { page = 1, limit = 10 } = params;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+
+      const { name } = params;
+      const filter: Record<string, unknown> = {};
+
+      if (typeof name === 'string' && name.trim().length > 0) {
+        // find viso objects whose name matches and filter environments by env_object_i
+        const visoObjects = (await this.visoObjectModel
+          .find({
+            obj_name: { $regex: name.trim(), $options: 'i' },
+          })
+          .select({ _id: 1 })
+          .lean()
+          .exec()) as unknown as Array<{ _id: Types.ObjectId | string }>;
+        const ids = visoObjects.map(({ _id }) =>
+          typeof _id === 'string' ? _id : _id.toString(),
+        );
+        if (ids.length === 0) {
+          return { items: [], total: 0, page, limit };
+        }
+        filter.env_object_i = { $in: ids };
+      }
+
+      this.logger.debug(
+        `Busca de ambientes ONA - filtros: ${JSON.stringify(filter)} | page: ${page}, limit: ${limit}`,
+      );
+
+      const [total, itemsRaw] = await Promise.all([
+        this.onaEnvironmentModel.countDocuments(filter).exec(),
+        this.onaEnvironmentModel
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+      const items = itemsRaw as unknown as Array<
+        Record<string, unknown> & { env_object_i: string }
+      >;
+
+      // populate env_object_i for response consistency
+      const envObjectIds = new Set<string>();
+      for (const it of items) {
+        if (it?.env_object_i) envObjectIds.add(String(it.env_object_i));
+      }
+      let populatedItems: Array<Record<string, unknown>> = items as Array<
+        Record<string, unknown>
+      >;
+      if (envObjectIds.size > 0) {
+        const visoObjects = (await this.visoObjectModel
+          .find({ _id: { $in: Array.from(envObjectIds) } })
+          .lean()
+          .exec()) as unknown as Array<
+          Record<string, unknown> & { _id: Types.ObjectId | string }
+        >;
+        const visoMap = new Map<string, Record<string, unknown>>(
+          visoObjects.map((o) => [
+            typeof o._id === 'string' ? o._id : o._id.toString(),
+            o,
+          ]),
+        );
+        populatedItems = items.map((it) => ({
+          ...it,
+          env_object_i: visoMap.get(String(it.env_object_i)) || it.env_object_i,
+        }));
+      }
+
+      this.logger.log(
+        `${populatedItems.length} ambientes ONA retornados na busca (total filtrado: ${total})`,
+      );
+
+      return { items: populatedItems, total, page, limit };
+    } catch (error) {
+      this.logger.error(
+        `Erro na busca de ambientes ONA: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new Error('Failed to search environments: Database error');
     }
   }
 }

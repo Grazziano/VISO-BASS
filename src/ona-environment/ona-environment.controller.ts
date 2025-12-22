@@ -140,6 +140,32 @@ export class OnaEnvironmentController {
     return this.onaEnvironmentService.findLast();
   }
 
+  @Get('search')
+  @ApiOperation({ summary: 'Busca ambientes por nome do objeto' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Nome (ou trecho) do objeto associado ao ambiente',
+    type: String,
+  })
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de ambientes filtrados',
+  })
+  search(
+    @Query('name') name?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.onaEnvironmentService.search({
+      name,
+      page: typeof page === 'string' ? Number(page) : page,
+      limit: typeof limit === 'string' ? Number(limit) : limit,
+    });
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Encontra ambiente pelo id' })
   @ApiParam({ name: 'id', type: String })
