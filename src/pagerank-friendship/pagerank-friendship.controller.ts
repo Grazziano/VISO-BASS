@@ -54,6 +54,31 @@ export class PagerankFriendshipController {
     return this.pagerankFriendshipService.findMostRelevant(limit);
   }
 
+  @ApiOperation({ summary: 'Busca amizades por nome dos objetos' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Nome (ou trecho) do objeto envolvido',
+  })
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de amizades filtradas',
+  })
+  @Get('search')
+  search(
+    @Query('name') name?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.pagerankFriendshipService.search({
+      name,
+      page: typeof page === 'string' ? Number(page) : page,
+      limit: typeof limit === 'string' ? Number(limit) : limit,
+    });
+  }
+
   @Get('count')
   @ApiOperation({
     summary: 'Contar total de amizades',

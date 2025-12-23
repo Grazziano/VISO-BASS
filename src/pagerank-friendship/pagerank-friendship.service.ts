@@ -137,6 +137,88 @@ export class PagerankFriendshipService {
     }
   }
 
+  async search(params: {
+    name?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ items: any[]; total: number; page: number; limit: number }> {
+    try {
+      let { page = 1, limit = 10 } = params;
+      page = Math.max(1, Math.floor(Number(page) || 1));
+      limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
+      const skip = (page - 1) * limit;
+
+      const filter: Record<string, unknown> = {};
+      const { name } = params;
+      if (typeof name === 'string' && name.trim().length > 0) {
+        const visoObjects = (await this.visoObjectModel
+          .find({
+            obj_name: { $regex: name.trim(), $options: 'i' },
+          })
+          .select({ _id: 1 })
+          .lean()
+          .exec()) as unknown as Array<{ _id: string }>;
+        const ids = visoObjects.map((o) => String(o._id));
+        if (ids.length === 0) {
+          return { items: [], total: 0, page, limit };
+        }
+        filter.$or = [
+          { rank_object: { $in: ids } },
+          { rank_adjacency: { $in: ids } },
+        ];
+      }
+
+      const [total, itemsRaw] = await Promise.all([
+        this.pagerankFriendshipModel.countDocuments(filter).exec(),
+        this.pagerankFriendshipModel
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec(),
+      ]);
+      const items = itemsRaw as Array<
+        Record<string, unknown> & { rank_object: string }
+      >;
+
+      const objectIds = new Set<string>();
+      for (const it of items) {
+        if (it?.rank_object) objectIds.add(String(it.rank_object));
+      }
+
+      let populatedItems: Array<Record<string, unknown>> = items as Array<
+        Record<string, unknown>
+      >;
+      if (objectIds.size > 0) {
+        const visoObjects = (await this.visoObjectModel
+          .find({ _id: { $in: Array.from(objectIds) } })
+          .lean()
+          .exec()) as unknown as Array<
+          Record<string, unknown> & { _id: string }
+        >;
+        const visoMap = new Map<string, Record<string, unknown>>(
+          visoObjects.map((o) => [String(o._id), o]),
+        );
+
+        populatedItems = items.map((it) => ({
+          ...it,
+          rank_object: visoMap.get(String(it.rank_object)) || it.rank_object,
+        })) as Array<Record<string, unknown>>;
+      }
+
+      return { items: populatedItems, total, page, limit };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to search pagerankFriendship: ${error.message}`,
+        );
+      }
+      throw new Error(
+        'Failed to search pagerankFriendship due to an unknown error',
+      );
+    }
+  }
   // async findMostRelevant(limit: number) {
   //   const results = await this.pagerankFriendshipModel.find().lean();
 
