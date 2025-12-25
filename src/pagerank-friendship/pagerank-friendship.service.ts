@@ -39,42 +39,80 @@ export class PagerankFriendshipService {
   async findAll(
     page = 1,
     limit = 10,
+    sort: 'created' | 'relevance' = 'created',
   ): Promise<{ items: any[]; total: number; page: number; limit: number }> {
     try {
       page = Math.max(1, Math.floor(Number(page) || 1));
       limit = Math.max(1, Math.min(100, Math.floor(Number(limit) || 10)));
       const skip = (page - 1) * limit;
-      const [total, items] = await Promise.all([
-        this.pagerankFriendshipModel.countDocuments().exec(),
-        this.pagerankFriendshipModel
+      const total = await this.pagerankFriendshipModel.countDocuments().exec();
+
+      let items: Array<Record<string, unknown>>;
+      if (sort === 'relevance') {
+        const aggregated = await this.pagerankFriendshipModel
+          .aggregate([
+            {
+              $addFields: {
+                relevanceScore: {
+                  $size: { $ifNull: ['$rank_adjacency', []] },
+                },
+              },
+            },
+            { $sort: { relevanceScore: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+          ])
+          .exec();
+        items = aggregated as Array<Record<string, unknown>>;
+      } else {
+        const found = await this.pagerankFriendshipModel
           .find()
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limit)
           .lean()
-          .exec(),
-      ]);
+          .exec();
+        items = found as Array<Record<string, unknown>>;
+      }
 
       // collect unique rank_object ids
       const objectIds = new Set<string>();
       for (const it of items) {
-        if (it?.rank_object) objectIds.add(String(it.rank_object));
+        const ro = it?.rank_object;
+        if (typeof ro === 'string') {
+          objectIds.add(ro);
+        } else if (ro && typeof ro === 'object' && '_id' in ro) {
+          objectIds.add(String((ro as { _id: unknown })._id));
+        }
       }
 
-      let populatedItems = items;
+      let populatedItems: Array<Record<string, unknown>> = items;
       if (objectIds.size > 0) {
-        const visoObjects = await this.visoObjectModel
+        const visoObjects = (await this.visoObjectModel
           .find({ _id: { $in: Array.from(objectIds) } })
           .lean()
-          .exec();
-        const visoMap = new Map<string, any>(
-          visoObjects.map((o: any) => [String(o._id), o]),
+          .exec()) as unknown as Array<
+          Record<string, unknown> & { _id: string }
+        >;
+        const visoMap = new Map<string, Record<string, unknown>>(
+          visoObjects.map((o) => [String(o._id), o]),
         );
 
-        populatedItems = items.map((it) => ({
-          ...it,
-          rank_object: visoMap.get(String(it.rank_object)) || it.rank_object,
-        }));
+        populatedItems = items.map((it: Record<string, unknown>) => {
+          const ro = it.rank_object;
+          const roId =
+            typeof ro === 'string'
+              ? ro
+              : ro && typeof ro === 'object' && '_id' in ro
+                ? String((ro as { _id: unknown })._id)
+                : undefined;
+          return {
+            ...it,
+            rank_object:
+              (roId ? visoMap.get(roId) : undefined) ??
+              (typeof ro === 'string' ? ro : ro),
+          };
+        });
       }
 
       return { items: populatedItems, total, page, limit };
@@ -90,7 +128,7 @@ export class PagerankFriendshipService {
 
   async countFriendships(): Promise<{ total: number }> {
     try {
-      const res = await this.pagerankFriendshipModel
+      const res = (await this.pagerankFriendshipModel
         .aggregate([
           {
             $project: {
@@ -99,8 +137,8 @@ export class PagerankFriendshipService {
           },
           { $group: { _id: null, total: { $sum: '$edges' } } },
         ])
-        .exec();
-      const total = (res?.[0]?.total as number) ?? 0;
+        .exec()) as Array<{ total: number }>;
+      const total = res?.[0]?.total ?? 0;
       return { total };
     } catch (error: unknown) {
       if (error instanceof Error) {

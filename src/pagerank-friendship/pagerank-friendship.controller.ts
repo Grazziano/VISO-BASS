@@ -41,8 +41,22 @@ export class PagerankFriendshipController {
   @Get()
   @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
-  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-    return this.pagerankFriendshipService.findAll(Number(page), Number(limit));
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    example: 'relevance',
+    description: 'Ordenação: created | relevance',
+  })
+  findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('sort') sort: 'created' | 'relevance' = 'created',
+  ) {
+    return this.pagerankFriendshipService.findAll(
+      Number(page),
+      Number(limit),
+      sort,
+    );
   }
 
   @ApiOperation({ summary: 'Lista as amizades pagerank mais relevantes' })
