@@ -126,4 +126,27 @@ export class OwnersService {
       );
     }
   }
+
+  async searchUsers(q: string): Promise<Omit<Owner, 'password'>[]> {
+    this.logger.debug(`Buscando usuários por termo: ${q}`);
+    try {
+      if (!q || q.trim().length === 0) {
+        return this.findAll();
+      }
+      const regex = new RegExp(q, 'i');
+      const owners = await this.ownerModel
+        .find({
+          $or: [{ name: regex }, { email: regex }],
+        })
+        .select('-password')
+        .exec();
+      return owners as unknown as Omit<Owner, 'password'>[];
+    } catch (error) {
+      this.logger.error(
+        `Erro na busca por usuários: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException('Erro ao buscar usuários');
+    }
+  }
 }

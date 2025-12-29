@@ -7,6 +7,7 @@ import {
   UseGuards,
   Patch,
   Param,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -250,5 +251,21 @@ export class AuthController {
     @Body() body: { role: string },
   ) {
     return this.ownersService.updateRole(id, body.role);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Buscar usuários (admin)',
+    description: 'Busca usuários por nome ou email.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Resultados retornados com sucesso',
+  })
+  @Get('users/search')
+  async searchUsers(@Query('q') q: string) {
+    return this.ownersService.searchUsers(q);
   }
 }
