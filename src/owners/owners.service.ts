@@ -87,4 +87,43 @@ export class OwnersService {
       throw new InternalServerErrorException('Erro ao buscar usuário');
     }
   }
+
+  async findAll(): Promise<Omit<Owner, 'password'>[]> {
+    this.logger.debug('Listando todos os usuários');
+    try {
+      const owners = await this.ownerModel.find({}).select('-password').exec();
+      return owners as unknown as Omit<Owner, 'password'>[];
+    } catch (error) {
+      this.logger.error(
+        `Erro ao listar usuários: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException('Erro ao listar usuários');
+    }
+  }
+
+  async updateRole(id: string, role: string): Promise<Omit<Owner, 'password'>> {
+    this.logger.debug(`Atualizando papel do usuário ${id} para ${role}`);
+    try {
+      const updated = await this.ownerModel
+        .findByIdAndUpdate(
+          id,
+          { $set: { role } },
+          { new: true, projection: { password: 0 } },
+        )
+        .exec();
+      if (!updated) {
+        throw new BadRequestException('Usuário não encontrado');
+      }
+      return updated as unknown as Omit<Owner, 'password'>;
+    } catch (error) {
+      this.logger.error(
+        `Erro ao atualizar papel do usuário ${id}: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException(
+        'Erro ao atualizar papel do usuário',
+      );
+    }
+  }
 }

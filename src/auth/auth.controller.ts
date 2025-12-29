@@ -5,11 +5,14 @@ import {
   Request,
   Get,
   UseGuards,
+  Patch,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from './types/jwt-payload.interface';
 import { IOwner } from 'src/owners/interfaces/owner.interface';
+import { OwnersService } from 'src/owners/owners.service';
 import {
   ApiOperation,
   ApiResponse,
@@ -21,11 +24,16 @@ import {
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Roles } from './roles.decorator';
+import { RolesGuard } from './roles.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private ownersService: OwnersService,
+  ) {}
 
   @ApiOperation({
     summary: 'Registrar novo usuário',
@@ -198,5 +206,49 @@ export class AuthController {
   async me(@Request() req: AuthenticatedRequest) {
     const data = await this.authService.me(req.user);
     return data;
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Listar usuários (admin)',
+    description: 'Retorna a lista de usuários sem o campo de senha.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista retornada com sucesso',
+  })
+  @Get('users')
+  async listUsers() {
+    return this.ownersService.findAll();
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Atualizar papel de usuário (admin)',
+    description: 'Atualiza o papel de um usuário para admin ou user.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        role: { type: 'string', enum: ['admin', 'user'] },
+      },
+      required: ['role'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Papel atualizado com sucesso',
+  })
+  @Patch('users/:id/role')
+  async updateUserRole(
+    @Param('id') id: string,
+    @Body() body: { role: string },
+  ) {
+    return this.ownersService.updateRole(id, body.role);
   }
 }
