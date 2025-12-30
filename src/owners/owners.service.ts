@@ -29,6 +29,53 @@ export class OwnersService {
       throw new BadRequestException('Email e senha são obrigatórios');
     }
 
+    const isWeakPassword = (pwd: string, name?: string, email?: string) => {
+      const minLen = 8;
+      const hasUpper = /[A-Z]/.test(pwd);
+      const hasLower = /[a-z]/.test(pwd);
+      const hasDigit = /\d/.test(pwd);
+      const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+      const common = [
+        '123456',
+        '12345678',
+        '123456789',
+        'password',
+        'qwerty',
+        'abc123',
+        'senha',
+        'admin',
+        '000000',
+        '111111',
+        'letmein',
+      ];
+      const normalized = pwd.toLowerCase();
+      const hasCommon = common.includes(normalized);
+      const hasRepeat = /^([a-zA-Z0-9])\1{3,}$/.test(pwd); // 4+ same chars
+      const nameNorm = (name ?? '').toLowerCase().replace(/\s+/g, '');
+      const emailLocal = (email ?? '').toLowerCase().split('@')[0] ?? '';
+      const containsPII =
+        (nameNorm && nameNorm.length >= 3 && normalized.includes(nameNorm)) ||
+        (emailLocal &&
+          emailLocal.length >= 3 &&
+          normalized.includes(emailLocal));
+      return !(
+        pwd.length >= minLen &&
+        hasUpper &&
+        hasLower &&
+        hasDigit &&
+        hasSpecial &&
+        !hasCommon &&
+        !hasRepeat &&
+        !containsPII
+      );
+    };
+
+    if (isWeakPassword(body.password, body.name, body.email)) {
+      throw new BadRequestException(
+        'Senha fraca. Use no mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo; não use dados pessoais nem sequências repetidas.',
+      );
+    }
+
     try {
       const ownerExists = await this.findByEmail(body.email);
 

@@ -60,9 +60,10 @@ export class AuthController {
         },
         password: {
           type: 'string',
-          minLength: 6,
-          description: 'Senha do usuário (mínimo 6 caracteres)',
-          example: 'minhasenha123',
+          minLength: 8,
+          description:
+            'Senha forte: mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo',
+          example: 'V1so@Bass!',
         },
       },
     },
