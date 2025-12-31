@@ -3,6 +3,7 @@ import { OwnersService } from '../owners/owners.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './types/jwt-payload.interface';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -34,8 +35,18 @@ export class AuthService {
       this.logger.log(`Usuário validado com sucesso: ${email}`);
       // Build a safe user object without the password to avoid unsafe `any` usage
       const uid = (user as unknown as { _id?: unknown })._id;
-      const idStr =
-        typeof uid === 'string' || typeof uid === 'number' ? String(uid) : '';
+      // Converter _id para string, lidando com ObjectId do Mongoose
+      let idStr = '';
+      if (uid instanceof Types.ObjectId) {
+        idStr = uid.toString();
+      } else if (typeof uid === 'string') {
+        idStr = uid;
+      } else if (typeof uid === 'number') {
+        idStr = String(uid);
+      } else if (uid && typeof uid === 'object' && 'toString' in uid) {
+        // Usar toString() explicitamente para evitar stringificação padrão
+        idStr = (uid as { toString: () => string }).toString();
+      }
       const result = {
         _id: idStr,
         email: user.email,

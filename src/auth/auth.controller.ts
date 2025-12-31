@@ -27,6 +27,7 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { Roles } from './roles.decorator';
 import { RolesGuard } from './roles.guard';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -216,20 +217,12 @@ export class AuthController {
     summary: 'Atualizar perfil do próprio usuário',
     description: 'Permite atualizar nome e email do usuário autenticado.',
   })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        email: { type: 'string', format: 'email' },
-      },
-    },
-  })
+  @ApiBody({ type: UpdateMeDto })
   @ApiBadRequestResponse({ description: 'Dados inválidos' })
   @Patch('me')
   async updateMe(
     @Request() req: AuthenticatedRequest,
-    @Body() body: { name?: string; email?: string },
+    @Body() body: UpdateMeDto,
   ) {
     const id = req.user.userId;
     return this.ownersService.updateMe(id, body);

@@ -43,6 +43,11 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      skipMissingProperties: true, // Permite que propriedades opcionais não sejam validadas se não estiverem presentes
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
   logger.log('Pipes de validação configurados');

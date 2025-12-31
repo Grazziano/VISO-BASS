@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Owner, OwnerDocument } from './schema/owner.schema';
 import { IOwner } from './interfaces/owner.interface';
@@ -199,29 +199,77 @@ export class OwnersService {
     id: string,
     updates: { name?: string; email?: string },
   ): Promise<Omit<Owner, 'password'>> {
-    this.logger.debug(`Atualizando perfil do usuário ${id}`);
+    this.logger.debug(
+      `Atualizando perfil do usuário ${id} (tipo: ${typeof id}, length: ${id?.length})`,
+    );
     try {
-      const set: Record<string, unknown> = {};
-      if (typeof updates.name === 'string') {
-        set.name = updates.name;
+      // Validar e converter o ID para ObjectId
+      if (!id || typeof id !== 'string' || id.trim().length === 0) {
+        this.logger.warn(`ID inválido recebido: ${id}`);
+        throw new BadRequestException(
+          'ID de usuário inválido: ID não fornecido ou vazio',
+        );
       }
-      if (typeof updates.email === 'string') {
+
+      if (!Types.ObjectId.isValid(id)) {
+        this.logger.warn(`ID não é um ObjectId válido: ${id}`);
+        throw new BadRequestException(
+          `ID de usuário inválido: formato incorreto (recebido: ${id})`,
+        );
+      }
+      const objectId = new Types.ObjectId(id);
+
+      const set: Record<string, unknown> = {};
+      if (typeof updates.name === 'string' && updates.name.trim().length > 0) {
+        set.name = updates.name.trim();
+      }
+      if (
+        typeof updates.email === 'string' &&
+        updates.email.trim().length > 0
+      ) {
+        const emailTrimmed = updates.email.trim();
         const exists = await this.ownerModel
-          .findOne({ email: updates.email, _id: { $ne: id } })
+          .findOne({ email: emailTrimmed, _id: { $ne: objectId } })
           .exec();
         if (exists) {
           throw new ConflictException('Email já está em uso');
         }
-        set.email = updates.email;
+        set.email = emailTrimmed;
       }
+
+      // Verificar se há campos para atualizar
+      if (Object.keys(set).length === 0) {
+        throw new BadRequestException(
+          'Nenhum campo fornecido para atualização. Forneça pelo menos um campo (name ou email).',
+        );
+      }
+
       const updated = await this.ownerModel
-        .findByIdAndUpdate(id, { $set: set }, { new: true })
+        .findByIdAndUpdate(objectId, { $set: set }, { new: true })
         .select('-password')
+        .lean()
         .exec();
       if (!updated) {
         throw new BadRequestException('Usuário não encontrado');
       }
-      return updated as unknown as Omit<Owner, 'password'>;
+      // Converter para objeto simples removendo campos do Mongoose
+      const updatedDoc = updated as Record<string, unknown>;
+      const idValue = updatedDoc._id;
+      const idString =
+        idValue instanceof Types.ObjectId
+          ? idValue.toString()
+          : typeof idValue === 'string'
+            ? idValue
+            : String(idValue);
+      const result = {
+        _id: idString,
+        name: updatedDoc.name as string,
+        email: updatedDoc.email as string,
+        role: updatedDoc.role as string,
+        createdAt: updatedDoc.createdAt,
+        updatedAt: updatedDoc.updatedAt,
+      };
+      return result as unknown as Omit<Owner, 'password'>;
     } catch (error) {
       if (
         error instanceof ConflictException ||
@@ -229,11 +277,18 @@ export class OwnersService {
       ) {
         throw error;
       }
+      // Log detalhado do erro para debug
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Erro ao atualizar perfil do usuário ${id}: ${(error as Error).message}`,
-        (error as Error).stack,
+        `Erro ao atualizar perfil do usuário ${id}: ${errorMessage}`,
+        errorStack,
       );
-      throw new InternalServerErrorException('Erro ao atualizar perfil');
+      // Incluir mais informações no erro para debug
+      throw new InternalServerErrorException(
+        `Erro ao atualizar perfil: ${errorMessage}`,
+      );
     }
   }
 

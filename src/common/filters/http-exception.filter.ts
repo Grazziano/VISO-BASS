@@ -8,7 +8,7 @@ import {
 import { Request, Response } from 'express';
 
 interface ExceptionResponse {
-  message?: string;
+  message?: string | string[];
   error?: string;
   [key: string]: unknown; // Para propriedades adicionais
 }
@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let message: string | string[] = 'Internal server error';
     let error: string | object = 'Error';
 
     if (exception instanceof HttpException) {
@@ -35,7 +35,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         exceptionResponse !== null
       ) {
         const response = exceptionResponse as ExceptionResponse;
-        message = response.message || message;
+        // Se message é um array (erros de validação), junta em uma string
+        if (Array.isArray(response.message)) {
+          message = response.message.join(', ');
+        } else {
+          message = response.message || message;
+        }
         error = response.error || error;
       }
     } else if (exception instanceof Error) {
