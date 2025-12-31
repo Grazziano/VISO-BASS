@@ -210,6 +210,70 @@ export class AuthController {
     return data;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Atualizar perfil do próprio usuário',
+    description: 'Permite atualizar nome e email do usuário autenticado.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        email: { type: 'string', format: 'email' },
+      },
+    },
+  })
+  @ApiBadRequestResponse({ description: 'Dados inválidos' })
+  @Patch('me')
+  async updateMe(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { name?: string; email?: string },
+  ) {
+    const id = req.user.userId;
+    return this.ownersService.updateMe(id, body);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Atualizar senha do próprio usuário',
+    description:
+      'Permite alterar a senha do usuário autenticado, exigindo a senha atual.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['currentPassword', 'newPassword'],
+      properties: {
+        currentPassword: { type: 'string' },
+        newPassword: {
+          type: 'string',
+          minLength: 8,
+          description:
+            'Senha forte: mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo',
+        },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Senha atual incorreta ou nova senha fraca',
+  })
+  @Patch('me/password')
+  async updateMyPassword(
+    @Request() req: AuthenticatedRequest,
+    @Body()
+    body: { currentPassword: string; newPassword: string },
+  ) {
+    const id = req.user.userId;
+    return this.ownersService.changePassword(
+      id,
+      body.currentPassword,
+      body.newPassword,
+    );
+  }
+
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('admin')
   @ApiBearerAuth('JWT-auth')

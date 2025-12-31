@@ -19,6 +19,45 @@ export class OwnersService {
     @InjectModel(Owner.name) private ownerModel: Model<OwnerDocument>,
   ) {}
 
+  private isWeakPassword(pwd: string, name?: string, email?: string) {
+    const minLen = 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasDigit = /\d/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+    const common = [
+      '123456',
+      '12345678',
+      '123456789',
+      'password',
+      'qwerty',
+      'abc123',
+      'senha',
+      'admin',
+      '000000',
+      '111111',
+      'letmein',
+    ];
+    const normalized = pwd.toLowerCase();
+    const hasCommon = common.includes(normalized);
+    const hasRepeat = /^([a-zA-Z0-9])\1{3,}$/.test(pwd);
+    const nameNorm = (name ?? '').toLowerCase().replace(/\s+/g, '');
+    const emailLocal = (email ?? '').toLowerCase().split('@')[0] ?? '';
+    const containsPII =
+      (nameNorm && nameNorm.length >= 3 && normalized.includes(nameNorm)) ||
+      (emailLocal && emailLocal.length >= 3 && normalized.includes(emailLocal));
+    return !(
+      pwd.length >= minLen &&
+      hasUpper &&
+      hasLower &&
+      hasDigit &&
+      hasSpecial &&
+      !hasCommon &&
+      !hasRepeat &&
+      !containsPII
+    );
+  }
+
   async create(body: IOwner): Promise<Owner> {
     this.logger.log(`Tentativa de criação de usuário: ${String(body.email)}`);
 
@@ -29,48 +68,7 @@ export class OwnersService {
       throw new BadRequestException('Email e senha são obrigatórios');
     }
 
-    const isWeakPassword = (pwd: string, name?: string, email?: string) => {
-      const minLen = 8;
-      const hasUpper = /[A-Z]/.test(pwd);
-      const hasLower = /[a-z]/.test(pwd);
-      const hasDigit = /\d/.test(pwd);
-      const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
-      const common = [
-        '123456',
-        '12345678',
-        '123456789',
-        'password',
-        'qwerty',
-        'abc123',
-        'senha',
-        'admin',
-        '000000',
-        '111111',
-        'letmein',
-      ];
-      const normalized = pwd.toLowerCase();
-      const hasCommon = common.includes(normalized);
-      const hasRepeat = /^([a-zA-Z0-9])\1{3,}$/.test(pwd); // 4+ same chars
-      const nameNorm = (name ?? '').toLowerCase().replace(/\s+/g, '');
-      const emailLocal = (email ?? '').toLowerCase().split('@')[0] ?? '';
-      const containsPII =
-        (nameNorm && nameNorm.length >= 3 && normalized.includes(nameNorm)) ||
-        (emailLocal &&
-          emailLocal.length >= 3 &&
-          normalized.includes(emailLocal));
-      return !(
-        pwd.length >= minLen &&
-        hasUpper &&
-        hasLower &&
-        hasDigit &&
-        hasSpecial &&
-        !hasCommon &&
-        !hasRepeat &&
-        !containsPII
-      );
-    };
-
-    if (isWeakPassword(body.password, body.name, body.email)) {
+    if (this.isWeakPassword(body.password, body.name, body.email)) {
       throw new BadRequestException(
         'Senha fraca. Use no mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo; não use dados pessoais nem sequências repetidas.',
       );
@@ -194,6 +192,89 @@ export class OwnersService {
         (error as Error).stack,
       );
       throw new InternalServerErrorException('Erro ao buscar usuários');
+    }
+  }
+
+  async updateMe(
+    id: string,
+    updates: { name?: string; email?: string },
+  ): Promise<Omit<Owner, 'password'>> {
+    this.logger.debug(`Atualizando perfil do usuário ${id}`);
+    try {
+      const set: Record<string, unknown> = {};
+      if (typeof updates.name === 'string') {
+        set.name = updates.name;
+      }
+      if (typeof updates.email === 'string') {
+        const exists = await this.ownerModel
+          .findOne({ email: updates.email, _id: { $ne: id } })
+          .exec();
+        if (exists) {
+          throw new ConflictException('Email já está em uso');
+        }
+        set.email = updates.email;
+      }
+      const updated = await this.ownerModel
+        .findByIdAndUpdate(id, { $set: set }, { new: true })
+        .select('-password')
+        .exec();
+      if (!updated) {
+        throw new BadRequestException('Usuário não encontrado');
+      }
+      return updated as unknown as Omit<Owner, 'password'>;
+    } catch (error) {
+      if (
+        error instanceof ConflictException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      this.logger.error(
+        `Erro ao atualizar perfil do usuário ${id}: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException('Erro ao atualizar perfil');
+    }
+  }
+
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<Omit<Owner, 'password'>> {
+    this.logger.debug(`Atualizando senha do usuário ${id}`);
+    try {
+      const user = await this.ownerModel.findById(id).exec();
+      if (!user) {
+        throw new BadRequestException('Usuário não encontrado');
+      }
+      const match = await bcrypt.compare(currentPassword, user.password);
+      if (!match) {
+        throw new BadRequestException('Senha atual incorreta');
+      }
+      if (this.isWeakPassword(newPassword, user.name, user.email)) {
+        throw new BadRequestException(
+          'Senha fraca. Use no mínimo 8 caracteres com maiúsculas, minúsculas, números e símbolo; não use dados pessoais nem sequências repetidas.',
+        );
+      }
+      const hash = await bcrypt.hash(newPassword, 10);
+      const updated = await this.ownerModel
+        .findByIdAndUpdate(id, { $set: { password: hash } }, { new: true })
+        .select('-password')
+        .exec();
+      if (!updated) {
+        throw new InternalServerErrorException('Erro ao atualizar senha');
+      }
+      return updated as unknown as Omit<Owner, 'password'>;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      this.logger.error(
+        `Erro ao atualizar senha do usuário ${id}: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+      throw new InternalServerErrorException('Erro ao atualizar senha');
     }
   }
 }
